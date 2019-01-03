@@ -15,7 +15,7 @@ package object pbson extends BsonEncoders with BsonDecoders {
   }
 
   implicit class BsonReaderOps(d: BsonDocument) {
-    def fromBson[T]()(implicit decoder: BsonDecoder[BsonError, T]): Either[BsonError, T] = try {
+    def fromBson[T]()(implicit decoder: BsonDecoder[T]): Either[BsonError, T] = try {
       decoder(d)
     } catch {
       case NonFatal(e) => Left(WrappedThrowable(e))

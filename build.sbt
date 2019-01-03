@@ -6,7 +6,21 @@ logBuffered in Test := false
 lazy val commonSettings = Seq(
   organization := "ru.twistedlogic",
   version := "0.0.1",
-  scalaVersion := "2.12.8"
+  scalaVersion := "2.12.8",
+  scalacOptions ++= Seq(
+    "-encoding", "utf8", // Option and arguments on same line
+    "-Xfatal-warnings",  // New lines for each options
+    "-deprecation",
+    "-unchecked",
+    "-language:implicitConversions",
+    "-language:higherKinds",
+    "-language:existentials",
+    "-language:postfixOps",
+    //"-Xlog-implicits",
+    //"-Xlog-implicit-conversions",
+    //"-Ymacro-debug-verbose",
+    //"-Ymacro-debug-lite"
+  )
 )
 
 lazy val root = (project in file("."))

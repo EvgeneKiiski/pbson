@@ -2,7 +2,8 @@ package pbson.encoder
 
 import org.mongodb.scala.bson.{BsonDocument, BsonValue}
 import pbson.BsonEncoder
-import shapeless.Lazy
+import shapeless.{LabelledGeneric, Lazy}
+//import ReprBsonEncoder._
 
 import scala.language.experimental.macros
 
@@ -12,12 +13,14 @@ import scala.language.experimental.macros
 abstract class DerivedBsonEncoder[A] extends BsonEncoder[A]
 
 object DerivedBsonEncoder {
-  implicit def derivedBsonEncoder[A]: DerivedBsonEncoder[A] = macro Deriver.deriveEncoder[A]
-//  implicit def derivedBsonEncoder[A]: DerivedBsonEncoder[A] = new DerivedBsonEncoder[A] {
-//    override def apply(t: A): BsonValue = {
-//      val aw = implicitly[BsonEncoder[Int]]
-//      val bw = implicitly[BsonEncoder[String]]
-//      BsonDocument()
-//    }
-//  }
+
+  implicit def deriveEncoder[A, R](implicit
+                          gen: LabelledGeneric.Aux[A, R],
+                          encode: Lazy[ReprBsonEncoder[R]]
+                         ): DerivedBsonEncoder[A] = new DerivedBsonEncoder[A] {
+    final def apply(t: A): BsonValue = {
+      BsonDocument(encode.value.apply(gen.to(t)))
+    }
+  }
+
 }
