@@ -1,7 +1,6 @@
 package pbson.examples
 
 import pbson._
-import pbson.examples.SimpleExample.{TestCase, test}
 import pbson.semiauto._
 
 /**
@@ -25,15 +24,20 @@ object FullExample extends App {
   implicit val threeEncoder: BsonEncoder[Three] = deriveEncoder
   implicit val sealedEncoder: BsonEncoder[SealedTest] = deriveEncoder
 
+  case class NestedCase(a: String, b: Long)
+
   case class TestCase(
                        a: Int,
                        b: Option[String],
                        c: Long,
-                       d: Seq[Long]
+                       d: Seq[Long],
+                       e: Map[String, NestedCase]
                        //st: SealedTest
                      ) extends Product
 
 
+  implicit val nestedCaseEncoder: BsonEncoder[NestedCase] = deriveEncoder
+  implicit val nestedCaseDecoder: BsonDecoder[NestedCase] = deriveDecoder
   implicit val testCaseEncoder: BsonEncoder[TestCase] = deriveEncoder
   implicit val testCaseDecoder: BsonDecoder[TestCase] = deriveDecoder
 
@@ -42,7 +46,8 @@ object FullExample extends App {
     3,
     Some("45"),
     34l,
-    List(2l, 5l)
+    List(2l, 5l),
+    Map("32" -> NestedCase("r", 5))
   )
 
   val bson = test.toBson

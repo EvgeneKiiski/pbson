@@ -10,11 +10,11 @@ import scala.util.control.NonFatal
   */
 package object pbson extends BsonEncoders with BsonDecoders {
 
-  implicit class BsonWriterOps[T](val t: T)(implicit encoder: BsonEncoder[T]) {
-    def toBson: BsonDocument = encoder(t).asDocument()
+  implicit class BsonWriterOps[T](val t: T) extends AnyVal {
+    def toBson(implicit encoder: BsonEncoder[T]): BsonDocument = encoder(t).asDocument()
   }
 
-  implicit class BsonReaderOps(d: BsonDocument) {
+  implicit class BsonReaderOps(val d: BsonDocument) extends AnyVal {
     def fromBson[T]()(implicit decoder: BsonDecoder[T]): Either[BsonError, T] = try {
       decoder(d)
     } catch {

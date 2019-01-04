@@ -17,7 +17,7 @@ abstract class ReprBsonEncoder[R] {
 
 object ReprBsonEncoder {
 
-  final def apply[R](implicit e: ReprBsonEncoder[R]): ReprBsonEncoder[R] = e
+  @inline final def apply[R](implicit e: ReprBsonEncoder[R]): ReprBsonEncoder[R] = e
 
   implicit final def keyTagEncoder[K <: Symbol, V](implicit
                                                    ve: BsonEncoder[V],

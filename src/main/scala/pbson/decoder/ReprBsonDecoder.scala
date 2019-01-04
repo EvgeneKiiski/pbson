@@ -21,7 +21,7 @@ trait ReprBsonDecoder[R] {
 }
 
 object ReprBsonDecoder {
-  final def apply[R](implicit d: ReprBsonDecoder[R]): ReprBsonDecoder[R] = d
+  @inline final def apply[R](implicit d: ReprBsonDecoder[R]): ReprBsonDecoder[R] = d
 
   implicit final def keyTagDecoder[K <: Symbol, V](implicit
                                                    vd: BsonDecoder[V],
