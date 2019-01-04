@@ -1,7 +1,12 @@
 package pbson.decoder
 
+import org.bson.BsonArray
 import org.mongodb.scala.bson.BsonValue
 import pbson.{BsonDecoder, BsonError}
+import collection.JavaConverters._
+import cats._
+import cats.implicits._
+
 
 import scala.language.implicitConversions
 
@@ -46,9 +51,16 @@ trait BsonDecoders {
       BsonError.InvalidType(s"${b.getBsonType} expected: Boolean")
     )
 
-  implicit final def optionDecoder[A](implicit decoder: BsonDecoder[A]): BsonDecoder[Option[A]] = {
+  implicit final def optionDecoder[A](implicit d: BsonDecoder[A]): BsonDecoder[Option[A]] = {
     case null => Right(None)
-    case b => decoder(b).map(Some.apply)
+    case b => d(b).map(Some.apply)
+  }
+
+  implicit final def seqDecoder[A](implicit d: BsonDecoder[A]): BsonDecoder[Seq[A]] = {
+    case null => Right(Seq.empty)
+    case b: BsonValue if b.isArray =>
+      val seq: List[BsonValue] = b.asArray().getValues.asScala.toList
+      seq.traverse(d.apply)
   }
 
 }

@@ -1,9 +1,9 @@
 package pbson.encoder
 
-import org.mongodb.scala.bson.{BsonBoolean, BsonInt32, BsonInt64, BsonNull, BsonString}
+import org.mongodb.scala.bson.{BsonArray, BsonBoolean, BsonInt32, BsonInt64, BsonNull, BsonString, BsonValue}
 import pbson.BsonEncoder
 
-import scala.language.implicitConversions
+import scala.language.{higherKinds, implicitConversions}
 
 /**
   * @author Evgenii Kiiski 
@@ -18,9 +18,12 @@ trait BsonEncoders {
 
   implicit val booleanEncoder: BsonEncoder[Boolean] = BsonBoolean(_)
 
-  implicit final def optionEncoder[A](implicit encoder: BsonEncoder[A]): BsonEncoder[Option[A]] = {
-    case Some(v) => encoder(v)
+  implicit final def optionEncoder[A](implicit e: BsonEncoder[A]): BsonEncoder[Option[A]] = {
+    case Some(v) => e(v)
     case None => BsonNull()
   }
+
+  implicit final def seqEncoder[A](implicit e: BsonEncoder[A]): BsonEncoder[Seq[A]] =
+    t => BsonArray.apply(t.map(e(_)))
 
 }

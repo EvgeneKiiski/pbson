@@ -12,6 +12,7 @@ lazy val commonSettings = Seq(
     "-Xfatal-warnings",  // New lines for each options
     "-deprecation",
     "-unchecked",
+    "-Ypartial-unification",
     "-language:implicitConversions",
     "-language:higherKinds",
     "-language:existentials",
@@ -30,6 +31,9 @@ lazy val root = (project in file("."))
     libraryDependencies ++= Seq(
       "org.mongodb.scala" %% "mongo-scala-bson" % "2.4.0",
       "com.chuusai" %% "shapeless" % "2.3.3",
+      "org.typelevel" %% "cats-core" % "1.5.0",
+      "org.typelevel" %% "cats-macros" % "1.5.0",
+      "org.typelevel" %% "cats-kernel" % "1.5.0",
       "junit" % "junit" % "4.12" % Test,
       "org.typelevel" %% "discipline" % "0.10.0" % Test,
       "org.scalactic" %% "scalactic" % "3.0.5"  % Test,
@@ -43,7 +47,16 @@ lazy val examples = (project in file("examples"))
   .dependsOn(root)
   .settings(
     commonSettings,
-    name := "examples"
+    name := "examples",
+    libraryDependencies ++= Seq(
+      "org.typelevel" %% "cats-core" % "1.5.0",
+      "org.typelevel" %% "cats-macros" % "1.5.0",
+      "org.typelevel" %% "cats-kernel" % "1.5.0",
+      "junit" % "junit" % "4.12" % Test,
+      "org.typelevel" %% "discipline" % "0.10.0" % Test,
+      "org.scalactic" %% "scalactic" % "3.0.5"  % Test,
+      "org.scalatest" %% "scalatest" % "3.0.5" % Test
+    )
   )
 
 
