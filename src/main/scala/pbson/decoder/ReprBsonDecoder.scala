@@ -36,13 +36,8 @@ object ReprBsonDecoder {
       }
     }
 
-  implicit final def hlistDecoder[H: ReprBsonDecoder, T <: HList : ReprBsonDecoder]: ReprBsonDecoder[H :: T] = {
-    d =>
-      for {
-        h <- ReprBsonDecoder[H].apply(d)
-        t <- ReprBsonDecoder[T].apply(d)
-      } yield h :: t
-  }
+  implicit final def hlistDecoder[H: ReprBsonDecoder, T <: HList : ReprBsonDecoder]: ReprBsonDecoder[H :: T] = d =>
+    ReprBsonDecoder[H].apply(d).flatMap(h => ReprBsonDecoder[T].apply(d).map(t => h :: t))
 
   implicit val hnilDecoder: ReprBsonDecoder[HNil] = _ => Right(HNil)
 
