@@ -1,7 +1,8 @@
 package pbson
 
 import org.mongodb.scala.bson.BsonValue
-import pbson.BsonError.InvalidType
+import pbson.BsonError.{BsonIsNull, InvalidType}
+
 import collection.JavaConverters._
 import cats._
 import cats.implicits._
@@ -17,11 +18,22 @@ object BsonDecoder {
 
   type Result[A] = Either[BsonError, A]
 
+  @inline final def apply[A](implicit d: BsonDecoder[A]): BsonDecoder[A] = d
+
+  private[this] def instance[A](f: BsonValue => Result[A]): BsonDecoder[A] = f(_)
+
   implicit final val stringDecoder: BsonDecoder[String] =
     b => Either.cond(
       b.isString,
       b.asString().getValue,
       BsonError.InvalidType(s"${b.getBsonType} expected: String")
+    )
+
+  implicit final val charDecoder: BsonDecoder[Char] =
+    b => Either.cond(
+      b.isString && b.asString().getValue.length == 1,
+      b.asString().getValue.head,
+      BsonError.InvalidType(s"${b.getBsonType} expected: String length 1")
     )
 
   implicit final val intDecoder: BsonDecoder[Int] =
@@ -30,6 +42,17 @@ object BsonDecoder {
         Right(b.asInt32().getValue)
       } else if (b.isInt64) {
         Right(b.asInt64().intValue())
+      } else {
+        Left(BsonError.InvalidType(s" ${b.getBsonType} expected: Int"))
+      }
+    }
+
+  implicit final val shortDecoder: BsonDecoder[Short] =
+    b => {
+      if (b.isInt32) {
+        Right(b.asInt32().intValue().toShort)
+      } else if (b.isInt64) {
+        Right(b.asInt64().intValue().toShort)
       } else {
         Left(BsonError.InvalidType(s" ${b.getBsonType} expected: Int"))
       }

@@ -21,4 +21,8 @@ object BsonError {
   final case class FieldNotFound(name: String) extends BsonError {
     override def toString: String = s"Bson field $name not found"
   }
+
+  final case object BsonIsNull extends BsonError {
+    override def toString: String = s"BsonValue is null"
+  }
 }

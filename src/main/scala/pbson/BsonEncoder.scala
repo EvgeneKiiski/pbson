@@ -11,7 +11,13 @@ trait BsonEncoder[A] {
 
 object BsonEncoder {
 
+  @inline final def apply[A](implicit e: BsonEncoder[A]): BsonEncoder[A] = e
+
   implicit final val stringEncoder: BsonEncoder[String] = BsonString(_)
+
+  implicit final val charEncoder: BsonEncoder[Char] = c => BsonString(String.valueOf(c))
+
+  implicit final val shortEncoder: BsonEncoder[Short] = BsonInt32(_)
 
   implicit final val intEncoder: BsonEncoder[Int] = BsonInt32(_)
 
