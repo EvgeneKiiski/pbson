@@ -1,6 +1,6 @@
 package pbson
 
-import org.mongodb.scala.bson.BsonValue
+import org.mongodb.scala.bson.{BsonNull, BsonValue}
 import pbson.BsonError.{BsonIsNull, InvalidType}
 
 import collection.JavaConverters._
@@ -21,6 +21,13 @@ object BsonDecoder {
   @inline final def apply[A](implicit d: BsonDecoder[A]): BsonDecoder[A] = d
 
   private[this] def instance[A](f: BsonValue => Result[A]): BsonDecoder[A] = f(_)
+
+  implicit final val unitDecoder: BsonDecoder[Unit] =
+    b => Either.cond(
+      b == BsonNull(),
+      Unit,
+      BsonError.InvalidType(s"${b.getBsonType} expected: BsonNull")
+    )
 
   implicit final val stringDecoder: BsonDecoder[String] =
     b => Either.cond(
