@@ -25,6 +25,10 @@ object BsonEncoder {
 
   implicit final val longEncoder: BsonEncoder[Long] = BsonInt64(_)
 
+  implicit final val doubleEncoder: BsonEncoder[Double] = BsonDouble(_)
+
+  implicit final val floatEncoder: BsonEncoder[Float] = f => BsonDouble(f.toDouble)
+
   implicit final val booleanEncoder: BsonEncoder[Boolean] = BsonBoolean(_)
 
   implicit final def optionEncoder[A](implicit e: BsonEncoder[A]): BsonEncoder[Option[A]] = {

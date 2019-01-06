@@ -76,6 +76,20 @@ object BsonDecoder {
       }
     }
 
+  implicit final val doubleDecoder: BsonDecoder[Double] =
+    b => Either.cond(
+      b.isDouble,
+      b.asDouble().getValue,
+      BsonError.InvalidType(s"${b.getBsonType} expected: Double")
+    )
+
+  implicit final val floatDecoder: BsonDecoder[Float] =
+    b => Either.cond(
+      b.isDouble,
+      b.asDouble().getValue.toFloat,
+      BsonError.InvalidType(s"${b.getBsonType} expected: Double")
+    )
+
   implicit final val booleanDecoder: BsonDecoder[Boolean] =
     b => Either.cond(
       b.isBoolean,
