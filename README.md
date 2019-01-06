@@ -10,7 +10,7 @@ Decode to ```Either[BsonError, A]``` without throws any exceptions.
 import pbson._
 import pbson.semiauto._
 
-case class TestCase(a: Int, b: Option[String]) extends Product
+case class TestCase(a: Int, b: Option[String])
 
 implicit val testCaseEncoder: BsonEncoder[TestCase] = deriveEncoder
 implicit val testCaseDecoder: BsonDecoder[TestCase] = deriveDecoder

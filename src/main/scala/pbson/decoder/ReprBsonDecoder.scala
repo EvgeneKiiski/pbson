@@ -17,33 +17,33 @@ import shapeless.tag._
   * @author Evgenii Kiiski 
   */
 trait ReprBsonDecoder[R] {
-  def apply(d: BsonDocument): Either[BsonError, R]
+  def apply(b: BsonDocument): Either[BsonError, R]
 }
 
 object ReprBsonDecoder {
   @inline final def apply[R](implicit d: ReprBsonDecoder[R]): ReprBsonDecoder[R] = d
 
-  implicit final def keyTagDecoder[K <: Symbol, V](implicit
-                                                   vd: BsonDecoder[V],
-                                                   w: Witness.Aux[K]
-                                                  ): ReprBsonDecoder[FieldType[K, V]] =
-    d => {
-      val value = d.get(w.value.name)
-      if (value == null) {
-        Left(FieldNotFound(w.value.name))
-      } else {
-        vd.apply(value).asInstanceOf[Either[BsonError, FieldType[K, V]]]
-      }
+  implicit final def hlistDecoder[K <: Symbol, V, T <: HList : ReprBsonDecoder](implicit
+                                                                                d: Lazy[BsonDecoder[V]],
+                                                                                w: Witness.Aux[K]
+                                                                               ): ReprBsonDecoder[FieldType[K, V] :: T] = b => {
+    val value = b.get(w.value.name)
+    if (value == null) {
+      Left(FieldNotFound(w.value.name))
+    } else {
+      d.value.apply(value).asInstanceOf[Either[BsonError, FieldType[K, V]]]
+        .flatMap(h => ReprBsonDecoder[T].apply(b).map(t => h :: t))
     }
-
-  implicit final def hlistDecoder[H: ReprBsonDecoder, T <: HList : ReprBsonDecoder]: ReprBsonDecoder[H :: T] = d =>
-    ReprBsonDecoder[H].apply(d).flatMap(h => ReprBsonDecoder[T].apply(d).map(t => h :: t))
+  }
 
   implicit val hnilDecoder: ReprBsonDecoder[HNil] = _ => Right(HNil)
 
   implicit val cnilDecoder: ReprBsonDecoder[CNil] = _ => Left(FieldNotFound("CNil"))
 
-  implicit final def coproductDecoder[H: ReprBsonDecoder, T <: Coproduct : ReprBsonDecoder]: ReprBsonDecoder[H :+: T] = ???
+  implicit final def coproductDecoder[K <: Symbol, V, T <: Coproduct : ReprBsonDecoder](implicit
+                                                                                        d: Lazy[BsonDecoder[V]],
+                                                                                        w: Witness.Aux[K]
+                                                                                       ): ReprBsonDecoder[FieldType[K, V] :+: T] = ???
 
 
 }
