@@ -29,11 +29,14 @@ object ReprBsonEncoder {
 
   implicit val cnilEncoder: ReprBsonEncoder[CNil] = _ => List.empty
 
-  implicit final def coproductEncoder[K <: Symbol, V, T <: Coproduct : ReprBsonEncoder](implicit
-                                                                                        e: Lazy[BsonEncoder[V]],
-                                                                                        w: Witness.Aux[K]
-                                                                                       ): ReprBsonEncoder[FieldType[K, V] :+: T] = {
-    case Inl(head) => (w.value.name, e.value.apply(head.asInstanceOf[V])) :: Nil
+  implicit final def cpEncoder[K <: Symbol, V, T <: Coproduct : ReprBsonEncoder](implicit
+                                                                                 e: Lazy[BsonEncoder[V]],
+                                                                                 w: Witness.Aux[K]
+                                                                                ): ReprBsonEncoder[FieldType[K, V] :+: T] = {
+    case Inl(head) => {
+      println(s"key: ${w.value.name} -> $head")
+      (w.value.name, e.value.apply(head.asInstanceOf[V])) :: Nil
+    }
     case Inr(tail) => ReprBsonEncoder[T].apply(tail)
   }
 

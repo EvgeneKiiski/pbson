@@ -1,6 +1,8 @@
 package pbson.decoder
 
 import org.bson.BsonDocument
+import org.mongodb.scala.bson.BsonValue
+import pbson.BsonDecoder.Result
 import pbson.BsonError.FieldNotFound
 import pbson.{BsonDecoder, BsonError}
 import pbson.encoder.ReprBsonEncoder
@@ -17,11 +19,16 @@ import shapeless.tag._
   * @author Evgenii Kiiski 
   */
 trait ReprBsonDecoder[R] {
-  def apply(b: BsonDocument): Either[BsonError, R]
+  def apply(b: BsonDocument): ReprBsonDecoder.Result[R]
 }
 
 object ReprBsonDecoder {
+
+  type Result[A] = Either[BsonError, A]
+
   @inline final def apply[R](implicit d: ReprBsonDecoder[R]): ReprBsonDecoder[R] = d
+
+  private[this] def instance[R](f: BsonDocument => Result[R]): ReprBsonDecoder[R] = f(_)
 
   implicit final def hlistDecoder[K <: Symbol, V, T <: HList : ReprBsonDecoder](implicit
                                                                                 d: Lazy[BsonDecoder[V]],
@@ -40,10 +47,18 @@ object ReprBsonDecoder {
 
   implicit val cnilDecoder: ReprBsonDecoder[CNil] = _ => Left(FieldNotFound("CNil"))
 
-  implicit final def coproductDecoder[K <: Symbol, V, T <: Coproduct : ReprBsonDecoder](implicit
-                                                                                        d: Lazy[BsonDecoder[V]],
-                                                                                        w: Witness.Aux[K]
-                                                                                       ): ReprBsonDecoder[FieldType[K, V] :+: T] = ???
+  implicit final def cpDecoder[K <: Symbol, V, T <: Coproduct : ReprBsonDecoder](implicit
+                                                                                 d: Lazy[BsonDecoder[V]],
+                                                                                 w: Witness.Aux[K]
+                                                                                ): ReprBsonDecoder[FieldType[K, V] :+: T] =
+    b => {
+      println(s"codec: ${w.value.name} $b")
+      if (b.containsKey(w.value.name)) {
+        d.value.apply(b.get(w.value.name)).map(v => Inl(v.asInstanceOf[FieldType[K, V]]))
+      } else {
+        ReprBsonDecoder[T].apply(b).map(Inr(_))
+      }
+    }
 
 
 }

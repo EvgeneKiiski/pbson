@@ -33,8 +33,8 @@ object FullExample extends App {
                        b: Option[String],
                        c: Long,
                        d: Seq[Long],
-                       e: Map[String, NestedCase]
-                       ,st: SealedTest
+                       e: Map[String, NestedCase],
+                       st: SealedTest
                      )
 
 
@@ -49,8 +49,8 @@ object FullExample extends App {
     Some("45"),
     34l,
     List(2l, 5l),
-    Map("32" -> NestedCase("r", 5))
-    ,Two("2")
+    Map("32" -> NestedCase("r", 5)),
+    One()
   )
 
   val bson = test.toBson
