@@ -30,16 +30,18 @@ object ReprBsonDecoder {
 
   private[this] def instance[R](f: BsonDocument => Result[R]): ReprBsonDecoder[R] = f(_)
 
-  implicit final def hlistDecoder[K <: Symbol, V, T <: HList : ReprBsonDecoder](implicit
-                                                                                d: Lazy[BsonDecoder[V]],
-                                                                                w: Witness.Aux[K]
-                                                                               ): ReprBsonDecoder[FieldType[K, V] :: T] = b => {
+  implicit final def hlistDecoder[K <: Symbol, V, U, T <: HList](implicit
+                                                                 w: Witness.Aux[K],
+                                                                 uw: Strict[Unwrapped.Aux[V, U]],
+                                                                 d: Lazy[BsonDecoder[U]],
+                                                                 rt: Strict[ReprBsonDecoder[T]]
+                                                                ): ReprBsonDecoder[FieldType[K, V] :: T] = b => {
     val value = b.get(w.value.name)
     if (value == null) {
       Left(FieldNotFound(w.value.name))
     } else {
-      d.value.apply(value).asInstanceOf[Either[BsonError, FieldType[K, V]]]
-        .flatMap(h => ReprBsonDecoder[T].apply(b).map(t => h :: t))
+      d.value.apply(value).map(v => uw.value.wrap(v)).asInstanceOf[Either[BsonError, FieldType[K, V]]]
+        .flatMap(h => rt.value.apply(b).map(t => h :: t))
     }
   }
 
