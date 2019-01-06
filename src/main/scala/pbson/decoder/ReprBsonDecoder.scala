@@ -43,10 +43,7 @@ object ReprBsonDecoder {
 
   implicit val cnilDecoder: ReprBsonDecoder[CNil] = _ => Left(FieldNotFound("CNil"))
 
-  //  implicit final def coproductDecoder[H: ReprBsonDecoder, T <: Coproduct : ReprBsonDecoder]: ReprBsonDecoder[H :+: T] = {
-  //    case Inl(head) => ReprBsonDecoder[H].apply(head)
-  //    case Inr(tail) => ReprBsonDecoder[T].apply(tail)
-  //  }
+  implicit final def coproductDecoder[H: ReprBsonDecoder, T <: Coproduct : ReprBsonDecoder]: ReprBsonDecoder[H :+: T] = ???
 
 
 }

@@ -12,32 +12,29 @@ import scala.language.experimental.macros
   * @author Evgenii Kiiski
   */
 abstract class ReprBsonEncoder[R] {
-  def apply(t: R): Map[String, BsonValue]
+  def apply(t: R): List[(String, BsonValue)]
 }
 
 object ReprBsonEncoder {
 
   @inline final def apply[R](implicit e: ReprBsonEncoder[R]): ReprBsonEncoder[R] = e
 
-  implicit final def keyTagEncoder[K <: Symbol, V](implicit
-                                                   ve: BsonEncoder[V],
-                                                   w: Witness.Aux[K]
-                                                  ): ReprBsonEncoder[FieldType[K, V]] =
-    t => Map(w.value.name -> ve.apply(t.asInstanceOf[V]))
+  implicit val hnilEncoder: ReprBsonEncoder[HNil] = _ => List.empty
 
+  implicit final def hlistEncoder[K <: Symbol, V, T <: HList : ReprBsonEncoder](implicit
+                                                                                e: Lazy[BsonEncoder[V]],
+                                                                                w: Witness.Aux[K]
+                                                                               ): ReprBsonEncoder[FieldType[K, V] :: T] =
+    l => (w.value.name, e.value.apply(l.head.asInstanceOf[V])) :: ReprBsonEncoder[T].apply(l.tail)
 
-  implicit val hnilEncoder: ReprBsonEncoder[HNil] = _ => Map.empty
+  implicit val cnilEncoder: ReprBsonEncoder[CNil] = _ => List.empty
 
-  implicit final def hlistEncoder[H: ReprBsonEncoder, T <: HList : ReprBsonEncoder]: ReprBsonEncoder[H :: T] = {
-    l => ReprBsonEncoder[H].apply(l.head) ++ ReprBsonEncoder[T].apply(l.tail)
-  }
-
-  implicit val cnilEncoder: ReprBsonEncoder[CNil] = _ => Map.empty
-
-  implicit final def coproductEncoder[H: ReprBsonEncoder, T <: Coproduct : ReprBsonEncoder]: ReprBsonEncoder[H :+: T] = {
-    case Inl(head) => ReprBsonEncoder[H].apply(head)
+  implicit final def coproductEncoder[K <: Symbol, V, T <: Coproduct : ReprBsonEncoder](implicit
+                                                                                        e: Lazy[BsonEncoder[V]],
+                                                                                        w: Witness.Aux[K]
+                                                                                       ): ReprBsonEncoder[FieldType[K, V] :+: T] = {
+    case Inl(head) => (w.value.name, e.value.apply(head.asInstanceOf[V])) :: Nil
     case Inr(tail) => ReprBsonEncoder[T].apply(tail)
-    case _ => Map.empty
   }
 
 }

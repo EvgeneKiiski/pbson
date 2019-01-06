@@ -13,7 +13,6 @@ object FullExample extends App {
   object SealedTest {
     final case class One() extends SealedTest
     final case class Two(s: String) extends SealedTest
-    final case class Three(i: Int) extends SealedTest
 
   }
 
@@ -21,8 +20,11 @@ object FullExample extends App {
 
   implicit val oneEncoder: BsonEncoder[One] = deriveEncoder
   implicit val twoEncoder: BsonEncoder[Two] = deriveEncoder
-  implicit val threeEncoder: BsonEncoder[Three] = deriveEncoder
   implicit val sealedEncoder: BsonEncoder[SealedTest] = deriveEncoder
+
+  implicit val oneDecoder: BsonDecoder[One] = deriveDecoder
+  implicit val twoDecoder: BsonDecoder[Two] = deriveDecoder
+  implicit val sealedDecoder: BsonDecoder[SealedTest] = deriveDecoder
 
   case class NestedCase(a: String, b: Long)
 
@@ -31,9 +33,9 @@ object FullExample extends App {
                        b: Option[String],
                        c: Long,
                        d: Seq[Long],
-                       e: Map[String, NestedCase]
-                       //st: SealedTest
-                     ) extends Product
+                       e: Map[String, NestedCase],
+                       st: SealedTest
+                     )
 
 
   implicit val nestedCaseEncoder: BsonEncoder[NestedCase] = deriveEncoder
@@ -47,7 +49,8 @@ object FullExample extends App {
     Some("45"),
     34l,
     List(2l, 5l),
-    Map("32" -> NestedCase("r", 5))
+    Map("32" -> NestedCase("r", 5)),
+    Two("2")
   )
 
   val bson = test.toBson
