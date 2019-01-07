@@ -1,0 +1,7 @@
+[info] Benchmark              Mode  Cnt    Score    Error   Units
+[info] SpeedTest.cicreSmall  thrpt   10  305.816 ±  2.429  ops/ms
+[info] SpeedTest.pbsonSmall  thrpt   10  532.171 ±  4.556  ops/ms
+[info] SpeedTest.cicreSmall   avgt   10    0.003 ±  0.001   ms/op
+[info] SpeedTest.pbsonSmall   avgt   10    0.002 ±  0.001   ms/op
+[success] Total time: 869 s, completed Jan 7, 2019, 11:20:35 AM
+

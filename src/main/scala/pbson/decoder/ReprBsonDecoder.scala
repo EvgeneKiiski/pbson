@@ -52,15 +52,11 @@ object ReprBsonDecoder {
   implicit final def cpDecoder[K <: Symbol, V, T <: Coproduct : ReprBsonDecoder](implicit
                                                                                  w: Witness.Aux[K],
                                                                                  d: Lazy[BsonDecoder[V]]
-                                                                                ): ReprBsonDecoder[FieldType[K, V] :+: T] =
-    b => {
-      println(s"codec: ${w.value.name} $b")
-      if (b.containsKey(w.value.name)) {
-        d.value.apply(b.get(w.value.name)).map(v => Inl(v.asInstanceOf[FieldType[K, V]]))
-      } else {
-        ReprBsonDecoder[T].apply(b).map(Inr(_))
-      }
+                                                                                ): ReprBsonDecoder[FieldType[K, V] :+: T] = b =>
+    if (b.containsKey(w.value.name)) {
+      d.value.apply(b.get(w.value.name)).map(v => Inl(v.asInstanceOf[FieldType[K, V]]))
+    } else {
+      ReprBsonDecoder[T].apply(b).map(Inr(_))
     }
-
 
 }

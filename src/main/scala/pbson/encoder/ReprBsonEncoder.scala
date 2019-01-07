@@ -1,7 +1,7 @@
 package pbson.encoder
 
 
-import org.mongodb.scala.bson.BsonValue
+import org.mongodb.scala.bson.{BsonString, BsonValue}
 import pbson.{BsonADTEncoder, BsonEncoder}
 import shapeless._
 import shapeless.labelled.FieldType
@@ -31,20 +31,11 @@ object ReprBsonEncoder {
 
   implicit val cnilEncoder: ReprBsonEncoder[CNil] = _ => List.empty
 
-  implicit final def adtEncoder[K, V]: BsonADTEncoder[K, V] = new BsonADTEncoder[K, V] {
-    override def apply(name: String, t: BsonValue): List[(String, BsonValue)] = (name, t) :: Nil
-  }
-
   implicit final def cpEncoder[K <: Symbol, V, T <: Coproduct : ReprBsonEncoder](implicit
                                                                                  w: Witness.Aux[K],
                                                                                  e: Lazy[BsonEncoder[V]],
-                                                                                 //h: Lazy[BsonADTEncoder[K, V]],
                                                                                 ): ReprBsonEncoder[FieldType[K, V] :+: T] = {
-    case Inl(head) => {
-      println(s"key: ${w.value.name} -> $head")
-      //h.value(w.value.name, e.value.apply(head.asInstanceOf[V]))
-      (w.value.name, e.value.apply(head.asInstanceOf[V])) :: Nil
-    }
+    case Inl(head) => (w.value.name, e.value.apply(head.asInstanceOf[V])) :: Nil
     case Inr(tail) => ReprBsonEncoder[T].apply(tail)
   }
 

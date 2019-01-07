@@ -24,7 +24,7 @@ object DerivedBsonDecoder {
           case l@Left(_) => l.asInstanceOf[Either[BsonError, A]]
         }
       } else {
-        Left(InvalidType(s"type: ${b.getBsonType}"))
+        Left(InvalidType(s"${b.getBsonType} expect Document"))
       }
     }
   }
