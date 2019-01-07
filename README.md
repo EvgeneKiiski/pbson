@@ -41,3 +41,5 @@ libraryDependencies += "ru.twistedlogic" %% "pbson" % "0.0.1"
 
 The [example](https://github.com/EvgeneKiiski/pbson/blob/master/examples/src/main/scala/pbson/examples/FullExample.scala)
 
+The [hint example](https://github.com/EvgeneKiiski/pbson/blob/master/examples/src/main/scala/pbson/examples/FullHintsExample.scala)
+

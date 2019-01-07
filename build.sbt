@@ -5,7 +5,7 @@ logBuffered in Test := false
 
 lazy val commonSettings = Seq(
   organization := "ru.twistedlogic",
-  version := "0.0.1",
+  version := "0.0.2",
   scalaVersion := "2.12.8",
   scalacOptions ++= Seq(
     "-encoding", "utf8", // Option and arguments on same line
@@ -16,11 +16,7 @@ lazy val commonSettings = Seq(
     "-language:implicitConversions",
     "-language:higherKinds",
     "-language:existentials",
-    "-language:postfixOps",
-    //"-Xlog-implicits",
-    //"-Xlog-implicit-conversions",
-    //"-Ymacro-debug-verbose",
-    //"-Ymacro-debug-lite"
+    "-language:postfixOps"
   )
 )
 
