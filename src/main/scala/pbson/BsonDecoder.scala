@@ -109,19 +109,6 @@ object BsonDecoder {
       seq.traverse(d.apply)
   }
 
-  implicit final def kvMapDecoder[K, V](implicit kd: BsonDecoder[K], vd: BsonDecoder[V]): BsonMapDecoder[K, V] = {
-    case b: BsonValue if b.isDocument =>
-      val doc = b.asDocument()
-      val key = doc.get("k")
-      val value = doc.get("v")
-      if (key != null && value != null) {
-        kd(key).flatMap(k => vd(value).map(v => (k, v)))
-      } else {
-        Left(InvalidType(s" ${doc.toJson} expected k,v"))
-      }
-    case b => Left(InvalidType(b.toString))
-  }
-
   implicit final def mapDecoder[K, V](implicit d: BsonMapDecoder[K, V]): BsonDecoder[Map[K, V]] = {
     case null => Right(Map.empty)
     case b: BsonValue if b.isArray =>

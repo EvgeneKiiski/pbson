@@ -16,11 +16,8 @@ object FullHintsExample extends App {
 
   case class OwnType(value: String) extends AnyVal
 
-
-  //TODO auto not work for key(((
-  implicit val ownTypeEncoder: BsonEncoder[OwnType] = o => BsonString(o.value)
-  //implicit val ownTypeEncoder: BsonEncoder[OwnType] = deriveEncoder
-  implicit final def ownTypeDecoder(implicit d: BsonDecoder[String]): BsonDecoder[OwnType] = b => d(b).map(OwnType.apply)
+  implicit val ownTypeEncoder: BsonEncoder[OwnType] = deriveEncoder
+  implicit val ownTypeDecoder: BsonDecoder[OwnType] = deriveDecoder
 
   sealed trait SealedTest
 
@@ -43,11 +40,7 @@ object FullHintsExample extends App {
   case class NestedCase(a: String, b: Long)
 
   case class TestCase(
-                       a: Int,
-                       b: Option[String],
                        w: OwnTypeA,
-                       c: Long,
-                       d: Seq[Long],
                        e: Map[OwnType, NestedCase],
                        st: SealedTest
                      )
@@ -63,11 +56,7 @@ object FullHintsExample extends App {
 
 
   val test = TestCase(
-    3,
-    Some("45"),
     OwnTypeA("sssss"),
-    34l,
-    List(2l, 5l),
     Map(OwnType("32") -> NestedCase("r", 5), OwnType("12") -> NestedCase("d", 1)),
     One()
   )

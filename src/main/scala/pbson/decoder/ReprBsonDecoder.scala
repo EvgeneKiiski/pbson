@@ -50,8 +50,8 @@ object ReprBsonDecoder {
   implicit val cnilDecoder: ReprBsonDecoder[CNil] = _ => Left(FieldNotFound("CNil"))
 
   implicit final def cpDecoder[K <: Symbol, V, T <: Coproduct : ReprBsonDecoder](implicit
-                                                                                 d: Lazy[BsonDecoder[V]],
-                                                                                 w: Witness.Aux[K]
+                                                                                 w: Witness.Aux[K],
+                                                                                 d: Lazy[BsonDecoder[V]]
                                                                                 ): ReprBsonDecoder[FieldType[K, V] :+: T] =
     b => {
       println(s"codec: ${w.value.name} $b")

@@ -39,10 +39,6 @@ object BsonEncoder {
   implicit final def seqEncoder[A](implicit e: BsonEncoder[A]): BsonEncoder[Seq[A]] =
     t => BsonArray.apply(t.map(e.apply))
 
-  implicit final def kvMapEncoder[K, V](implicit ke: BsonEncoder[K], ve: BsonEncoder[V]): BsonMapEncoder[K, V] = {
-    case (k, v) => BsonDocument("k" -> ke(k), "v" -> ve(v))
-  }
-
   implicit final def mapEncoder[K, V](implicit e: BsonMapEncoder[K, V]): BsonEncoder[Map[K, V]] =
     t => BsonArray.apply(t.map(e.apply))
 

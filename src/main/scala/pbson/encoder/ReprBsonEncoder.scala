@@ -31,14 +31,14 @@ object ReprBsonEncoder {
 
   implicit val cnilEncoder: ReprBsonEncoder[CNil] = _ => List.empty
 
-  implicit final def adtEncoder[V]: BsonADTEncoder[V] = new BsonADTEncoder[V] {
+  implicit final def adtEncoder[K, V]: BsonADTEncoder[K, V] = new BsonADTEncoder[K, V] {
     override def apply(name: String, t: BsonValue): List[(String, BsonValue)] = (name, t) :: Nil
   }
 
   implicit final def cpEncoder[K <: Symbol, V, T <: Coproduct : ReprBsonEncoder](implicit
+                                                                                 w: Witness.Aux[K],
                                                                                  e: Lazy[BsonEncoder[V]],
-                                                                                 //h: Lazy[BsonADTEncoder[V]],
-                                                                                 w: Witness.Aux[K]
+                                                                                 //h: Lazy[BsonADTEncoder[K, V]],
                                                                                 ): ReprBsonEncoder[FieldType[K, V] :+: T] = {
     case Inl(head) => {
       println(s"key: ${w.value.name} -> $head")
