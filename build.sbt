@@ -65,6 +65,7 @@ lazy val benchmarks = (project in file("benchmarks"))
       "io.circe" %% "circe-core" % "0.10.0",
       "io.circe" %% "circe-generic" % "0.10.0",
       "io.circe" %% "circe-parser" % "0.10.0",
+      "org.mongodb.scala" %% "mongo-scala-driver" % "2.5.0",
       "junit" % "junit" % "4.12" % Test,
       "org.typelevel" %% "discipline" % "0.10.0" % Test,
       "org.scalactic" %% "scalactic" % "3.0.5",

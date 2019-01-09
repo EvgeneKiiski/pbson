@@ -1,5 +1,7 @@
 package pbson.decoder.benchmarks
 
+import org.bson.codecs.{Codec, DecoderContext, EncoderContext}
+import org.mongodb.scala.bson.codecs.Macros
 import org.openjdk.jmh.annotations.{Scope, State}
 
 
@@ -29,5 +31,11 @@ object Examples {
     Map("str" -> 5, "s" -> 4),
     Seq(B(23, "1"), B(24, "5"))
   )
+
+  import org.mongodb.scala.bson.codecs.DEFAULT_CODEC_REGISTRY
+  val mongoProvider = Macros.createCodecProvider[Examples.A]()
+  val codec  = mongoProvider.get(Examples.small.getClass, DEFAULT_CODEC_REGISTRY)
+  val contextE = EncoderContext.builder().build()
+  val contextD = DecoderContext.builder().build()
 
 }

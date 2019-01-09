@@ -11,6 +11,10 @@ import io.circe._
 import io.circe.parser._
 import io.circe.generic.auto._
 import io.circe.syntax._
+import org.bson._
+import org.bson.codecs.{Codec, DecoderContext, EncoderContext}
+import org.bson.types.{Decimal128, ObjectId}
+import org.mongodb.scala.bson.codecs.Macros
 
 /**
   * @author Evgenii Kiiski 
