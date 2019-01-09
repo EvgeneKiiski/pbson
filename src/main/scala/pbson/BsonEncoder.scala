@@ -36,8 +36,12 @@ object BsonEncoder {
     case None => BsonNull()
   }
 
-  implicit final def seqEncoder[A](implicit e: BsonEncoder[A]): BsonEncoder[Seq[A]] =
-    t => BsonArray.apply(t.map(e.apply))
+  implicit final def seqEncoder[A](implicit e: BsonEncoder[A]): BsonEncoder[Seq[A]] = t =>
+    if (t.isEmpty) {
+      BsonNull()
+    } else {
+      BsonArray.apply(t.map(e.apply))
+    }
 
   implicit final def mapEncoder[K, V](implicit e: BsonMapEncoder[K, V]): BsonEncoder[Map[K, V]] =
     t => BsonArray.apply(t.map(e.apply))
