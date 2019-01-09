@@ -16,6 +16,7 @@ object CharSpecification extends Properties("Char") {
 
   property("decoder error") = forAll(AnyBsonGen.anyGen) { v: BsonValue =>
     v match {
+      case null => BsonDecoder[Boolean].apply(null).isLeft
       case s if s.isString && s.asString().getValue.length == 1 => BsonDecoder[Char].apply(s).isRight
       case s => BsonDecoder[Char].apply(s).isLeft
     }

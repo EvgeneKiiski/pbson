@@ -37,12 +37,8 @@ object ReprBsonDecoder {
                                                                  rt: Strict[ReprBsonDecoder[T]]
                                                                 ): ReprBsonDecoder[FieldType[K, V] :: T] = b => {
     val value = b.get(w.value.name)
-    if (value == null) {
-      Left(FieldNotFound(w.value.name))
-    } else {
-      d.value.apply(value).map(v => uw.value.wrap(v)).asInstanceOf[Either[BsonError, FieldType[K, V]]]
+    d.value.apply(value).map(v => uw.value.wrap(v)).asInstanceOf[Either[BsonError, FieldType[K, V]]]
         .flatMap(h => rt.value.apply(b).map(t => h :: t))
-    }
   }
 
   implicit val hnilDecoder: ReprBsonDecoder[HNil] = _ => Right(HNil)

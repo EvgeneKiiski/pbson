@@ -16,6 +16,7 @@ object BooleanSpecification extends Properties("Boolean") {
 
   property("decoder error") = forAll(AnyBsonGen.anyGen) { v: BsonValue =>
     v match {
+      case null => BsonDecoder[Boolean].apply(null).isLeft
       case s if s.isBoolean => BsonDecoder[Boolean].apply(s).isRight
       case s => BsonDecoder[Boolean].apply(s).isLeft
     }

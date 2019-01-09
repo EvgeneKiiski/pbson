@@ -16,6 +16,7 @@ object ShortSpecification extends Properties("Short") {
 
   property("decoder error") = forAll(AnyBsonGen.anyGen) { v: BsonValue =>
     v match {
+      case null => BsonDecoder[Boolean].apply(null).isLeft
       case s if s.isInt32 => BsonDecoder[Short].apply(s).isRight
       case s if s.isInt64 => BsonDecoder[Short].apply(s).isRight
       case s => BsonDecoder[Short].apply(s).isLeft
