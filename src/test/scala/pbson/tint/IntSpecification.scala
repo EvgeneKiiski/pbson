@@ -16,7 +16,7 @@ object IntSpecification extends Properties("Int") {
 
   property("decoder error") = forAll(AnyBsonGen.anyGen) { v: BsonValue =>
     v match {
-      case null => BsonDecoder[Boolean].apply(null).isLeft
+      case null => BsonDecoder[Int].apply(null).isLeft
       case s if s.isInt32 => BsonDecoder[Int].apply(s).isRight
       case s if s.isInt64 => BsonDecoder[Int].apply(s).isRight
       case s => BsonDecoder[Int].apply(s).isLeft

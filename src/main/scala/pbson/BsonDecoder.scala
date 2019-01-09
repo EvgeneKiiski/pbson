@@ -10,7 +10,7 @@ import cats.implicits._
 /**
   * @author Evgenii Kiiski 
   */
-trait BsonDecoder[A] {
+abstract class BsonDecoder[A] {
   def apply(b: BsonValue): BsonDecoder.Result[A]
 }
 
@@ -119,10 +119,7 @@ object BsonDecoder {
 
   implicit final def optionDecoder[A](implicit d: BsonDecoder[A]): BsonDecoder[Option[A]] = {
     case null => Right(None)
-    case b => {
-      println(b)
-      d(b).map(Some.apply)
-    }
+    case b => d(b).map(Some.apply)
   }
 
   implicit final def seqDecoder[A](implicit d: BsonDecoder[A]): BsonDecoder[Seq[A]] = {

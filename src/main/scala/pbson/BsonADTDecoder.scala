@@ -3,6 +3,6 @@ package pbson
 /**
   * @author Evgenii Kiiski 
   */
-trait BsonADTDecoder {
+abstract class BsonADTDecoder {
 
 }

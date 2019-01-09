@@ -5,7 +5,7 @@ import org.mongodb.scala.bson._
 /**
   * @author Evgenii Kiiski 
   */
-trait BsonEncoder[A] {
+abstract class BsonEncoder[A] {
   def apply(t: A): BsonValue
 }
 

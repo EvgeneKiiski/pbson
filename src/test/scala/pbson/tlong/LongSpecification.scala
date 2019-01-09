@@ -16,7 +16,7 @@ object LongSpecification extends Properties("Long") {
 
   property("decoder error") = forAll(AnyBsonGen.anyGen) { v: BsonValue =>
     v match {
-      case null => BsonDecoder[Boolean].apply(null).isLeft
+      case null => BsonDecoder[Long].apply(null).isLeft
       case s if s.isInt32 => BsonDecoder[Long].apply(s).isRight
       case s if s.isInt64 => BsonDecoder[Long].apply(s).isRight
       case s => BsonDecoder[Long].apply(s).isLeft

@@ -6,7 +6,7 @@ import pbson.BsonError.InvalidType
 /**
   * @author Evgenii Kiiski 
   */
-trait BsonMapDecoder[K, V] extends BsonDecoder[(K, V)]
+abstract class BsonMapDecoder[K, V] extends BsonDecoder[(K, V)]
 
 object BsonMapDecoder {
 

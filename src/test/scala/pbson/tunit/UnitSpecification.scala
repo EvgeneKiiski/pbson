@@ -17,6 +17,7 @@ object UnitSpecification extends Properties("Unit") {
 
   property("decoder error") = forAll(AnyBsonGen.anyGen) { v: BsonValue =>
     v match {
+      case null => BsonDecoder[Unit].apply(null).isLeft
       case s if s == BsonNull() => BsonDecoder[Unit].apply(s).isRight
       case s => BsonDecoder[Unit].apply(s).isLeft
     }
