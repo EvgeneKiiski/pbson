@@ -1,18 +1,19 @@
 package pbson.decoder
 
 import org.bson.BsonDocument
-import org.mongodb.scala.bson.{ BsonString, BsonValue }
+import org.mongodb.scala.bson.{BsonString, BsonValue}
 import pbson.BsonDecoder.Result
 import pbson.BsonError.FieldNotFound
-import pbson.{ BsonDecoder, BsonError }
+import pbson.{BsonDecoder, BsonError, Const}
 import pbson.encoder.ReprBsonEncoder
 import shapeless._
 import shapeless.labelled.FieldType
 import shapeless.poly._
 import shapeless.record._
 import shapeless.ops.record._
-import shapeless.ops.hlist.{ Mapper, ToTraversable }
+import shapeless.ops.hlist.{Mapper, ToTraversable}
 import shapeless.tag._
+import Const._
 
 
 /**
@@ -49,7 +50,7 @@ object ReprBsonDecoder {
                                                                                  w: Witness.Aux[K],
                                                                                  d: Lazy[BsonDecoder[V]]
                                                                                 ): ReprBsonDecoder[FieldType[K, V] :+: T] = b =>
-    if (b.get("_k") == BsonString(w.value.name)) {
+    if (b.get(Key) == BsonString(w.value.name)) {
       d.value.apply(b).map(v => Inl(v.asInstanceOf[FieldType[K, V]]))
     } else {
       ReprBsonDecoder[T].apply(b).map(Inr(_))
