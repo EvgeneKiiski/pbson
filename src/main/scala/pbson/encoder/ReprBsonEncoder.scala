@@ -1,12 +1,14 @@
 package pbson.encoder
 
 
-import org.mongodb.scala.bson.{BsonString, BsonValue}
-import pbson.{BsonADTEncoder, BsonEncoder}
+import org.mongodb.scala.bson.{ BsonString, BsonValue }
+import pbson.{ BsonADTEncoder, BsonEncoder }
 import shapeless._
 import shapeless.labelled.FieldType
 
 import scala.language.experimental.macros
+import collection.JavaConverters._
+import scala.collection.mutable
 
 /**
   * @author Evgenii Kiiski
@@ -35,7 +37,14 @@ object ReprBsonEncoder {
                                                                                  w: Witness.Aux[K],
                                                                                  e: Lazy[BsonEncoder[V]],
                                                                                 ): ReprBsonEncoder[FieldType[K, V] :+: T] = {
-    case Inl(head) => (w.value.name, e.value.apply(head.asInstanceOf[V])) :: Nil
+    case Inl(head) =>
+      e.value.apply(head.asInstanceOf[V])
+        .asDocument()
+        .append("_k", BsonString(w.value.name))
+        .entrySet()
+        .asScala
+        .map(e => (e.getKey, e.getValue))
+        .toList
     case Inr(tail) => ReprBsonEncoder[T].apply(tail)
   }
 
