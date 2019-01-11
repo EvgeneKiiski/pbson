@@ -8,8 +8,8 @@ lazy val commonSettings = Seq(
   version := "0.0.3",
   scalaVersion := "2.12.8",
   scalacOptions ++= Seq(
-    "-encoding", "utf8", // Option and arguments on same line
-    "-Xfatal-warnings",  // New lines for each options
+    "-encoding", "utf8", 
+    "-Xfatal-warnings",  
     "-deprecation",
     "-unchecked",
     "-Ypartial-unification",

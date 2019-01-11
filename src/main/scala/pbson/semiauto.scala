@@ -1,9 +1,12 @@
 package pbson
 
-import org.mongodb.scala.bson.{BsonString, BsonValue}
+import org.mongodb.scala.bson.{ BsonDocument, BsonString, BsonValue }
 import pbson.BsonError.InvalidType
 import pbson.decoder.DerivedBsonDecoder
 import pbson.encoder.DerivedBsonEncoder
+import collection.JavaConverters._
+import cats._
+import cats.implicits._
 import shapeless._
 
 /**
@@ -51,5 +54,26 @@ object semiauto {
       Left(InvalidType(b.toString))
     }
 
+  final def mapDocHintEncoder[K, V, U](implicit
+    uw: Strict[Unwrapped.Aux[K, U]],
+    ke: Lazy[BsonEncoder[U]],
+    ve: BsonEncoder[V]
+  ): BsonEncoder[Map[K, V]] = m =>
+    BsonDocument(m.map {
+      case (k, v) => ke.value(uw.value.unwrap(k)).toString -> ve(v)
+    })
+
+  final def mapDocHintDecoder[K, V, U](implicit
+    uw: Strict[Unwrapped.Aux[K, U]],
+    kd: Lazy[BsonDecoder[U]],
+    vd: BsonDecoder[V]
+  ): BsonDecoder[Map[K, V]] =
+    _.asDocument()
+      .entrySet()
+      .asScala
+      .map(e => kd.value.apply(BsonString(e.getKey)).map(k => uw.value.wrap(k)).product(vd(e.getValue)))
+      .toList
+      .sequence
+      .map(_.toMap)
 
 }
