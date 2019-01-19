@@ -27,6 +27,7 @@ object BsonDecoder {
       Left(FieldNotFound("null"))
     }
 
+
   implicit final val unitDecoder: BsonDecoder[Unit] = instance {
     b =>
       Either.cond(

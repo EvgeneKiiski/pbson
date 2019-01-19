@@ -1,12 +1,14 @@
 package pbson
 
-import org.mongodb.scala.bson.{ BsonDocument, BsonString, BsonValue }
+import org.mongodb.scala.bson.{BsonDocument, BsonString, BsonValue}
 import pbson.BsonError.InvalidType
 import pbson.decoder.DerivedBsonDecoder
 import pbson.encoder.DerivedBsonEncoder
+
 import collection.JavaConverters._
 import cats._
 import cats.implicits._
+import pbson.BsonDecoder.Result
 import shapeless._
 
 /**
@@ -17,6 +19,9 @@ object semiauto {
   final def deriveEncoder[A](implicit encode: Lazy[DerivedBsonEncoder[A]]): BsonEncoder[A] = encode.value
 
   final def deriveDecoder[A](implicit decode: Lazy[DerivedBsonDecoder[A]]): BsonDecoder[A] = decode.value
+
+  final def validateDecoder[A](decoder: BsonDecoder[A], validator: A => BsonDecoder.Result[A]): BsonDecoder[A] =
+    (b: BsonValue) => decoder.apply(b).flatMap(validator)
 
   final def mapKeyHintEncoder[K, V, U](name: String)(implicit
                                                      uw: Strict[Unwrapped.Aux[K, U]],
