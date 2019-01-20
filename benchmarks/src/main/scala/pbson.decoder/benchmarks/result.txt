@@ -15,3 +15,12 @@ v2
 [info] SpeedTest.cicreSmall   avgt   10    0.003 ±  0.001   ms/op
 [info] SpeedTest.pbsonSmall   avgt   10    0.002 ±  0.001   ms/op
 [success] Total time: 809 s, completed Jan 9, 2019, 11:25:04 PM
+
+v3 + adt in test
+[info] Benchmark               Mode  Cnt    Score    Error   Units
+[info] SpeedTest.cicreSmall   thrpt   10  240.222 ±  2.343  ops/ms
+[info] SpeedTest.manualSmall  thrpt   10  958.147 ±  9.874  ops/ms
+[info] SpeedTest.pbsonSmall   thrpt   10  488.326 ±  4.081  ops/ms
+[info] SpeedTest.cicreSmall    avgt   10    0.004 ±  0.001   ms/op
+[info] SpeedTest.manualSmall   avgt   10    0.001 ±  0.001   ms/op
+[info] SpeedTest.pbsonSmall    avgt   10    0.002 ±  0.001   ms/op

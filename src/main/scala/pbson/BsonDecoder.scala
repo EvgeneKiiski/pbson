@@ -1,11 +1,10 @@
 package pbson
 
-import org.mongodb.scala.bson.{ BsonNull, BsonValue }
-import pbson.BsonError.{ BsonIsNull, FieldNotFound, InvalidType }
-
-import collection.JavaConverters._
-import cats._
 import cats.implicits._
+import org.mongodb.scala.bson.{BsonNull, BsonValue}
+import pbson.BsonError.{FieldNotFound, InvalidType}
+
+import scala.collection.JavaConverters._
 
 /**
   * @author Evgenii Kiiski 
@@ -26,6 +25,7 @@ object BsonDecoder {
     } else {
       Left(FieldNotFound("null"))
     }
+
 
   implicit final val unitDecoder: BsonDecoder[Unit] = instance {
     b =>
@@ -127,13 +127,17 @@ object BsonDecoder {
     case b: BsonValue if b.isArray =>
       val seq: List[BsonValue] = b.asArray().getValues.asScala.toList
       seq.traverse(d.apply)
+    case b => Left(InvalidType(b.toString))
   }
 
   implicit final def mapDecoder[K, V](implicit d: BsonMapDecoder[K, V]): BsonDecoder[Map[K, V]] = {
     case null => Right(Map.empty)
-    case b: BsonValue if b.isArray =>
-      val seq: List[BsonValue] = b.asArray().getValues.asScala.toList
-      seq.traverse(d.apply).map(_.toMap)
+    case b: BsonValue if b.isDocument =>
+      b.asDocument().asScala.map(d.apply).toList.sequence.map(_.toMap)
+//    case b: BsonValue if b.isArray =>
+//      val seq: List[BsonValue] = b.asArray().getValues.asScala.toList
+//      seq.traverse(d.apply).map(_.toMap)
+    case b => Left(InvalidType(b.toString))
   }
 
 }

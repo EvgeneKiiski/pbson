@@ -43,11 +43,11 @@ object BsonEncoder {
       BsonArray.apply(t.map(e.apply))
     }
 
-  implicit final def mapEncoder[K, V](implicit e: BsonMapEncoder[K, V]): BsonEncoder[Map[K, V]] = t =>
-    if(t.isEmpty) {
+  implicit final def mapEncoderDocument[K, V](implicit e: BsonMapEncoder[K, V]): BsonEncoder[Map[K, V]] = t =>
+    if (t.isEmpty) {
       BsonNull()
     } else {
-      BsonArray.apply(t.map(e.apply))
+      BsonDocument(t.map(e.apply))
     }
 
 }

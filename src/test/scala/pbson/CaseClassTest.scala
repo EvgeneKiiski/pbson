@@ -26,6 +26,20 @@ class CaseClassTest extends WordSpec with ParallelTestExecution with Matchers {
         val bson = test.toBson
         bson.fromBson[TestCase] shouldEqual Right(test)
       }
+      "simple example wrapped with either constructor" in {
+
+        case class TestCase(a: Int, b: Option[String], id: MyIdV)
+
+        implicit val idDecoder: BsonDecoder[MyIdV] = validateDeriveDecoder(MyIdV.validate)
+
+        implicit val testCaseEncoder: BsonEncoder[TestCase] = deriveEncoder
+        implicit val testCaseDecoder: BsonDecoder[TestCase] = deriveDecoder
+
+        val test = TestCase(3, Some("45"), MyIdV("000"))
+
+        val bson = test.toBson
+        bson.fromBson[TestCase] shouldEqual Right(test)
+      }
       "seq map" in {
 
         sealed trait SealedTest
@@ -81,6 +95,15 @@ class CaseClassTest extends WordSpec with ParallelTestExecution with Matchers {
 
 }
 object CaseClassTest {
-  case class MyId(value: String) extends AnyVal
+
+  final case class MyId(value: String) extends AnyVal
+
+  final case class MyIdV(value: String) extends AnyVal
+
+  object MyIdV {
+    private[CaseClassTest] def apply(value: String): MyIdV = new MyIdV(value)
+
+    def validate(value: MyIdV): Either[BsonError, MyIdV] = Right(value)
+  }
 
 }

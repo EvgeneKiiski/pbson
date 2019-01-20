@@ -74,9 +74,6 @@ object FullHintsExample extends App {
   implicit val nestedCaseEncoder: BsonEncoder[NestedCase] = deriveEncoder
   implicit val nestedCaseDecoder: BsonDecoder[NestedCase] = deriveDecoder
 
-  implicit val mapHintEncoder: BsonMapEncoder[OwnType, NestedCase] = mapKeyHintEncoder("key")
-  implicit val mapHintDecoder: BsonMapDecoder[OwnType, NestedCase] = mapKeyHintDecoder("key")
-
   implicit val testCaseEncoder: BsonEncoder[TestCase] = deriveEncoder
   implicit val testCaseDecoder: BsonDecoder[TestCase] = deriveDecoder
 

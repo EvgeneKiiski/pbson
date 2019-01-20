@@ -1,10 +1,13 @@
 package pbson
 
-import org.mongodb.scala.bson.{BsonString, BsonValue}
+import cats.implicits._
+import org.mongodb.scala.bson.{BsonArray, BsonNull, BsonString, BsonValue}
 import pbson.BsonError.InvalidType
 import pbson.decoder.DerivedBsonDecoder
 import pbson.encoder.DerivedBsonEncoder
 import shapeless._
+
+import scala.collection.JavaConverters._
 
 /**
   * @author Evgenii Kiiski 
@@ -15,29 +18,12 @@ object semiauto {
 
   final def deriveDecoder[A](implicit decode: Lazy[DerivedBsonDecoder[A]]): BsonDecoder[A] = decode.value
 
-  final def mapKeyHintEncoder[K, V, U](name: String)(implicit
-                                                     uw: Strict[Unwrapped.Aux[K, U]],
-                                                     ke: Lazy[BsonEncoder[U]],
-                                                     ve: BsonEncoder[V]
-  ): BsonMapEncoder[K, V] = {
-    case (k, v) => ve(v).asDocument().append(name, ke.value(uw.value.unwrap(k)))
-  }
+  final def validateDeriveDecoder[A](validator: A => BsonDecoder.Result[A])(implicit
+                                                                            decode: Lazy[DerivedBsonDecoder[A]]
+  ): BsonDecoder[A] = bsonValidate(decode.value, validator)
 
-  final def mapKeyHintDecoder[K, V, U](name: String)(implicit
-                                                     uw: Strict[Unwrapped.Aux[K, U]],
-                                                     kd: Lazy[BsonDecoder[U]],
-                                                     vd: BsonDecoder[V]
-  ): BsonMapDecoder[K, V] = {
-    case b: BsonValue if b.isDocument =>
-      val doc = b.asDocument()
-      val key = doc.get(name)
-      if (key != null) {
-        kd.value(key).map(k => uw.value.wrap(k)).flatMap(k => vd(doc).map(v => (k, v)))
-      } else {
-        Left(InvalidType(s" ${doc.toJson} expected k,v"))
-      }
-    case b => Left(InvalidType(b.toString))
-  }
+  final def bsonValidate[A](decoder: BsonDecoder[A], validator: A => BsonDecoder.Result[A]): BsonDecoder[A] =
+    (b: BsonValue) => decoder.apply(b).flatMap(validator)
 
   final def asStringEncoder[A](f: A => String): BsonEncoder[A] = a => BsonString(f(a))
 
@@ -50,6 +36,21 @@ object semiauto {
     } else {
       Left(InvalidType(b.toString))
     }
+
+  final def map2ArrayEncoder[K, V](implicit e: BsonBiEncoder[K, V]): BsonEncoder[Map[K, V]] = t =>
+    if (t.isEmpty) {
+      BsonNull()
+    } else {
+      BsonArray(t.map(e.apply))
+    }
+
+  final def array2MapDecoder[K, V](implicit d: BsonBiDecoder[K, V]): BsonDecoder[Map[K, V]] = {
+    case null => Right(Map.empty)
+    case b: BsonValue if b.isArray =>
+      val seq: List[BsonValue] = b.asArray().getValues.asScala.toList
+      seq.traverse(d.apply).map(_.toMap)
+    case b => Left(InvalidType(b))
+  }
 
 
 }

@@ -2,14 +2,13 @@ package pbson.encoder
 
 
 import org.mongodb.scala.bson.{BsonString, BsonValue}
-import pbson.{BsonADTEncoder, BsonEncoder, Const}
+import pbson.BsonConst._
+import pbson.{BsonEncoder, BsonConst}
 import shapeless._
 import shapeless.labelled.FieldType
 
+import scala.collection.JavaConverters._
 import scala.language.experimental.macros
-import collection.JavaConverters._
-import scala.collection.mutable
-import Const._
 
 /**
   * @author Evgenii Kiiski

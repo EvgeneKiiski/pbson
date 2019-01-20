@@ -3,7 +3,6 @@ package pbson.decoder
 import org.mongodb.scala.bson.BsonValue
 import pbson.BsonError.InvalidType
 import pbson.{BsonDecoder, BsonError}
-import shapeless.ops.record._
 import shapeless._
 
 /**
