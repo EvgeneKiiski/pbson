@@ -11,9 +11,9 @@ object WrapperWithValidationExample extends App {
   case class MyId(value: String) extends AnyVal
 
   object MyId {
-    def valid(id: MyId): Either[BsonError, MyId] = Right(id)
+    private[examples] def valid(id: MyId): BsonDecoder.Result[MyId] = Right(id)
 
-    implicit val idDecoder: BsonDecoder[MyId] = validateDecoder(deriveDecoder, MyId.valid)
+    implicit val idDecoder: BsonDecoder[MyId] = validateDeriveDecoder(MyId.valid)
   }
 
   case class TestCase(a: Int, b: Option[String], id: MyId)

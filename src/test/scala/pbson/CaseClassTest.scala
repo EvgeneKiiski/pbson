@@ -26,21 +26,20 @@ class CaseClassTest extends WordSpec with ParallelTestExecution with Matchers {
         val bson = test.toBson
         bson.fromBson[TestCase] shouldEqual Right(test)
       }
-//      "simple example wrapped with either constructor" in {
-//
-//        case class TestCase(a: Int, b: Option[String], id: MyIdV)
-//
-//        implicit val testCaseEncoder: BsonEncoder[TestCase] = deriveEncoder
-//        implicit val testCaseDecoder: BsonDecoder[TestCase] = deriveDecoder
-//
-//        val test = MyIdV("000") match {
-//          case Right(i) => TestCase(3, Some("45"), i)
-//          case Left(l) => throw new RuntimeException("impossible")
-//        }
-//
-//        val bson = test.toBson
-//        bson.fromBson[TestCase] shouldEqual Right(test)
-//      }
+      "simple example wrapped with either constructor" in {
+
+        case class TestCase(a: Int, b: Option[String], id: MyIdV)
+
+        implicit val idDecoder: BsonDecoder[MyIdV] = validateDeriveDecoder(MyIdV.validate)
+
+        implicit val testCaseEncoder: BsonEncoder[TestCase] = deriveEncoder
+        implicit val testCaseDecoder: BsonDecoder[TestCase] = deriveDecoder
+
+        val test = TestCase(3, Some("45"), MyIdV("000"))
+
+        val bson = test.toBson
+        bson.fromBson[TestCase] shouldEqual Right(test)
+      }
       "seq map" in {
 
         sealed trait SealedTest
@@ -96,14 +95,15 @@ class CaseClassTest extends WordSpec with ParallelTestExecution with Matchers {
 
 }
 object CaseClassTest {
-  trait Validated extends Any
 
   final case class MyId(value: String) extends AnyVal
 
-  final case class MyIdV(value: String) extends AnyVal with Validated
+  final case class MyIdV(value: String) extends AnyVal
 
   object MyIdV {
-    def apply(value: String): Either[BsonError, MyIdV] = Right(new MyIdV(value))
+    private[CaseClassTest] def apply(value: String): MyIdV = new MyIdV(value)
+
+    def validate(value: MyIdV): Either[BsonError, MyIdV] = Right(value)
   }
 
 }

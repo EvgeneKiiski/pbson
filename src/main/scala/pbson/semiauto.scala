@@ -20,8 +20,13 @@ object semiauto {
 
   final def deriveDecoder[A](implicit decode: Lazy[DerivedBsonDecoder[A]]): BsonDecoder[A] = decode.value
 
-  final def validateDecoder[A](decoder: BsonDecoder[A], validator: A => BsonDecoder.Result[A]): BsonDecoder[A] =
+  final def validateDeriveDecoder[A](validator: A => BsonDecoder.Result[A])(implicit
+                                                                            decode: Lazy[DerivedBsonDecoder[A]]
+  ): BsonDecoder[A] = bsonValidate(decode.value, validator)
+
+  final def bsonValidate[A](decoder: BsonDecoder[A], validator: A => BsonDecoder.Result[A]): BsonDecoder[A] =
     (b: BsonValue) => decoder.apply(b).flatMap(validator)
+
 
   final def mapKeyHintEncoder[K, V, U](name: String)(implicit
                                                      uw: Strict[Unwrapped.Aux[K, U]],

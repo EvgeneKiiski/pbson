@@ -25,4 +25,8 @@ object BsonError {
   final case object BsonIsNull extends BsonError {
     override def toString: String = s"BsonValue is null"
   }
+
+  final case class ValidateError(s: String) extends BsonError {
+    override def toString: String = s"Invalid value $s"
+  }
 }
