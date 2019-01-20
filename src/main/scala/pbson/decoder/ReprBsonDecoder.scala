@@ -1,19 +1,12 @@
 package pbson.decoder
 
 import org.bson.BsonDocument
-import org.mongodb.scala.bson.{BsonString, BsonValue}
-import pbson.BsonDecoder.Result
+import org.mongodb.scala.bson.BsonString
 import pbson.BsonError.FieldNotFound
-import pbson.{BsonDecoder, BsonError, Const}
-import pbson.encoder.ReprBsonEncoder
+import pbson.BsonConst._
+import pbson.{BsonDecoder, BsonError, BsonConst}
 import shapeless._
 import shapeless.labelled.FieldType
-import shapeless.poly._
-import shapeless.record._
-import shapeless.ops.record._
-import shapeless.ops.hlist.{Mapper, ToTraversable}
-import shapeless.tag._
-import Const._
 
 
 /**

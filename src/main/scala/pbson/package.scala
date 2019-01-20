@@ -1,4 +1,4 @@
-import org.mongodb.scala.bson.{BsonDocument, BsonValue}
+import org.mongodb.scala.bson.BsonDocument
 import pbson.BsonError._
 
 import scala.util.control.NonFatal

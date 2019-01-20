@@ -1,22 +1,22 @@
 package pbson
 
-import org.mongodb.scala.bson.BsonDocument
-import Const._
+import org.mongodb.scala.bson.BsonValue
+import shapeless.{Lazy, Strict, Unwrapped}
 
 /**
   * @author Evgenii Kiiski 
   */
-abstract class BsonMapEncoder[K, V] extends BsonEncoder[(K, V)]
+abstract class BsonMapEncoder[K, V] {
+  def apply(t: (K, V)): (String, BsonValue)
+}
 
 object BsonMapEncoder {
-  implicit final def kvMapEncoder[K, V](implicit ke: BsonEncoder[K], ve: BsonEncoder[V]): BsonMapEncoder[K, V] = {
-    case (k, v) => {
-      val body = ve(v)
-      if (body.isDocument) {
-        ve(v).asDocument().append(Key, ke(k))
-      } else {
-        BsonDocument(Key -> ke(k), Value -> ve(v))
-      }
+
+  implicit final def kvMapEncoder[K, V](implicit
+                                        uw: Strict[Unwrapped.Aux[K, String]],
+                                        ve: Lazy[BsonEncoder[V]]
+                                       ): BsonMapEncoder[K, V] = {
+        case (k, v) => uw.value.unwrap(k) -> ve.value.apply(v)
     }
-  }
+
 }

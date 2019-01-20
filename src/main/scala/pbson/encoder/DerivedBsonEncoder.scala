@@ -1,9 +1,8 @@
 package pbson.encoder
 
-import org.mongodb.scala.bson.{ BsonDocument, BsonNull, BsonValue }
+import org.mongodb.scala.bson.{BsonDocument, BsonNull, BsonValue}
 import pbson.BsonEncoder
 import shapeless._
-//import ReprBsonEncoder._
 
 import scala.language.experimental.macros
 
