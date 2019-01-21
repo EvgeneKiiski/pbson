@@ -8,4 +8,6 @@ private[pbson] object BsonConst {
   val Key = "_k"
   val Value = "_v"
 
+  val CoProductType = "type"
+
 }

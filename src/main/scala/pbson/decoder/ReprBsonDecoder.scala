@@ -48,7 +48,7 @@ object ReprBsonDecoder {
                                                                                  w: Witness.Aux[K],
                                                                                  d: Lazy[BsonDecoder[V]]
                                                                                 ): ReprBsonDecoder[FieldType[K, V] :+: T] = b =>
-    if (b.get(Key) == BsonString(w.value.name)) {
+    if (b.get(CoProductType) == BsonString(w.value.name)) {
       d.value.apply(b).map(v => Inl(v.asInstanceOf[FieldType[K, V]]))
     } else {
       ReprBsonDecoder[T].apply(b).map(Inr(_))

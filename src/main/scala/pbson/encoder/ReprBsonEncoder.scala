@@ -40,7 +40,7 @@ object ReprBsonEncoder {
     case Inl(head) =>
       e.value.apply(head.asInstanceOf[V])
         .asDocument()
-        .append(Key, BsonString(w.value.name))
+        .append(CoProductType, BsonString(w.value.name))
         .entrySet()
         .asScala
         .map(e => (e.getKey, e.getValue))
