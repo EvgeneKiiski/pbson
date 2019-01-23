@@ -14,10 +14,6 @@ class CaseWrapperTest extends WordSpec with ParallelTestExecution with Matchers 
 
   "Decode Encode" should {
     "simple example" in {
-
-      implicit val wrapperEncoder: BsonEncoder[Wrapper] = deriveEncoder
-      implicit val wrapperDecoder: BsonDecoder[Wrapper] = deriveDecoder
-
       val test = Wrapper("000")
 
       val bson = test.toBson
@@ -31,4 +27,7 @@ class CaseWrapperTest extends WordSpec with ParallelTestExecution with Matchers 
 
 object CaseWrapperTest {
   case class Wrapper(value: String) extends AnyVal
+
+  implicit val wrapperEncoder: BsonEncoder[Wrapper] = deriveEncoder
+  implicit val wrapperDecoder: BsonDecoder[Wrapper] = deriveDecoder
 }
