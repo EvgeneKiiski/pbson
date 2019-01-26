@@ -1,6 +1,7 @@
 package pbson
 
 import org.mongodb.scala.bson._
+import pbson.BsonError.InvalidType
 
 /**
   * @author Evgenii Kiiski 
@@ -49,5 +50,6 @@ object BsonEncoder {
     } else {
       BsonDocument(t.map(e.apply))
     }
+
 
 }

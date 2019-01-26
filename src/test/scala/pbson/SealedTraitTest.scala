@@ -2,7 +2,7 @@ package pbson
 
 import org.mongodb.scala.bson.BsonString
 import org.scalatest.{ Matchers, ParallelTestExecution, WordSpec }
-import pbson.semiauto.{ asStringDecoder, asStringEncoder }
+import pbson._
 
 /**
   * @author Eugene Kiyski

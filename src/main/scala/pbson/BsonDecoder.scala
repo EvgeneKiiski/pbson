@@ -1,7 +1,7 @@
 package pbson
 
 import cats.implicits._
-import org.mongodb.scala.bson.{BsonNull, BsonValue}
+import org.mongodb.scala.bson.{BsonArray, BsonNull, BsonString, BsonValue}
 import pbson.BsonError.{FieldNotFound, InvalidType}
 
 import scala.collection.JavaConverters._

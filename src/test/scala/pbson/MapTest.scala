@@ -2,6 +2,7 @@ package pbson
 
 import org.mongodb.scala.bson.{BsonArray, BsonDocument, BsonString}
 import org.scalatest.{Matchers, ParallelTestExecution, WordSpec}
+import pbson._
 import pbson.semiauto._
 
 /**
