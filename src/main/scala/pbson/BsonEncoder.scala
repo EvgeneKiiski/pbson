@@ -14,6 +14,7 @@ object BsonEncoder {
 
   @inline final def apply[A](implicit e: BsonEncoder[A]): BsonEncoder[A] = e
 
+  //TODO BaonNull as constants
   implicit final val unitEncoder: BsonEncoder[Unit] = _ => BsonNull()
 
   implicit final val stringEncoder: BsonEncoder[String] = BsonString(_)

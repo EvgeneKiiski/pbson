@@ -1,6 +1,7 @@
 package pbson
 
 import cats.implicits._
+import org.bson.BsonType
 import org.mongodb.scala.bson.{BsonArray, BsonNull, BsonString, BsonValue}
 import pbson.BsonError.{FieldNotFound, InvalidType}
 
@@ -27,62 +28,54 @@ object BsonDecoder {
     }
 
 
-  implicit final val unitDecoder: BsonDecoder[Unit] = instance {
-    b =>
-      Either.cond(
-        b == BsonNull(),
-        Unit,
-        BsonError.InvalidType(s"${b.getBsonType} expected: BsonNull")
-      )
+  implicit final val unitDecoder: BsonDecoder[Unit] = {
+    case null => Left(FieldNotFound("null"))
+    case b if b.getBsonType == BsonType.NULL => Right(())
+    case b => Left(BsonError.InvalidType(s"${b.getBsonType} expected: BsonNull"))
   }
 
-  implicit final val stringDecoder: BsonDecoder[String] = instance {
-    b =>
-      Either.cond(
-        b.isString,
-        b.asString().getValue,
-        BsonError.InvalidType(s"${b.getBsonType} expected: String")
-      )
+
+  implicit final val stringDecoder: BsonDecoder[String] = {
+    case null => Left(FieldNotFound("null"))
+    case b if b.getBsonType == BsonType.STRING => Right(b.asInstanceOf[BsonString].getValue)
+    case b => Left(BsonError.InvalidType(s"${b.getBsonType} expected: String"))
   }
 
-  implicit final val charDecoder: BsonDecoder[Char] = instance {
-    b =>
-      Either.cond(
-        b.isString && b.asString().getValue.length == 1,
-        b.asString().getValue.head,
-        BsonError.InvalidType(s"${b.getBsonType} expected: String length 1")
-      )
-  }
-
-  implicit final val intDecoder: BsonDecoder[Int] = instance {
-    b => {
-      if (b.isInt32) {
-        Right(b.asInt32().getValue)
-      } else if (b.isInt64) {
-        Right(b.asInt64().intValue())
-      } else {
-        Left(BsonError.InvalidType(s" ${b.getBsonType} expected: Int"))
-      }
-    }
+  implicit final val charDecoder: BsonDecoder[Char] = {
+    case null => Left(FieldNotFound("null"))
+    case b if b.getBsonType == BsonType.STRING =>
+      val str = b.asInstanceOf[BsonString].getValue
+      if(str.size == 1)
+        Right(str.head)
+      else
+        Left(BsonError.InvalidType(s"${b.getBsonType} expected: BsonString lenght 1"))
+    case b => Left(BsonError.InvalidType(s"${b.getBsonType} expected: BsonString "))
   }
 
   implicit final val shortDecoder: BsonDecoder[Short] = instance {
     b => {
       if (b.isInt32) {
         Right(b.asInt32().intValue().toShort)
-      } else if (b.isInt64) {
-        Right(b.asInt64().intValue().toShort)
+      } else {
+        Left(BsonError.InvalidType(s" ${b.getBsonType} expected: Int32"))
+      }
+    }
+  }
+
+  implicit final val intDecoder: BsonDecoder[Int] = instance {
+    b => {
+      if (b.isInt32) {
+        Right(b.asInt32().getValue)
       } else {
         Left(BsonError.InvalidType(s" ${b.getBsonType} expected: Int"))
       }
     }
   }
 
+
   implicit final val longDecoder: BsonDecoder[Long] = instance {
     b => {
-      if (b.isInt32) {
-        Right(b.asInt32().longValue())
-      } else if (b.isInt64) {
+      if (b.isInt64) {
         Right(b.asInt64().getValue)
       } else {
         Left(BsonError.InvalidType(s" ${b.getBsonType} expected: Int"))
@@ -134,9 +127,6 @@ object BsonDecoder {
     case null => Right(Map.empty)
     case b: BsonValue if b.isDocument =>
       b.asDocument().asScala.map(d.apply).toList.sequence.map(_.toMap)
-//    case b: BsonValue if b.isArray =>
-//      val seq: List[BsonValue] = b.asArray().getValues.asScala.toList
-//      seq.traverse(d.apply).map(_.toMap)
     case b => Left(InvalidType(b.toString))
   }
 

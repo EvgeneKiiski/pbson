@@ -12,7 +12,6 @@ import org.scalacheck.Gen
 object AnyBsonGen {
 
   val anyGen: Gen[BsonValue] = Gen.oneOf(
-    null: BsonValue,
     BsonDouble(23.232): BsonValue,
     BsonString("sdsds"): BsonValue,
     BsonDocument(): BsonValue,

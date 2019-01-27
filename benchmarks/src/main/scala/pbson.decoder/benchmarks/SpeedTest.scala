@@ -24,7 +24,7 @@ import scala.collection.JavaConverters._
   * @author Evgenii Kiiski 
   */
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
-@BenchmarkMode(Array(Mode.Throughput, Mode.AverageTime))
+@BenchmarkMode(Array(Mode.Throughput))
 @State(Scope.Benchmark)
 class SpeedTest {
 
