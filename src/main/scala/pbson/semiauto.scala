@@ -1,8 +1,8 @@
 package pbson
 
 import cats.implicits._
-import org.mongodb.scala.bson.{BsonArray, BsonNull, BsonString, BsonValue}
-import pbson.BsonError.InvalidType
+import org.mongodb.scala.bson.{ BsonArray, BsonNull, BsonString, BsonValue }
+import pbson.BsonError.UnexpectedType
 import pbson.decoder.DerivedBsonDecoder
 import pbson.encoder.DerivedBsonEncoder
 import shapeless._
@@ -18,7 +18,7 @@ object semiauto {
   final def deriveDecoder[A](implicit decode: Lazy[DerivedBsonDecoder[A]]): BsonDecoder[A] = decode.value
 
   final def validateDeriveDecoder[A](validator: A => BsonDecoder.Result[A])(implicit
-                                                                            decode: Lazy[DerivedBsonDecoder[A]]
+    decode: Lazy[DerivedBsonDecoder[A]]
   ): BsonDecoder[A] = bsonValidate(decode.value, validator)
 
   final def bsonValidate[A](decoder: BsonDecoder[A], validator: A => BsonDecoder.Result[A]): BsonDecoder[A] =

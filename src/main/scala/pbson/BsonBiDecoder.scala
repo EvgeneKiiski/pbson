@@ -1,8 +1,9 @@
 package pbson
 
+import org.bson.BsonType
 import org.mongodb.scala.bson.BsonValue
-import pbson.BsonError.InvalidType
-import shapeless.{Lazy, Strict, Unwrapped}
+import pbson.BsonError.UnexpectedType
+import shapeless.{ Lazy, Strict, Unwrapped }
 
 /**
   * @author Evgenii Kiiski 
@@ -32,7 +33,7 @@ object BsonBiDecoder {
       }
       key.flatMap(k => value.map((k, _)))
     } else {
-      Left(InvalidType(s"Expect document $b"))
+      Left(UnexpectedType(b, BsonType.DOCUMENT))
     }
   }
 

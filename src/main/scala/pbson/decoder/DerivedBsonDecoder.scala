@@ -1,10 +1,11 @@
 package pbson.decoder
 
+import org.bson.BsonType
 import org.mongodb.scala.bson.BsonValue
 import pbson.BsonDecoder.Result
-import pbson.BsonError.InvalidType
+import pbson.BsonError.UnexpectedType
 import pbson.utils.AnyValUtils
-import pbson.{BsonDecoder, BsonError}
+import pbson.{ BsonDecoder, BsonError }
 import shapeless._
 
 /**
@@ -42,7 +43,7 @@ trait LowPriorityDerivedBsonDecoderInstances {
           case l@Left(_) => l.asInstanceOf[Either[BsonError, A]]
         }
       } else {
-        Left(InvalidType(s"${b.getBsonType} expect Document"))
+        Left(UnexpectedType(b, BsonType.DOCUMENT))
       }
     }
   }
