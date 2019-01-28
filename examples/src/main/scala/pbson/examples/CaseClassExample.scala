@@ -6,7 +6,7 @@ import pbson.semiauto._
 /**
   * @author Evgenii Kiiski 
   */
-object SimpleExample extends App {
+object CaseClassExample extends App {
 
   case class MyId(value: String) extends AnyVal
 

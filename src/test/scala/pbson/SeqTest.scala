@@ -1,7 +1,9 @@
 package pbson
 
-import org.mongodb.scala.bson.{ BsonArray, BsonDocument, BsonString }
-import org.scalatest.{ Matchers, ParallelTestExecution, WordSpec }
+import org.bson.BsonType
+import org.mongodb.scala.bson.{BsonArray, BsonDocument, BsonString}
+import org.scalatest.{Matchers, ParallelTestExecution, WordSpec}
+import pbson.BsonError.UnexpectedType
 import pbson.semiauto._
 
 /**
@@ -32,6 +34,10 @@ class SeqTest extends WordSpec with ParallelTestExecution with Matchers {
     "decode seq empty" in {
       val bson = BsonDocument()
       bson.fromBson[TestCase] shouldEqual Right(TestCase(Seq.empty))
+    }
+    "decode unexpected type" in {
+      val bson = BsonDocument("a" -> BsonString("45"))
+      bson.fromBson[TestCase] shouldEqual Left(UnexpectedType(BsonString("45"), BsonType.ARRAY))
     }
   }
 

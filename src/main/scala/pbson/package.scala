@@ -1,12 +1,13 @@
 import org.mongodb.scala.bson.{BsonDocument, BsonValue}
 import pbson.BsonError._
+import pbson.utils.{BsonDecoderUtils, BsonEncoderUtils}
 
 import scala.util.control.NonFatal
 
 /**
   * @author Evgenii Kiiski 
   */
-package object pbson {
+package object pbson extends BsonDecoderUtils with BsonEncoderUtils {
 
   implicit class BsonWriterOps[T](val t: T) extends AnyVal {
     final def toBson(implicit encoder: BsonEncoder[T]): BsonValue = encoder(t)

@@ -1,8 +1,9 @@
 package pbson
 
 import cats.implicits._
-import org.mongodb.scala.bson.{BsonNull, BsonValue}
-import pbson.BsonError.{FieldNotFound, InvalidType}
+import org.bson.BsonType
+import org.mongodb.scala.bson.{ BsonArray, BsonBoolean, BsonDocument, BsonDouble, BsonInt32, BsonInt64, BsonNull, BsonString, BsonValue }
+import pbson.BsonError._
 
 import scala.collection.JavaConverters._
 
@@ -19,125 +20,115 @@ object BsonDecoder {
 
   @inline final def apply[A](implicit d: BsonDecoder[A]): BsonDecoder[A] = d
 
-  @inline private[this] def instance[A](f: BsonValue => Result[A]): BsonDecoder[A] = b =>
-    if (b != null) {
-      f(b)
+  abstract class BsonDecoderNotNull[A] extends BsonDecoder[A]
+
+  implicit final val unitDecoder: BsonDecoderNotNull[Unit] = { b =>
+    if (b.getBsonType == BsonType.NULL) {
+      Right(())
     } else {
-      Left(FieldNotFound("null"))
-    }
-
-
-  implicit final val unitDecoder: BsonDecoder[Unit] = instance {
-    b =>
-      Either.cond(
-        b == BsonNull(),
-        Unit,
-        BsonError.InvalidType(s"${b.getBsonType} expected: BsonNull")
-      )
-  }
-
-  implicit final val stringDecoder: BsonDecoder[String] = instance {
-    b =>
-      Either.cond(
-        b.isString,
-        b.asString().getValue,
-        BsonError.InvalidType(s"${b.getBsonType} expected: String")
-      )
-  }
-
-  implicit final val charDecoder: BsonDecoder[Char] = instance {
-    b =>
-      Either.cond(
-        b.isString && b.asString().getValue.length == 1,
-        b.asString().getValue.head,
-        BsonError.InvalidType(s"${b.getBsonType} expected: String length 1")
-      )
-  }
-
-  implicit final val intDecoder: BsonDecoder[Int] = instance {
-    b => {
-      if (b.isInt32) {
-        Right(b.asInt32().getValue)
-      } else if (b.isInt64) {
-        Right(b.asInt64().intValue())
-      } else {
-        Left(BsonError.InvalidType(s" ${b.getBsonType} expected: Int"))
-      }
+      Left(UnexpectedType(b, BsonType.NULL))
     }
   }
 
-  implicit final val shortDecoder: BsonDecoder[Short] = instance {
-    b => {
-      if (b.isInt32) {
-        Right(b.asInt32().intValue().toShort)
-      } else if (b.isInt64) {
-        Right(b.asInt64().intValue().toShort)
-      } else {
-        Left(BsonError.InvalidType(s" ${b.getBsonType} expected: Int"))
-      }
+
+  implicit final val stringDecoder: BsonDecoderNotNull[String] = { b =>
+    if (b.getBsonType == BsonType.STRING) {
+      Right(b.asInstanceOf[BsonString].getValue)
+    } else {
+      Left(UnexpectedType(b, BsonType.STRING))
     }
   }
 
-  implicit final val longDecoder: BsonDecoder[Long] = instance {
-    b => {
-      if (b.isInt32) {
-        Right(b.asInt32().longValue())
-      } else if (b.isInt64) {
-        Right(b.asInt64().getValue)
-      } else {
-        Left(BsonError.InvalidType(s" ${b.getBsonType} expected: Int"))
-      }
+  implicit final val charDecoder: BsonDecoderNotNull[Char] = { b =>
+    if (b.getBsonType == BsonType.STRING) {
+      val str = b.asInstanceOf[BsonString].getValue
+      if (str.nonEmpty)
+        Right(str.head)
+      else
+        Left(UnexpectedEmptyString)
+    } else {
+      Left(UnexpectedType(b, BsonType.STRING))
     }
   }
 
-  implicit final val doubleDecoder: BsonDecoder[Double] = instance {
-    b =>
-      Either.cond(
-        b.isDouble,
-        b.asDouble().getValue,
-        BsonError.InvalidType(s"${b.getBsonType} expected: Double")
-      )
+  implicit final val shortDecoder: BsonDecoderNotNull[Short] = { b =>
+    if (b.getBsonType == BsonType.INT32) {
+      Right(b.asInstanceOf[BsonInt32].intValue().toShort)
+    } else {
+      Left(UnexpectedType(b, BsonType.INT32))
+    }
   }
 
-  implicit final val floatDecoder: BsonDecoder[Float] = instance {
-    b =>
-      Either.cond(
-        b.isDouble,
-        b.asDouble().getValue.toFloat,
-        BsonError.InvalidType(s"${b.getBsonType} expected: Double")
-      )
+
+  implicit final val intDecoder: BsonDecoderNotNull[Int] = { b =>
+    if (b.getBsonType == BsonType.INT32) {
+      Right(b.asInstanceOf[BsonInt32].getValue)
+    } else {
+      Left(UnexpectedType(b, BsonType.INT32))
+    }
   }
 
-  implicit final val booleanDecoder: BsonDecoder[Boolean] = instance {
-    b =>
-      Either.cond(
-        b.isBoolean,
-        b.asBoolean().getValue,
-        BsonError.InvalidType(s"${b.getBsonType} expected: Boolean")
-      )
+
+  implicit final val longDecoder: BsonDecoderNotNull[Long] = { b =>
+    if (b.getBsonType == BsonType.INT64) {
+      Right(b.asInstanceOf[BsonInt64].getValue)
+    } else {
+      Left(UnexpectedType(b, BsonType.INT64))
+    }
   }
 
-  implicit final def optionDecoder[A](implicit d: BsonDecoder[A]): BsonDecoder[Option[A]] = {
-    case null => Right(None)
-    case b => d(b).map(Some.apply)
+  implicit final val doubleDecoder: BsonDecoderNotNull[Double] = { b =>
+    if (b.getBsonType == BsonType.DOUBLE) {
+      Right(b.asInstanceOf[BsonDouble].getValue)
+    } else {
+      Left(UnexpectedType(b, BsonType.DOUBLE))
+    }
   }
 
-  implicit final def seqDecoder[A](implicit d: BsonDecoder[A]): BsonDecoder[Seq[A]] = {
-    case null => Right(Seq.empty)
-    case b: BsonValue if b.isArray =>
-      val seq: List[BsonValue] = b.asArray().getValues.asScala.toList
-      seq.traverse(d.apply)
-    case b => Left(InvalidType(b.toString))
+  implicit final val floatDecoder: BsonDecoderNotNull[Float] = { b =>
+    if (b.getBsonType == BsonType.DOUBLE) {
+      Right(b.asInstanceOf[BsonDouble].getValue.toFloat)
+    } else {
+      Left(UnexpectedType(b, BsonType.DOUBLE))
+    }
   }
 
-  implicit final def mapDecoder[K, V](implicit d: BsonMapDecoder[K, V]): BsonDecoder[Map[K, V]] = {
-    case null => Right(Map.empty)
-    case b: BsonValue if b.isDocument =>
-      b.asDocument().asScala.map(d.apply).toList.sequence.map(_.toMap)
-//    case b: BsonValue if b.isArray =>
-//      val seq: List[BsonValue] = b.asArray().getValues.asScala.toList
-//      seq.traverse(d.apply).map(_.toMap)
-    case b => Left(InvalidType(b.toString))
+  implicit final val booleanDecoder: BsonDecoderNotNull[Boolean] = { b =>
+    if (b.getBsonType == BsonType.BOOLEAN) {
+      Right(b.asInstanceOf[BsonBoolean].getValue)
+    } else {
+      Left(UnexpectedType(b, BsonType.BOOLEAN))
+    }
+  }
+
+  implicit final def optionDecoder[A](implicit d: BsonDecoder[A]): BsonDecoder[Option[A]] = { b =>
+    if (b == null) {
+      Right(None)
+    } else {
+      d(b).map(Some.apply)
+    }
+  }
+
+  implicit final def seqDecoder[A](implicit d: BsonDecoder[A]): BsonDecoder[Seq[A]] = { b =>
+    if (b == null) {
+      Right(Seq.empty)
+    } else if (b.getBsonType == BsonType.ARRAY) {
+      b.asInstanceOf[BsonArray].getValues.asScala.toList.traverse(d.apply)
+    } else {
+      Left(UnexpectedType(b, BsonType.ARRAY))
+    }
+  }
+
+  implicit final def mapDecoder[K, V](implicit
+    d: BsonMapDecoder[K, V]
+  ): BsonDecoder[Map[K, V]] = { b =>
+    if (b == null) {
+      Right(Map.empty)
+    } else if (b.getBsonType == BsonType.DOCUMENT) {
+      b.asInstanceOf[BsonDocument].asScala.map(d.apply).toList.sequence.map(_.toMap)
+    } else {
+      Left(UnexpectedType(b, BsonType.DOCUMENT))
+    }
   }
 
 }

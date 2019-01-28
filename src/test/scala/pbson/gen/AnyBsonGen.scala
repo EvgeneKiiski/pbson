@@ -1,9 +1,9 @@
-package pbson
+package pbson.gen
 
 import java.util.Date
 
-import org.bson.{BsonDbPointer, BsonValue}
-import org.mongodb.scala.bson._
+import org.bson.BsonValue
+import org.mongodb.scala.bson.{BsonArray, BsonBinary, BsonBoolean, BsonDateTime, BsonDecimal128, BsonDocument, BsonDouble, BsonInt32, BsonInt64, BsonJavaScript, BsonJavaScriptWithScope, BsonMaxKey, BsonMinKey, BsonNull, BsonObjectId, BsonRegularExpression, BsonString, BsonSymbol, BsonTimestamp, BsonUndefined}
 import org.scalacheck.Gen
 
 /**
@@ -12,7 +12,6 @@ import org.scalacheck.Gen
 object AnyBsonGen {
 
   val anyGen: Gen[BsonValue] = Gen.oneOf(
-    null: BsonValue,
     BsonDouble(23.232): BsonValue,
     BsonString("sdsds"): BsonValue,
     BsonDocument(): BsonValue,

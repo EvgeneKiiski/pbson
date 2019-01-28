@@ -1,5 +1,6 @@
 package pbson
 
+import org.bson.BsonType
 import org.mongodb.scala.bson.BsonValue
 
 /**
@@ -13,17 +14,20 @@ object BsonError {
     override def toString: String = "Bson fatal error"
   }
 
-  final case class InvalidType(s: String) extends BsonError {
-    override def toString: String = s"Bson invalid type: $s"
+  case object UnexpectedEmptyString extends BsonError {
+    override def toString: String = "Bson unexpected empty string"
   }
 
-  object InvalidType {
-    def apply(b: BsonValue): InvalidType =
-      if (b != null) {
-        new InvalidType(b.toString)
-      } else {
-        new InvalidType("null")
-      }
+  case object ADTValueNotFound extends BsonError {
+    override def toString: String = s"ADT value not found, check ${BsonConst.CoProductType} field"
+  }
+
+  final case class UnexpectedType(v: BsonValue, t: BsonType) extends BsonError {
+    override def toString: String = s"Bson unexpected type: $v expected: $t"
+  }
+
+  final case class UnexpectedValue(s: Any) extends BsonError {
+    override def toString: String = s"Bson unexpected value: $s "
   }
 
   final case class WrappedThrowable(th: Throwable) extends BsonError {
@@ -32,10 +36,6 @@ object BsonError {
 
   final case class FieldNotFound(name: String) extends BsonError {
     override def toString: String = s"Bson field $name not found"
-  }
-
-  final case object BsonIsNull extends BsonError {
-    override def toString: String = s"BsonValue is null"
   }
 
   final case class ValidateError(s: String) extends BsonError {

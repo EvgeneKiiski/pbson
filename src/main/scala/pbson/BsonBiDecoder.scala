@@ -1,8 +1,9 @@
 package pbson
 
+import org.bson.BsonType
 import org.mongodb.scala.bson.BsonValue
-import pbson.BsonError.InvalidType
-import shapeless.{Lazy, Strict, Unwrapped}
+import pbson.BsonError.UnexpectedType
+import shapeless.{ Lazy, Strict, Unwrapped }
 
 /**
   * @author Evgenii Kiiski 
@@ -13,6 +14,7 @@ abstract class BsonBiDecoder[K, V] {
 
 object BsonBiDecoder {
 
+  // TODO dual behavior ???
   implicit final def biDecoderJoin[K, V, U](implicit
                                             uw: Strict[Unwrapped.Aux[K, U]],
                                             ke: Lazy[BsonDecoder[U]],
@@ -32,7 +34,7 @@ object BsonBiDecoder {
       }
       key.flatMap(k => value.map((k, _)))
     } else {
-      Left(InvalidType(s"Expect document $b"))
+      Left(UnexpectedType(b, BsonType.DOCUMENT))
     }
   }
 
