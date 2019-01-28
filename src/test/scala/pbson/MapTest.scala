@@ -1,7 +1,9 @@
 package pbson
 
+import org.bson.BsonType
 import org.mongodb.scala.bson.{BsonArray, BsonDocument, BsonString}
 import org.scalatest.{Matchers, ParallelTestExecution, WordSpec}
+import pbson.BsonError.{FieldNotFound, UnexpectedType}
 import pbson._
 import pbson.semiauto._
 
@@ -27,7 +29,6 @@ class MapTest extends WordSpec with ParallelTestExecution with Matchers {
     "encode map empty" in {
       val test = TestCase(Map.empty)
       val bson = test.toBson
-      println(bson)
       bson.asDocument().containsKey("a") shouldEqual false
     }
     "decode map" in {
@@ -41,6 +42,56 @@ class MapTest extends WordSpec with ParallelTestExecution with Matchers {
     "decode map empty" in {
       val bson = BsonDocument()
       bson.fromBson[TestCase] shouldEqual Right(TestCase(Map.empty))
+    }
+  }
+
+  "Map simple -> simple as array" should {
+    case class TestCase(a: Map[String, String])
+
+    implicit val mapEncoder: BsonEncoder[Map[String, String]] = map2ArrayEncoder
+    implicit val mapDecoder: BsonDecoder[Map[String, String]] = array2MapDecoder
+
+    implicit val testCaseEncoder: BsonEncoder[TestCase] = deriveEncoder
+    implicit val testCaseDecoder: BsonDecoder[TestCase] = deriveDecoder
+
+
+    "encode map" in {
+      val test = TestCase(Map("45" -> "34", "23" -> "45"))
+      val bson = test.toBson
+      bson.asDocument().get("a") shouldEqual BsonArray(
+        BsonDocument("_k" -> BsonString("45"), "_v" -> BsonString("34")),
+        BsonDocument("_k" -> BsonString("23"), "_v" -> BsonString("45"))
+      )
+    }
+    "encode map empty" in {
+      val test = TestCase(Map.empty)
+      val bson = test.toBson
+      bson.asDocument().containsKey("a") shouldEqual false
+    }
+    "decode map" in {
+      val bson = BsonDocument(
+        "a" -> BsonArray(
+          BsonDocument("_k" -> BsonString("45"), "_v" -> BsonString("34")),
+          BsonDocument("_k" -> BsonString("23"), "_v" -> BsonString("45"))
+        ))
+      bson.fromBson[TestCase] shouldEqual Right(TestCase(Map("45" -> "34", "23" -> "45")))
+    }
+    "decode map empty" in {
+      val bson = BsonDocument()
+      bson.fromBson[TestCase] shouldEqual Right(TestCase(Map.empty))
+    }
+    "decode map invalid key" in {
+      val bson = BsonDocument(
+        "a" -> BsonArray(
+          BsonDocument("k" -> BsonString("45"), "_v" -> BsonString("34")),
+          BsonDocument("_k" -> BsonString("23"), "_v" -> BsonString("45"))
+        ))
+      bson.fromBson[TestCase].isLeft shouldEqual true
+    }
+    "decode map invalid type" in {
+      val bson = BsonDocument(
+        "a" -> BsonString("2"))
+      bson.fromBson[TestCase] shouldEqual Left(UnexpectedType(BsonString("2"), BsonType.ARRAY))
     }
   }
 
@@ -66,7 +117,6 @@ class MapTest extends WordSpec with ParallelTestExecution with Matchers {
     "encode map empty" in {
       val test = TestCase(Map.empty)
       val bson = test.toBson
-      println(bson)
       bson.asDocument().containsKey("a") shouldEqual false
     }
     "decode map" in {
@@ -80,6 +130,14 @@ class MapTest extends WordSpec with ParallelTestExecution with Matchers {
     "decode map empty" in {
       val bson = BsonDocument()
       bson.fromBson[TestCase] shouldEqual Right(TestCase(Map.empty))
+    }
+    "decode map invalid nested class" in {
+      val bson = BsonDocument(
+        "a" -> BsonDocument(
+          "45" -> BsonDocument("error" -> BsonString("34")),
+          "23" -> BsonDocument("sd" -> BsonString("45"))
+        ))
+      bson.fromBson[TestCase] shouldEqual Left(FieldNotFound("sd"))
     }
   }
 
@@ -118,7 +176,6 @@ class MapTest extends WordSpec with ParallelTestExecution with Matchers {
     "encode map empty" in {
       val test = TestCase(Map.empty)
       val bson = test.toBson
-      println(bson)
       bson.asDocument().containsKey("a") shouldEqual false
     }
     "decode map" in {

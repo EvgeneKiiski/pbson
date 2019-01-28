@@ -4,6 +4,7 @@ import org.bson.BsonValue
 import org.scalacheck.Prop.forAll
 import org.scalacheck.Properties
 import org.scalatest.EitherValues
+import pbson.gen.AnyBsonGen
 
 /**
   * @author Evgenii Kiiski 

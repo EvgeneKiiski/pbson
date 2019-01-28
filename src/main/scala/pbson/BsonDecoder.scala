@@ -45,7 +45,7 @@ object BsonDecoder {
       if (str.nonEmpty)
         Right(str.head)
       else
-        Left(UnexpectedValue(s"${b.getBsonType} expected: BsonString lenght 1"))
+        Left(UnexpectedEmptyString)
     } else {
       Left(UnexpectedType(b, BsonType.STRING))
     }

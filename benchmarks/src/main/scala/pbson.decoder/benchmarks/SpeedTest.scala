@@ -4,7 +4,7 @@ import java.util.concurrent.TimeUnit
 
 import org.openjdk.jmh.annotations._
 import pbson._
-import pbson.examples.FullExample.{NestedCase, TestCase}
+import pbson.examples.CaseClass2Example.{NestedCase, TestCase}
 import pbson.semiauto._
 import cats.syntax.either._
 import io.circe._

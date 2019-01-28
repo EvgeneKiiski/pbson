@@ -1,6 +1,9 @@
 package pbson
 
+import org.bson.BsonType
+import org.mongodb.scala.bson.{BsonDocument, BsonString}
 import org.scalatest.{Matchers, ParallelTestExecution, WordSpec}
+import pbson.BsonError.UnexpectedType
 import pbson.semiauto._
 
 /**
@@ -14,8 +17,6 @@ class CaseClassTest extends WordSpec with ParallelTestExecution with Matchers {
 
     "Decode Encode" should {
       "simple example" in {
-
-
         case class TestCase(a: Int, b: Option[String], id: MyId)
 
         implicit val testCaseEncoder: BsonEncoder[TestCase] = deriveEncoder
@@ -25,6 +26,17 @@ class CaseClassTest extends WordSpec with ParallelTestExecution with Matchers {
 
         val bson = test.toBson
         bson.fromBson[TestCase] shouldEqual Right(test)
+      }
+      "invalid type" in {
+        case class TestCase(a: Int, b: Option[String])
+
+        implicit val testCaseEncoder: BsonEncoder[TestCase] = deriveEncoder
+        implicit val testCaseDecoder: BsonDecoder[TestCase] = deriveDecoder
+
+        val test = TestCase(3, Some("45"))
+
+        val bson = BsonString("343")
+        bson.fromBson[TestCase] shouldEqual Left(UnexpectedType(BsonString("343"), BsonType.DOCUMENT))
       }
       "simple example wrapped with either constructor" in {
 

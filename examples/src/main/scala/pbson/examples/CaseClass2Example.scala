@@ -6,7 +6,7 @@ import pbson.semiauto._
 /**
   * @author Evgenii Kiiski 
   */
-object FullExample extends App {
+object CaseClass2Example extends App {
 
   sealed trait SealedTest
 

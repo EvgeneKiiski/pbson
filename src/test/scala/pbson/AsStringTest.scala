@@ -1,7 +1,8 @@
 package pbson
 
-import org.mongodb.scala.bson.BsonString
-import org.scalatest.{ EitherValues, Matchers, ParallelTestExecution, WordSpec }
+import org.bson.BsonType
+import org.mongodb.scala.bson.{BsonInt32, BsonString}
+import org.scalatest.{EitherValues, Matchers, ParallelTestExecution, WordSpec}
 import pbson.BsonError._
 import pbson._
 
@@ -39,7 +40,11 @@ class AsStringTest extends WordSpec with ParallelTestExecution with Matchers wit
     }
     "decode invalid" in {
       val bson = BsonString("C")
-      bson.fromBson[ADT].isLeft shouldEqual true
+      bson.fromBson[ADT] shouldEqual Left(UnexpectedValue("C"))
+    }
+    "decode invalid type" in {
+      val bson = BsonInt32(12)
+      bson.fromBson[ADT] shouldEqual Left(UnexpectedType(BsonInt32(12), BsonType.STRING))
     }
   }
 

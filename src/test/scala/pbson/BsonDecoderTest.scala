@@ -6,6 +6,7 @@ import org.scalacheck.Prop
 import org.scalacheck.Prop._
 import org.scalatest.prop._
 import org.scalatest.{Assertion, Matchers, ParallelTestExecution, WordSpec}
+import pbson.BsonError.UnexpectedEmptyString
 import pbson.semiauto._
 
 /**
@@ -35,6 +36,14 @@ class BsonDecoderTest extends WordSpec with Matchers with Checkers {
     "some string" in {
       val v: BsonValue = BsonString("s")
       v.fromBson[Char] shouldEqual Right('s')
+    }
+    "long string first char" in {
+      val v: BsonValue = BsonString("swerw")
+      v.fromBson[Char] shouldEqual Right('s')
+    }
+    "empty string" in {
+      val v: BsonValue = BsonString("")
+      v.fromBson[Char] shouldEqual Left(UnexpectedEmptyString)
     }
   }
 

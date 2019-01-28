@@ -14,6 +14,7 @@ abstract class BsonBiDecoder[K, V] {
 
 object BsonBiDecoder {
 
+  // TODO dual behavior ???
   implicit final def biDecoderJoin[K, V, U](implicit
                                             uw: Strict[Unwrapped.Aux[K, U]],
                                             ke: Lazy[BsonDecoder[U]],

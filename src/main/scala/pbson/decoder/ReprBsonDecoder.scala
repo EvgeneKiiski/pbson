@@ -2,10 +2,10 @@ package pbson.decoder
 
 import org.bson.BsonDocument
 import org.mongodb.scala.bson.BsonString
-import pbson.BsonError.FieldNotFound
+import pbson.BsonError.{ADTValueNotFound, FieldNotFound}
 import pbson.BsonConst._
 import pbson.BsonDecoder.BsonDecoderNotNull
-import pbson.{ BsonConst, BsonDecoder, BsonError }
+import pbson.{BsonConst, BsonDecoder, BsonError}
 import shapeless._
 import shapeless.labelled.FieldType
 
@@ -25,7 +25,7 @@ object ReprBsonDecoder extends ReprBsonDecoderInstances {
 
   implicit val hnilDecoder: ReprBsonDecoder[HNil] = _ => Right(HNil)
 
-  implicit val cnilDecoder: ReprBsonDecoder[CNil] = _ => Left(FieldNotFound("CNil"))
+  implicit val cnilDecoder: ReprBsonDecoder[CNil] = _ => Left(ADTValueNotFound)
 
   implicit final def cpDecoder[K <: Symbol, V, T <: Coproduct : ReprBsonDecoder](implicit
     w: Witness.Aux[K],
