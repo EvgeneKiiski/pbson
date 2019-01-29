@@ -1,5 +1,5 @@
 
-[![CircleCI](https://circleci.com/gh/EvgeneKiiski/pbson/tree/dev.svg?style=svg)](https://circleci.com/gh/EvgeneKiiski/pbson/tree/dev)
+[![Build status](https://circleci.com/gh/EvgeneKiiski/pbson/tree/dev.svg?style=svg)](https://circleci.com/gh/EvgeneKiiski/pbson/tree/dev)
 
 # PBson
 
