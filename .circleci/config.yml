@@ -26,7 +26,7 @@ jobs:
           command: cat /dev/null | sbt clean coverage test coverageReport
       - store_test_results:
           path: target/scala-2.12/coverage-report
-          path: target/scala-2.12/scoverage-report
+#          path: target/scala-2.12/scoverage-report
       - run:
           name: Compile dist package
           command: cat /dev/null | sbt clean update compile test
