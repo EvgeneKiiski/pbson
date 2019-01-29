@@ -6,7 +6,6 @@ jobs:
       - image: openjdk:8
     environment:
       SBT_VERSION: 1.2.1
-      SCALA_BINARY_VERSION: 2.12.8
     steps:
       - run: echo 'export ARTIFACT_BUILD=$CIRCLE_PROJECT_REPONAME-$CIRCLE_BUILD_NUM.zip' >> $BASH_ENV
       - run:
@@ -27,8 +26,8 @@ jobs:
           name: Test
           command: |
             cat /dev/null | sbt clean coverage test coverageReport
-            mv target/scala-$SCALA_BINARY_VERSION/coverage-report  $CIRCLE_ARTIFACTS/coverage-report
-            mv target/scala-$SCALA_BINARY_VERSION/scoverage-report $CIRCLE_ARTIFACTS/scoverage-report
+            mv target/scala-2.12/coverage-report  $CIRCLE_ARTIFACTS/coverage-report
+            mv target/scala-2.12/scoverage-report $CIRCLE_ARTIFACTS/scoverage-report
       - run:
           name: Compile dist package
           command: cat /dev/null | sbt clean update compile test
