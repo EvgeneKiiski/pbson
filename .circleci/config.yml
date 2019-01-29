@@ -29,7 +29,7 @@ jobs:
 #          path: target/scala-2.12/scoverage-report
       - run:
           name: Compile dist package
-          command: cat /dev/null | sbt clean update compile test
+          command: cat /dev/null | sbt clean update compile
 #      - store_artifacts: # for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
 #          path: target/universal/pbson.zip
 #          destination: pbson
