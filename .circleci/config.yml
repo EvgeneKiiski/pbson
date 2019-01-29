@@ -17,17 +17,13 @@ jobs:
             rm sbt-$SBT_VERSION.deb
             apt-get update
             apt-get install -y sbt python-pip git
-            pip install awscli
             apt-get clean && apt-get autoclean
       - checkout
       - restore_cache:
           key: sbt-cache
       - run:
           name: Test
-          command: |
-            cat /dev/null | sbt clean coverage test coverageReport
-            mv target/scala-2.12/coverage-report  $CIRCLE_ARTIFACTS/coverage-report
-            mv target/scala-2.12/scoverage-report $CIRCLE_ARTIFACTS/scoverage-report
+          command: cat /dev/null | sbt clean coverage test coverageReport && mv target/scala-2.12/coverage-report  $CIRCLE_ARTIFACTS/coverage-report && mv target/scala-2.12/scoverage-report $CIRCLE_ARTIFACTS/scoverage-report
       - run:
           name: Compile dist package
           command: cat /dev/null | sbt clean update compile test

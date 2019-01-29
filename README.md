@@ -1,3 +1,6 @@
+
+[![CircleCI](https://circleci.com/gh/EvgeneKiiski/pbson/tree/dev.svg?style=svg)](https://circleci.com/gh/EvgeneKiiski/pbson/tree/dev)
+
 # PBson
 
 pbson is a BSON library for Scala.
