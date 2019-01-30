@@ -1,3 +1,7 @@
+
+[![Build status](https://img.shields.io/circleci/project/github/EvgeneKiiski/pbson.svg?style=flat)](https://circleci.com/gh/EvgeneKiiski/pbson/tree/dev)
+[![Coverage Status](https://coveralls.io/repos/github/EvgeneKiiski/pbson/badge.svg?branch=master)](https://coveralls.io/github/EvgeneKiiski/pbson?branch=master)
+
 # PBson
 
 pbson is a BSON library for Scala.
