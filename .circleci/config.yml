@@ -23,7 +23,7 @@ jobs:
           key: sbt-cache
       - run:
           name: Test
-          command: cat /dev/null | sbt clean coverage test coverageReport
+          command: cat /dev/null | sbt clean coverage test coverageReport && touch $CIRCLE_ARTIFACTS/test.touch
       - store_test_results:
           path: target/scala-2.12/coverage-report
 #          path: target/scala-2.12/scoverage-report
