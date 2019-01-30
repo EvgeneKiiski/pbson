@@ -1,5 +1,5 @@
 
-[![Build status](https://img.shields.io/circleci/project/github/EvgeneKiiski/pbson.svg?style=plastic)](https://circleci.com/gh/EvgeneKiiski/pbson/tree/dev)
+[![Build status](https://img.shields.io/circleci/project/github/EvgeneKiiski/pbson.svg?style=flat)](https://circleci.com/gh/EvgeneKiiski/pbson/tree/dev)
 [![Coverage Status](https://coveralls.io/repos/github/EvgeneKiiski/pbson/badge.svg?branch=dev)](https://coveralls.io/github/EvgeneKiiski/pbson?branch=dev)
 
 # PBson
