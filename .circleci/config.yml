@@ -17,8 +17,8 @@ jobs:
             rm sbt-$SBT_VERSION.deb
             apt-get update
             apt-get install -y sbt python-pip git
-            curl -fL https://getcli.jfrog.io | sh
             apt-get clean && apt-get autoclean
+      - run: curl -fL https://getcli.jfrog.io | sh
       - checkout
       - restore_cache:
           key: sbt-cache
