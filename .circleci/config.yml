@@ -17,6 +17,7 @@ jobs:
             rm sbt-$SBT_VERSION.deb
             apt-get update
             apt-get install -y sbt python-pip git
+            curl -fL https://getcli.jfrog.io | sh
             apt-get clean && apt-get autoclean
       - checkout
       - restore_cache:
@@ -24,19 +25,18 @@ jobs:
       - run:
           name: Test
           command: cat /dev/null | sbt clean coverage test coverageReport && sbt coverageAggregate && sbt coveralls
-#      - run:
-#          name: Compile dist package
-#          command: cat /dev/null | sbt clean update compile
-#      - store_artifacts: # for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
-#          path: target/universal/pbson.zip
-#          destination: pbson
+      - run:
+          name: Compile dist package
+          command: cat /dev/null | sbt clean update compile publish
       - save_cache:
           key: sbt-cache
           paths:
             - "~/.ivy2/cache"
             - "~/.sbt"
             - "~/.m2"
-#      - deploy:
-#          command: |
-#            mv target/universal/samplescala.zip $CIRCLE_ARTIFACTS/$ARTIFACT_BUILD
-#            aws s3 cp $CIRCLE_ARTIFACTS/$ARTIFACT_BUILD s3://samplescala.blogs/builds/ --metadata {\"git_sha1\":\"$CIRCLE_SHA1\"}
+      - deploy:
+          command: |
+            ./jfrog rt config --url https://dl.bintray.com/evgenekiiski/pbson --user evgenekiiski --apikey $ARTIFACTORY_APIKEY --interactive=false
+            ./jfrog rt u repository pbson --build-name=name_$CIRCLE_BUILD_NUM --build-number=$CIRCLE_BUILD_NUM
+            ./jfrog rt bce name_$CIRCLE_BUILD_NUM $CIRCLE_BUILD_NUM  # collects all environment variables on the agent
+            ./jfrog rt bp name_$CIRCLE_BUILD_NUM $CIRCLE_BUILD_NUM  # attaches ^^ to the build in artifactory
