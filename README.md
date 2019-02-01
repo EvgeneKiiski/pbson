@@ -73,12 +73,6 @@ sealed trait ADT
 object ADT {
   case class A(s: String) extends ADT
   case class B(a: Int) extends ADT
-
-  implicit val aEncoder: BsonEncoder[A] = deriveEncoder
-  implicit val aDecoder: BsonDecoder[A] = deriveDecoder
-
-  implicit val bEncoder: BsonEncoder[B] = deriveEncoder
-  implicit val bDecoder: BsonDecoder[B] = deriveDecoder
 }
 
 import ADT._
