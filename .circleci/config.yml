@@ -36,7 +36,7 @@ jobs:
       - run: curl -fL https://getcli.jfrog.io | sh
       - deploy:
           command: |
-            ./jfrog bt config --user evgenekiiski --apikey $ARTIFACTORY_APIKEY --interactive=false
+            ./jfrog bt config --user evgenekiiski --key $ARTIFACTORY_APIKEY --interactive=false
             ./jfrog bt u /root/repository twistedlogic/pbson/pbson/$CIRCLE_BUILD_NUM
 #            ./jfrog rt u repository pbson --build-name=name_$CIRCLE_BUILD_NUM --build-number=$CIRCLE_BUILD_NUM
 #            ./jfrog rt bce name_$CIRCLE_BUILD_NUM $CIRCLE_BUILD_NUM  # collects all environment variables on the agent
