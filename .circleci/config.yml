@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build:
+  test:
     working_directory: ~/pbson
     docker:
       - image: openjdk:8
@@ -24,6 +24,33 @@ jobs:
       - run:
           name: Test
           command: cat /dev/null | sbt clean coverage test coverageReport && sbt coverageAggregate && sbt coveralls
+      - save_cache:
+          key: sbt-cache
+          paths:
+            - "~/.ivy2/cache"
+            - "~/.sbt"
+            - "~/.m2"
+  publish:
+    working_directory: ~/pbson
+    docker:
+      - image: openjdk:8
+    environment:
+      SBT_VERSION: 1.2.1
+    steps:
+      - run: echo 'export ARTIFACT_BUILD=$CIRCLE_PROJECT_REPONAME-$CIRCLE_BUILD_NUM.zip' >> $BASH_ENV
+      - run:
+          name: Get sbt binary
+          command: |
+            apt update && apt install -y curl
+            curl -L -o sbt-$SBT_VERSION.deb https://dl.bintray.com/sbt/debian/sbt-$SBT_VERSION.deb
+            dpkg -i sbt-$SBT_VERSION.deb
+            rm sbt-$SBT_VERSION.deb
+            apt-get update
+            apt-get install -y sbt python-pip git
+            apt-get clean && apt-get autoclean
+      - checkout
+      - restore_cache:
+          key: sbt-cache
       - run:
           name: Compile dist package
           command: cat /dev/null | sbt clean update compile publish
@@ -37,7 +64,21 @@ jobs:
       - deploy:
           command: |
             ./jfrog bt config --user evgenekiiski --key $ARTIFACTORY_APIKEY --interactive=false
-            ./jfrog bt u /root/pbson/repository/ twistedlogic/pbson/pbson/$CIRCLE_BUILD_NUM
+            ./jfrog bt u /root/pbson/repository/ twistedlogic/pbson/pbson/$CIRCLE_TAG
 #            ./jfrog rt u repository pbson --build-name=name_$CIRCLE_BUILD_NUM --build-number=$CIRCLE_BUILD_NUM
 #            ./jfrog rt bce name_$CIRCLE_BUILD_NUM $CIRCLE_BUILD_NUM  # collects all environment variables on the agent
 #            ./jfrog rt bp name_$CIRCLE_BUILD_NUM $CIRCLE_BUILD_NUM  # attaches ^^ to the build in artifactory
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - test
+      - publish
+          requires:
+            - test
+          filters:
+            branches:
+              only:
+                - master
+            tags:
+              only: /^v.*/
