@@ -29,6 +29,7 @@ jobs:
           paths:
             - "~/.ivy2/cache"
             - "~/.sbt"
+<<<<<<< HEAD
             - "~/.m2"
   publish:
     working_directory: ~/pbson
