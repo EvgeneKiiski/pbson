@@ -5,7 +5,7 @@ logBuffered in Test := false
 
 lazy val commonSettings = Seq(
   organization := "ru.twistedlogic",
-  version := "0.0.5",
+  version := "0.0.6",
   scalaVersion := "2.12.8",
   scalacOptions ++= Seq(
     "-encoding", "utf8", 
@@ -16,8 +16,7 @@ lazy val commonSettings = Seq(
     "-language:implicitConversions",
     "-language:higherKinds",
     "-language:existentials",
-    "-language:postfixOps"//,
-    //"-Xlog-implicits"
+    "-language:postfixOps"
   )
 )
 
@@ -36,7 +35,7 @@ lazy val root = (project in file("."))
       "org.scalactic" %% "scalactic" % "3.0.5"  % Test,
       "org.scalatest" %% "scalatest" % "3.0.5" % Test
     ),
-    publishTo := Some(Resolver.file("file",  new File( "/Users/evg/work/mparser.org/repository" )) )
+    publishTo := Some(Resolver.file("file",  new File( "repository" )) )
   )
 
 

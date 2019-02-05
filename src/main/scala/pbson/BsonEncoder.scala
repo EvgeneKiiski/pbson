@@ -1,7 +1,10 @@
 package pbson
 
 import org.mongodb.scala.bson._
+import pbson.BsonEncoder.BSON_NULL
 import pbson.BsonError.UnexpectedType
+import pbson.encoder.DerivedBsonEncoder
+import shapeless.Lazy
 
 /**
   * @author Evgenii Kiiski 
@@ -10,13 +13,17 @@ abstract class BsonEncoder[A] {
   def apply(t: A): BsonValue
 }
 
-object BsonEncoder {
+object BsonEncoder extends BsonEncoderInstances {
 
   @inline final def apply[A](implicit e: BsonEncoder[A]): BsonEncoder[A] = e
 
-  private[this] val BSON_NULL = BsonNull()
+  private[pbson] val BSON_NULL = BsonNull()
 
-  implicit final val unitEncoder: BsonEncoder[Unit] = _ => BSON_NULL
+}
+
+trait BsonEncoderInstances extends LowPriorityBsonEncoderInstances {
+
+  implicit final val unitEncoder: BsonEncoder[Unit] = _ => BsonEncoder.BSON_NULL
 
   implicit final val stringEncoder: BsonEncoder[String] = BsonString.apply
 
@@ -47,13 +54,18 @@ object BsonEncoder {
     }
 
   implicit final def mapEncoderDocument[K, V](implicit
-    e: BsonMapEncoder[K, V]
-  ): BsonEncoder[Map[K, V]] = t =>
+                                              e: BsonMapEncoder[K, V]
+                                             ): BsonEncoder[Map[K, V]] = t =>
     if (t.isEmpty) {
       BsonNull()
     } else {
       BsonDocument(t.map(e.apply))
     }
 
+}
+
+trait LowPriorityBsonEncoderInstances {
+
+  implicit final def deriveEncoder[A](implicit encode: Lazy[DerivedBsonEncoder[A]]): BsonEncoder[A] = encode.value
 
 }

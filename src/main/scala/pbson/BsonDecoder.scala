@@ -2,8 +2,10 @@ package pbson
 
 import cats.implicits._
 import org.bson.BsonType
-import org.mongodb.scala.bson.{ BsonArray, BsonBoolean, BsonDocument, BsonDouble, BsonInt32, BsonInt64, BsonNull, BsonString, BsonValue }
+import org.mongodb.scala.bson.{BsonArray, BsonBoolean, BsonDocument, BsonDouble, BsonInt32, BsonInt64, BsonNull, BsonString, BsonValue}
 import pbson.BsonError._
+import pbson.decoder.DerivedBsonDecoder
+import shapeless.Lazy
 
 import scala.collection.JavaConverters._
 
@@ -14,11 +16,15 @@ abstract class BsonDecoder[A] {
   def apply(b: BsonValue): BsonDecoder.Result[A]
 }
 
-object BsonDecoder {
+object BsonDecoder extends BsonDecoderInstances {
 
   type Result[A] = Either[BsonError, A]
 
   @inline final def apply[A](implicit d: BsonDecoder[A]): BsonDecoder[A] = d
+}
+
+
+trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
 
   abstract class BsonDecoderNotNull[A] extends BsonDecoder[A]
 
@@ -120,8 +126,8 @@ object BsonDecoder {
   }
 
   implicit final def mapDecoder[K, V](implicit
-    d: BsonMapDecoder[K, V]
-  ): BsonDecoder[Map[K, V]] = { b =>
+                                      d: BsonMapDecoder[K, V]
+                                     ): BsonDecoder[Map[K, V]] = { b =>
     if (b == null) {
       Right(Map.empty)
     } else if (b.getBsonType == BsonType.DOCUMENT) {
@@ -130,6 +136,12 @@ object BsonDecoder {
       Left(UnexpectedType(b, BsonType.DOCUMENT))
     }
   }
+
+}
+
+trait LowPriorityBsonDecoderInstances {
+
+  implicit final def deriveDecoder[A](implicit decode: Lazy[DerivedBsonDecoder[A]]): BsonDecoder[A] = decode.value
 
 }
 

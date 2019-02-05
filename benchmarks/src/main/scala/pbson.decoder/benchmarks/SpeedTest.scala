@@ -45,10 +45,6 @@ class SpeedTest {
   implicit val aEncoder: BsonEncoder[Examples.A] = deriveEncoder
   implicit val aDecoder: BsonDecoder[Examples.A] = deriveDecoder
 
-  @Benchmark
-  def pbsonSmall(): Either[BsonError, A] = {
-    Examples.small.toBson.fromBson[Examples.A]()
-  }
 
   @Benchmark
   def cicreSmall(): Either[ParsingFailure, Json] = {
@@ -81,6 +77,11 @@ class SpeedTest {
     }
     val result = A(int, str, map, sq, adt)
     result
+  }
+
+  @Benchmark
+  def pbsonSmall(): Either[BsonError, A] = {
+    Examples.small.toBson.fromBson[Examples.A]()
   }
 
 }

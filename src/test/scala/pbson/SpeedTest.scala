@@ -52,8 +52,6 @@ class SpeedTest extends WordSpec with ParallelTestExecution with Matchers {
     case "C" => ADT3()
   }
 
-  implicit val bEncoder: BsonEncoder[B] = deriveEncoder
-  implicit val bDecoder: BsonDecoder[B] = deriveDecoder
   implicit val aEncoder: BsonEncoder[A] = deriveEncoder
   implicit val aDecoder: BsonDecoder[A] = deriveDecoder
 

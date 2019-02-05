@@ -19,3 +19,9 @@ v5
 [info] SpeedTest.cicreSmall   thrpt   10  235.572 ± 1.433  ops/ms
 [info] SpeedTest.manualSmall  thrpt   10  944.039 ± 7.756  ops/ms
 [info] SpeedTest.pbsonSmall   thrpt   10  498.385 ± 5.785  ops/ms
+
+v6
+[info] Benchmark               Mode  Cnt    Score   Error   Units
+[info] SpeedTest.cicreSmall   thrpt   10  243.897 ± 1.903  ops/ms
+[info] SpeedTest.manualSmall  thrpt   10  965.741 ± 9.441  ops/ms
+[info] SpeedTest.pbsonSmall   thrpt   10  529.635 ± 3.784  ops/ms
