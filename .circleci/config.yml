@@ -29,7 +29,6 @@ jobs:
           paths:
             - "~/.ivy2/cache"
             - "~/.sbt"
-<<<<<<< HEAD
             - "~/.m2"
   publish:
     working_directory: ~/pbson
@@ -66,9 +65,7 @@ jobs:
           command: |
             ./jfrog bt config --user evgenekiiski --key $ARTIFACTORY_APIKEY --interactive=false
             ./jfrog bt u /root/pbson/repository/ twistedlogic/pbson/pbson/$CIRCLE_TAG
-#            ./jfrog rt u repository pbson --build-name=name_$CIRCLE_BUILD_NUM --build-number=$CIRCLE_BUILD_NUM
-#            ./jfrog rt bce name_$CIRCLE_BUILD_NUM $CIRCLE_BUILD_NUM  # collects all environment variables on the agent
-#            ./jfrog rt bp name_$CIRCLE_BUILD_NUM $CIRCLE_BUILD_NUM  # attaches ^^ to the build in artifactory
+
 workflows:
   version: 2
   build_and_test:
