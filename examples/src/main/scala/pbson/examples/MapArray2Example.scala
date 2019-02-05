@@ -12,11 +12,6 @@ object MapArray2Example extends App {
   case class Value(v: String)
   case class TestCase(a: Map[Key, Value])
 
-  implicit val keyEncoder: BsonEncoder[Key] = deriveEncoder
-  implicit val keyDecoder: BsonDecoder[Key] = deriveDecoder
-
-  implicit val nestedEncoder: BsonEncoder[Value] = deriveEncoder
-  implicit val nestedDecoder: BsonDecoder[Value] = deriveDecoder
 
   implicit val mapEncoder: BsonEncoder[Map[Key, Value]] = map2ArrayEncoder
   implicit val mapDecoder: BsonDecoder[Map[Key, Value]] = array2MapDecoder

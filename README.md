@@ -2,7 +2,7 @@
 [![Build status](https://img.shields.io/circleci/project/github/EvgeneKiiski/pbson.svg?style=flat)](https://circleci.com/gh/EvgeneKiiski/pbson/tree/dev)
 [![Coverage Status](https://coveralls.io/repos/github/EvgeneKiiski/pbson/badge.svg?branch=dev)](https://coveralls.io/github/EvgeneKiiski/pbson?branch=dev)
 
-# PBson
+# PBson - Pure BSON
 
 pbson is a BSON library for Scala.
 
@@ -158,12 +158,6 @@ println(bson.fromBson[TestCase])
 case class Key(k: String)
 case class Value(v: String)
 case class TestCase(a: Map[Key, Value])
-
-implicit val keyEncoder: BsonEncoder[Key] = deriveEncoder
-implicit val keyDecoder: BsonDecoder[Key] = deriveDecoder
-
-implicit val nestedEncoder: BsonEncoder[Value] = deriveEncoder
-implicit val nestedDecoder: BsonDecoder[Value] = deriveDecoder
 
 implicit val mapEncoder: BsonEncoder[Map[Key, Value]] = map2ArrayEncoder
 implicit val mapDecoder: BsonDecoder[Map[Key, Value]] = array2MapDecoder

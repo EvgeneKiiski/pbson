@@ -10,12 +10,23 @@ import pbson.semiauto._
   * @author Evgenii Kiiski 
   */
 
-class CaseClassTest extends WordSpec with ParallelTestExecution with Matchers {
+class CaseClassTest extends WordSpec with Matchers {
 
   import CaseClassTest._
 
 
     "Decode Encode" should {
+      "empty case class" in {
+        final case class TestCase()
+
+        implicit val testCaseEncoder: BsonEncoder[TestCase] = deriveEncoder
+        implicit val testCaseDecoder: BsonDecoder[TestCase] = deriveDecoder
+
+        val test = TestCase()
+
+        val bson = test.toBson
+        bson.fromBson[TestCase] shouldEqual Right(test)
+      }
       "simple example" in {
         case class TestCase(a: Int, b: Option[String], id: MyId)
 
@@ -51,57 +62,6 @@ class CaseClassTest extends WordSpec with ParallelTestExecution with Matchers {
 
         val bson = test.toBson
         bson.fromBson[TestCase] shouldEqual Right(test)
-      }
-      "seq map" in {
-
-        sealed trait SealedTest
-
-        object SealedTest {
-          final case class One() extends SealedTest
-          final case class Two(s: String) extends SealedTest
-
-        }
-
-        import SealedTest._
-
-        implicit val oneEncoder: BsonEncoder[One] = deriveEncoder
-        implicit val twoEncoder: BsonEncoder[Two] = deriveEncoder
-        implicit val sealedEncoder: BsonEncoder[SealedTest] = deriveEncoder
-
-        implicit val oneDecoder: BsonDecoder[One] = deriveDecoder
-        implicit val twoDecoder: BsonDecoder[Two] = deriveDecoder
-        implicit val sealedDecoder: BsonDecoder[SealedTest] = deriveDecoder
-
-        case class NestedCase(a: String, b: Long)
-
-        case class TestCase(
-                             a: Int,
-                             b: Option[String],
-                             c: Long,
-                             d: Seq[Long],
-                             e: Map[String, NestedCase],
-                             st: SealedTest
-                           )
-
-
-        implicit val nestedCaseEncoder: BsonEncoder[NestedCase] = deriveEncoder
-        implicit val nestedCaseDecoder: BsonDecoder[NestedCase] = deriveDecoder
-        implicit val testCaseEncoder: BsonEncoder[TestCase] = deriveEncoder
-        implicit val testCaseDecoder: BsonDecoder[TestCase] = deriveDecoder
-
-
-        val test = TestCase(
-          3,
-          Some("45"),
-          34l,
-          List(2l, 5l),
-          Map("32" -> NestedCase("r", 5)),
-          One()
-        )
-
-        val bson = test.toBson
-        bson.fromBson[TestCase] shouldEqual Right(test)
-
       }
     }
 

@@ -16,6 +16,7 @@ class ADTTest extends WordSpec with ParallelTestExecution with Matchers  {
 
     case class A(s: String) extends ADT
     case class B(a: Int) extends ADT
+    case class C() extends ADT
 
   }
 
@@ -34,7 +35,7 @@ class ADTTest extends WordSpec with ParallelTestExecution with Matchers  {
       bson.fromBson[ADT] shouldEqual Right(B(4))
     }
     "decode unexpected type" in {
-      val bson: BsonValue = BsonDocument("type" -> BsonString("C"), "a" -> BsonInt32(4))
+      val bson: BsonValue = BsonDocument("type" -> BsonString("E"), "a" -> BsonInt32(4))
       bson.fromBson[ADT] shouldEqual Left(ADTValueNotFound)
     }
   }

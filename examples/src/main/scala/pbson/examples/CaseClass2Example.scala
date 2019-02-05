@@ -18,12 +18,8 @@ object CaseClass2Example extends App {
 
   import SealedTest._
 
-//  implicit val oneEncoder: BsonEncoder[One] = deriveEncoder
-//  implicit val twoEncoder: BsonEncoder[Two] = deriveEncoder
   implicit val sealedEncoder: BsonEncoder[SealedTest] = deriveEncoder
 
-//  implicit val oneDecoder: BsonDecoder[One] = deriveDecoder
-//  implicit val twoDecoder: BsonDecoder[Two] = deriveDecoder
   implicit val sealedDecoder: BsonDecoder[SealedTest] = deriveDecoder
 
   case class NestedCase(a: String, b: Long)
@@ -38,8 +34,6 @@ object CaseClass2Example extends App {
                      )
 
 
-//  implicit val nestedCaseEncoder: BsonEncoder[NestedCase] = deriveEncoder
-//  implicit val nestedCaseDecoder: BsonDecoder[NestedCase] = deriveDecoder
   implicit val testCaseEncoder: BsonEncoder[TestCase] = deriveEncoder
   implicit val testCaseDecoder: BsonDecoder[TestCase] = deriveDecoder
 
