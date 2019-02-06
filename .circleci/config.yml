@@ -71,12 +71,12 @@ workflows:
   build_and_test:
     jobs:
       - test
-      - publish:
-          requires:
-            - test
-          filters:
-            branches:
-              only:
-                - master
-            tags:
-              only: /^v.*/
+#      - publish:
+#          requires:
+#            - test
+#          filters:
+#            branches:
+#              only:
+#                - master
+#            tags:
+#              only: /^v.*/
