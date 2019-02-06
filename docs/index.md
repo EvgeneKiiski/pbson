@@ -13,8 +13,10 @@ pbson can derive bson encoder and decoder:
 
 ``` BsonEncoder[T] : T => BsonValue ```
 
-``` BsonDecoder[T] : BsonValue => Either[BsonError, T]``
+``` BsonDecoder[T] : BsonValue => Either[BsonError, T]```
 
 <a name="quick-start"></a>
 
 {% include_relative quickstart.md %}
+
+{% include_relative examples.md %}
