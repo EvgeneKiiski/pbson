@@ -52,6 +52,6 @@ libraryDependencies += "ru.twistedlogic" %% "pbson" % "0.0.6"
 
 [docs](https://evgenekiiski.github.io/pbson/)
 
-The [examples](https://github.com/EvgeneKiiski/pbson/blob/master/examples/src/main/scala/pbson/examples/)
+[examples](https://github.com/EvgeneKiiski/pbson/blob/master/examples/src/main/scala/pbson/examples/)
 
 
