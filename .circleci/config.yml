@@ -64,7 +64,7 @@ jobs:
       - deploy:
           command: |
             ./jfrog bt config --user evgenekiiski --key $ARTIFACTORY_APIKEY --interactive=false
-            ./jfrog bt u /root/pbson/repository/ twistedlogic/pbson/pbson/$CIRCLE_TAG
+            ./jfrog bt u repository/ twistedlogic/pbson/pbson/$CIRCLE_TAG /ru/twistedlogic/pbson_2.12/
 
 workflows:
   version: 2

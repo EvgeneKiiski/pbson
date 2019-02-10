@@ -67,6 +67,13 @@ trait BsonEncoderInstances extends LowPriorityBsonEncoderInstances {
       BsonArray.apply(t.map(e.apply))
     }
 
+  implicit final def vectorEncoder[A](implicit e: BsonEncoder[A]): BsonEncoder[Vector[A]] = t =>
+    if (t.isEmpty) {
+      BsonNull()
+    } else {
+      BsonArray.apply(t.map(e.apply))
+    }
+
   implicit final def mapEncoderDocument[K, V](implicit
                                               e: BsonMapEncoder[K, V]
                                              ): BsonEncoder[Map[K, V]] = t =>
