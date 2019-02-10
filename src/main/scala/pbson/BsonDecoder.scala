@@ -125,6 +125,16 @@ trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
     }
   }
 
+  implicit final def listDecoder[A](implicit d: BsonDecoder[A]): BsonDecoder[List[A]] = { b =>
+    if (b == null) {
+      Right(List.empty)
+    } else if (b.getBsonType == BsonType.ARRAY) {
+      b.asInstanceOf[BsonArray].getValues.asScala.toList.traverse(d.apply)
+    } else {
+      Left(UnexpectedType(b, BsonType.ARRAY))
+    }
+  }
+
   implicit final def mapDecoder[K, V](implicit
                                       d: BsonMapDecoder[K, V]
                                      ): BsonDecoder[Map[K, V]] = { b =>
