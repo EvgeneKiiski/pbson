@@ -5,7 +5,7 @@ logBuffered in Test := false
 
 lazy val commonSettings = Seq(
   organization := "ru.twistedlogic",
-  version := "0.0.7",
+  version := "0.0.8",
   scalaVersion := "2.12.8",
   scalacOptions ++= Seq(
     "-encoding", "utf8", 
