@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/github.css">
+
+    <title>Pure BSON</title>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-42861978-3"></script>
+    <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-42861978-3');
+
+    </script>
+</head>
+<body>
+
+<div class="wrapper">
+
+    <!-- Sidebar -->
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            <h3>Pure BSON</h3>
+            BSON scala library.
+        </div>
+
+        <ul class="list-unstyled components">
+            <li>
+                <a href="#quickstart">Quick Start</a>
+            </li>
+            <li>
+                <a href="#anyval">AnyVal</a>
+            </li>
+            <li>
+                <a href="#adt">ADT</a>
+            </li>
+            <li>
+                <a href="#map">Map</a>
+            </li>
+        </ul>
+        <ul class="list-unstyled CTAs">
+            <li>
+                <a href="https://github.com/EvgeneKiiski/pbson" class="article">Github source</a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Page Content -->
+    <div id="content">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <button type="button" id="sidebarCollapse" class="navbar-btn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fas fa-align-justify"></i>
+                </button>
+            </div>
+        </nav>
+        <p>
+            pbson is a BSON library for Scala.
+        </p>
+
+        <p>
+            The goal of this library is to create at compile-time the boilerplate necessary to encode and decode of a
+            certain type.
+            The pbson provides generic codec derivation using <a href="https://github.com/milessabin/shapeless">Shapeless</a>.
+        </p>
+
+        <p>
+            pbson can derive bson encoder and decoder:
+        <div class="container-fluid">
+        <pre>
+            <code data-language="java">
+BsonEncoder[T] : T => BsonValue
+BsonDecoder[T] : BsonValue => Either[BsonError, T]</code>
+        </pre>
+        </div>
+        </p>
+
+        <div id="quickstart">
+            <h3>Quick Start</h3>
+            <p>If you're using SBT, add the following line to your build file:</p>
+            <figure class="highlight col-12"><pre><code data-language="java">
+resolvers += "JCenter" at "https://jcenter.bintray.com/"
+libraryDependencies += "ru.twistedlogic" %% "pbson" % "0.0.6"
+            </code></pre>
+            </figure>
+            <div class="container-fluid">
+                <div class="row position-relative">
+                    <a class="btn btn-primary btn-light codelink float-right" role="button"
+                       href="https://github.com/EvgeneKiiski/pbson/blob/master/examples/src/main/scala/pbson/examples/CaseClassExample.scala">Link
+                        to code</a>
+                    <figure class="highlight col-12">
+            <pre>
+                <code data-language="java">
+import pbson._
+import pbson.semiauto._
+
+case class MyId(value: String) extends AnyVal
+
+case class TestCase(a: Int, b: Option[String], id: MyId)
+
+implicit val testCaseEncoder: BsonEncoder[TestCase] = deriveEncoder
+implicit val testCaseDecoder: BsonDecoder[TestCase] = deriveDecoder
+
+val test = TestCase(3, Some("45"), MyId("000"))
+
+val bson = test.toBson
+println(bson)
+// { "a" : 3, "b" : "45", "id" : "000" }
+println(bson.fromBson[TestCase])
+// Right(TestCase(3,Some(45),MyId(000)))</code>
+            </pre>
+                    </figure>
+                </div>
+            </div>
+        </div>
+        <div id="anyval">
+            <h3>AnyVal wrappers</h3>
+            <p>AnyVal wrappers encode and decode as value.</p>
+            <div class="container-fluid">
+                <div class="row position-relative">
+                    <a class="btn btn-primary btn-light codelink float-right" role="button"
+                       href="https://github.com/EvgeneKiiski/pbson/blob/master/examples/src/main/scala/pbson/examples/AnyValWrapperExample.scala">Link
+                        to code</a>
+                    <figure class="highlight col-12"><pre><code data-language="java">
+case class MyId(value: String) extends AnyVal
+
+implicit val testCaseEncoder: BsonEncoder[MyId] = deriveEncoder
+implicit val testCaseDecoder: BsonDecoder[MyId] = deriveDecoder
+
+val test = MyId("000")
+
+val bson = test.toBson
+println(bson)
+// BsonString{value='000'}
+println(bson.fromBson[MyId])
+// Right(MyId(000))
+            </code></pre>
+                    </figure>
+                </div>
+            </div>
+        </div>
+        <div id="adt">
+            <h3>ADT (Algebraic Data Types)</h3>
+            <div id="adtsemiauto">
+                <p>semiauto</p>
+                <div class="container-fluid">
+                    <div class="row position-relative">
+                        <a class="btn btn-primary btn-light codelink float-right" role="button"
+                           href="https://github.com/EvgeneKiiski/pbson/blob/master/examples/src/main/scala/pbson/examples/ADTExample.scala">Link
+                            to code</a>
+                        <figure class="highlight col-12"><pre><code data-language="java">
+sealed trait ADT
+
+object ADT {
+  case class A(s: String) extends ADT
+  case class B(a: Int) extends ADT
+}
+
+import ADT._
+
+implicit val adtEncoder: BsonEncoder[ADT] = deriveEncoder
+implicit val adtDecoder: BsonDecoder[ADT] = deriveDecoder
+
+val test : ADT = B(4)
+
+val bson = test.toBson
+println(bson)
+// { "a" : 4, "type" : "B" }
+println(bson.fromBson[ADT])
+// Right(B(4))
+            </code></pre>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+            <div id="adtnamual">
+                <p>manual enumeration</p>
+                <div class="container-fluid">
+                    <div class="row position-relative">
+                        <a class="btn btn-primary btn-light codelink float-right" role="button"
+                           href="https://github.com/EvgeneKiiski/pbson/blob/master/examples/src/main/scala/pbson/examples/EnumExample.scala">Link
+                            to code</a>
+                        <figure class="highlight col-12"><pre><code data-language="java">
+sealed trait ADT
+
+object ADT {
+  final case object A extends ADT
+  final case object B extends ADT
+}
+
+import ADT._
+
+implicit val adtEnumEncoder: BsonEncoder[ADT] = asStringEncoder {
+  case A => "A"
+  case B => "B"
+}
+
+implicit val adtEnumDecoder: BsonDecoder[ADT] = asStringDecoder {
+  case "A" => A
+  case "B" => B
+}
+
+val test : ADT = B
+
+val bson = test.toBson
+println(bson)
+// BsonString{value='B'}
+println(bson.fromBson[ADT])
+// Right(B)
+            </code></pre>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="map">
+            <h3>Map</h3>
+            <div id="mapsemiauto">
+                <p>as object</p>
+                <div class="container-fluid">
+                    <div class="row position-relative">
+                        <a class="btn btn-primary btn-light codelink float-right" role="button"
+                           href="https://github.com/EvgeneKiiski/pbson/blob/master/examples/src/main/scala/pbson/examples/MapExample.scala">Link
+                            to code</a>
+                        <figure class="highlight col-12"><pre><code data-language="java">
+case class TestCase(a: Map[String, String])
+
+implicit val testCaseEncoder: BsonEncoder[TestCase] = deriveEncoder
+implicit val testCaseDecoder: BsonDecoder[TestCase] = deriveDecoder
+
+val test : TestCase = TestCase(Map("key1" -> "value1", "key2" -> "value2"))
+
+val bson = test.toBson
+println(bson)
+// { "a" : { "key1" : "value1", "key2" : "value2" } }
+println(bson.fromBson[TestCase])
+// Right(TestCase(Map(key1 -> value1, key2 -> value2)))
+                        </code></pre>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+            <div id="maparray">
+                <p>map as array</p>
+                <div class="container-fluid">
+                    <div class="row position-relative">
+                        <a class="btn btn-primary btn-light codelink float-right" role="button"
+                           href="https://github.com/EvgeneKiiski/pbson/blob/master/examples/src/main/scala/pbson/examples/MapArrayExample.scala">Link
+                            to code</a>
+                        <figure class="highlight col-12"><pre><code data-language="java">
+case class TestCase(a: Map[String, String])
+
+implicit val testCaseEncoder: BsonEncoder[TestCase] = deriveEncoder
+implicit val testCaseDecoder: BsonDecoder[TestCase] = deriveDecoder
+
+implicit val mapEncoder: BsonEncoder[Map[String, String]] = map2ArrayEncoder
+implicit val mapDecoder: BsonDecoder[Map[String, String]] = array2MapDecoder
+
+val test : TestCase = TestCase(Map("key1" -> "value1", "key2" -> "value2"))
+
+val bson = test.toBson
+println(bson)
+// { "a" : [{ "_v" : "value1", "_k" : "key1" }, { "_v" : "value2", "_k" : "key2" }] }
+println(bson.fromBson[TestCase])
+// Right(TestCase(Map(key1 -> value1, key2 -> value2)))
+                        </code></pre>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+            <div id="maparraycase">
+                <p>map (key, value case classes) as array</p>
+                <div class="container-fluid">
+                    <div class="row position-relative">
+                        <a class="btn btn-primary btn-light codelink float-right" role="button"
+                           href="https://github.com/EvgeneKiiski/pbson/blob/master/examples/src/main/scala/pbson/examples/MapArray2Example.scala">Link
+                            to code</a>
+                        <figure class="highlight col-12"><pre><code data-language="java">
+case class Key(k: String)
+case class Value(v: String)
+case class TestCase(a: Map[Key, Value])
+
+implicit val mapEncoder: BsonEncoder[Map[Key, Value]] = map2ArrayEncoder
+implicit val mapDecoder: BsonDecoder[Map[Key, Value]] = array2MapDecoder
+
+implicit val testCaseEncoder: BsonEncoder[TestCase] = deriveEncoder
+implicit val testCaseDecoder: BsonDecoder[TestCase] = deriveDecoder
+
+val test : TestCase = TestCase(Map(Key("45") -> Value("34"), Key("23") -> Value("45")))
+
+val bson = test.toBson
+println(bson)
+// { "a" : [{ "v" : "34", "k" : "45" }, { "v" : "45", "k" : "23" }] }
+println(bson.fromBson[TestCase])
+// Right(TestCase(Map(Key(45) -> Value(34), Key(23) -> Value(45))))
+                        </code></pre>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+        integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+        integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+        crossorigin="anonymous"></script>
+<script src="js/rainbow-custom.min.js"></script>
+<script type="text/javascript">
+        $(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+                $(this).toggleClass('active');
+            });
+        });
+
+
+
+
+</script>
+</body>
+</html>
