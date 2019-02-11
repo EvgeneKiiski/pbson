@@ -43,13 +43,13 @@ println(bson.fromBson[TestCase])
 
 ## Getting pbson
 
-The current stable version is 0.0.8
+The current stable version is 0.0.9
 
 If you're using SBT, add the following line to your build file:
 
 ```scala
 resolvers += "JCenter" at "https://jcenter.bintray.com/"
-libraryDependencies += "ru.twistedlogic" %% "pbson" % "0.0.8"
+libraryDependencies += "ru.twistedlogic" %% "pbson" % "0.0.9"
 ```
 
 ## Resources
