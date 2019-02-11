@@ -29,7 +29,7 @@ trait BsonDecoderUtils {
   final def array2MapDecoder[K, V](implicit d: BsonBiDecoder[K, V]): BsonDecoder[Map[K, V]] = {
     case null => Right(Map.empty)
     case b: BsonValue if b.isArray =>
-      traverse2Map(b.asArray().getValues.asScala)(d.apply)
+      traverse2Map(b.asArray().getValues)(d.apply)
     case b => Left(UnexpectedType(b, BsonType.ARRAY))
   }
 

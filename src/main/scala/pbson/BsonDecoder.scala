@@ -119,7 +119,7 @@ trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
     if (b == null) {
       Right(Seq.empty)
     } else if (b.getBsonType == BsonType.ARRAY) {
-      traverse2Seq(b.asInstanceOf[BsonArray].getValues.asScala)(d.apply)
+      traverse2Seq(b.asInstanceOf[BsonArray].getValues)(d.apply)
     } else {
       Left(UnexpectedType(b, BsonType.ARRAY))
     }
@@ -129,7 +129,7 @@ trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
     if (b == null) {
       Right(List.empty)
     } else if (b.getBsonType == BsonType.ARRAY) {
-      traverse2List(b.asInstanceOf[BsonArray].getValues.asScala)(d.apply)
+      traverse2List(b.asInstanceOf[BsonArray].getValues)(d.apply)
     } else {
       Left(UnexpectedType(b, BsonType.ARRAY))
     }
@@ -139,7 +139,7 @@ trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
     if (b == null) {
       Right(Set.empty)
     } else if (b.getBsonType == BsonType.ARRAY) {
-      traverse2Set(b.asInstanceOf[BsonArray].getValues.asScala)(d.apply)
+      traverse2Set(b.asInstanceOf[BsonArray].getValues)(d.apply)
     } else {
       Left(UnexpectedType(b, BsonType.ARRAY))
     }
@@ -149,7 +149,7 @@ trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
     if (b == null) {
       Right(Vector.empty)
     } else if (b.getBsonType == BsonType.ARRAY) {
-      traverse2Vector(b.asInstanceOf[BsonArray].getValues.asScala)(d.apply)
+      traverse2Vector(b.asInstanceOf[BsonArray].getValues)(d.apply)
     } else {
       Left(UnexpectedType(b, BsonType.ARRAY))
     }
@@ -161,7 +161,7 @@ trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
     if (b == null) {
       Right(Map.empty)
     } else if (b.getBsonType == BsonType.DOCUMENT) {
-      traverse2Map(b.asInstanceOf[BsonDocument].asScala)(d.apply)
+      traverse2Map(b.asInstanceOf[BsonDocument])(d.apply)
     } else {
       Left(UnexpectedType(b, BsonType.DOCUMENT))
     }
