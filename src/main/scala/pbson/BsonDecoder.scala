@@ -1,11 +1,11 @@
 package pbson
 
-import cats.implicits._
 import org.bson.BsonType
 import org.mongodb.scala.bson.{BsonArray, BsonBoolean, BsonDocument, BsonDouble, BsonInt32, BsonInt64, BsonNull, BsonString, BsonValue}
 import pbson.BsonError._
 import pbson.decoder.DerivedBsonDecoder
 import shapeless.Lazy
+import pbson.utils.TraversableUtils._
 
 import scala.collection.JavaConverters._
 
@@ -119,7 +119,7 @@ trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
     if (b == null) {
       Right(Seq.empty)
     } else if (b.getBsonType == BsonType.ARRAY) {
-      b.asInstanceOf[BsonArray].getValues.asScala.toList.traverse(d.apply)
+      traverse2Seq(b.asInstanceOf[BsonArray].getValues.asScala)(d.apply)
     } else {
       Left(UnexpectedType(b, BsonType.ARRAY))
     }
@@ -129,7 +129,7 @@ trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
     if (b == null) {
       Right(List.empty)
     } else if (b.getBsonType == BsonType.ARRAY) {
-      b.asInstanceOf[BsonArray].getValues.asScala.toList.traverse(d.apply)
+      traverse2List(b.asInstanceOf[BsonArray].getValues.asScala)(d.apply)
     } else {
       Left(UnexpectedType(b, BsonType.ARRAY))
     }
@@ -139,7 +139,7 @@ trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
     if (b == null) {
       Right(Set.empty)
     } else if (b.getBsonType == BsonType.ARRAY) {
-      b.asInstanceOf[BsonArray].getValues.asScala.toList.traverse(d.apply).map(_.toSet)
+      traverse2Set(b.asInstanceOf[BsonArray].getValues.asScala)(d.apply)
     } else {
       Left(UnexpectedType(b, BsonType.ARRAY))
     }
@@ -149,7 +149,7 @@ trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
     if (b == null) {
       Right(Vector.empty)
     } else if (b.getBsonType == BsonType.ARRAY) {
-      b.asInstanceOf[BsonArray].getValues.asScala.toList.traverse(d.apply).map(_.toVector)
+      traverse2Vector(b.asInstanceOf[BsonArray].getValues.asScala)(d.apply)
     } else {
       Left(UnexpectedType(b, BsonType.ARRAY))
     }
@@ -161,7 +161,7 @@ trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
     if (b == null) {
       Right(Map.empty)
     } else if (b.getBsonType == BsonType.DOCUMENT) {
-      b.asInstanceOf[BsonDocument].asScala.map(d.apply).toList.sequence.map(_.toMap)
+      traverse2Map(b.asInstanceOf[BsonDocument].asScala)(d.apply)
     } else {
       Left(UnexpectedType(b, BsonType.DOCUMENT))
     }

@@ -5,9 +5,8 @@ import pbson.{ BsonBiDecoder, BsonDecoder }
 import pbson.BsonError.{ UnexpectedType, UnexpectedValue, WrappedThrowable }
 
 import scala.collection.JavaConverters._
-import cats._
-import cats.implicits._
 import org.bson.BsonType
+import pbson.utils.TraversableUtils.traverse2Map
 
 import scala.util.Try
 
@@ -30,16 +29,14 @@ trait BsonDecoderUtils {
   final def array2MapDecoder[K, V](implicit d: BsonBiDecoder[K, V]): BsonDecoder[Map[K, V]] = {
     case null => Right(Map.empty)
     case b: BsonValue if b.isArray =>
-      val seq: List[BsonValue] = b.asArray().getValues.asScala.toList
-      seq.traverse(d.apply).map(_.toMap)
+      traverse2Map(b.asArray().getValues.asScala)(d.apply)
     case b => Left(UnexpectedType(b, BsonType.ARRAY))
   }
 
   final def enumDecoder[E <: Enumeration](enum: E): BsonDecoder[E#Value] = b =>
     BsonDecoder.stringDecoder(b).flatMap { str =>
       Try(enum.withName(str))
-        .toEither
-        .leftMap(WrappedThrowable.apply)
+        .toEither.fold(e => Left(WrappedThrowable.apply(e)), Right.apply)
     }
 
 }
