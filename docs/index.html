@@ -47,6 +47,9 @@
             <li>
                 <a href="#map">Map</a>
             </li>
+            <li>
+                <a href="#enumeration">Enumeration</a>
+            </li>
         </ul>
         <ul class="list-unstyled CTAs">
             <li>
@@ -79,6 +82,9 @@
             The goal of this library is to create at compile-time the boilerplate necessary to encode and decode of a
             certain type.
             The pbson provides generic codec derivation using <a href="https://github.com/milessabin/shapeless">Shapeless</a>.
+            This library provides another way encode and decode case classes for
+            <a href="https://docs.mongodb.com/ecosystem/drivers/scala/#mongo-scala-driver">mongo scala driver</a>.
+            Decoder instead of throw Exception return <code data-language="java">Either[BsonError, T]</code>
         </p>
 
         <p>
@@ -310,6 +316,34 @@ println(bson)
 // { "a" : [{ "v" : "34", "k" : "45" }, { "v" : "45", "k" : "23" }] }
 println(bson.fromBson[TestCase])
 // Right(TestCase(Map(Key(45) -> Value(34), Key(23) -> Value(45))))
+                        </code></pre>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+            <div id="enumeration">
+                <h3>Enumeration</h3>
+                <div class="container-fluid">
+                    <div class="row position-relative">
+                        <a class="btn btn-primary btn-light codelink float-right" role="button"
+                           href="https://github.com/EvgeneKiiski/pbson/blob/master/examples/src/main/scala/pbson/examples/EnumerationExample.scala">Link
+                            to code</a>
+                        <figure class="highlight col-12"><pre><code data-language="java">
+object WeekDay extends Enumeration {
+type WeekDay = Value
+  val Mon, Tue, Wed, Thu, Fri, Sat, Sun = Value
+}
+
+implicit val weekDayEncoder: BsonEncoder[WeekDay.Value] = enumEncoder(WeekDay)
+implicit val weekDayDecoder: BsonDecoder[WeekDay.Value] = enumDecoder(WeekDay)
+
+val test : WeekDay.Value = WeekDay.Thu
+
+val bson = test.toBson
+println(bson)
+// BsonString{value='Thu'}
+println(bson.fromBson[WeekDay.Value])
+// Right(Thu)
                         </code></pre>
                         </figure>
                     </div>

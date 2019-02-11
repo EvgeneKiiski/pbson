@@ -2,12 +2,14 @@ package pbson.utils
 
 import org.mongodb.scala.bson.BsonValue
 import pbson.{ BsonBiDecoder, BsonDecoder }
-import pbson.BsonError.{ UnexpectedType, UnexpectedValue }
+import pbson.BsonError.{ UnexpectedType, UnexpectedValue, WrappedThrowable }
 
 import scala.collection.JavaConverters._
 import cats._
 import cats.implicits._
 import org.bson.BsonType
+
+import scala.util.Try
 
 
 /**
@@ -32,5 +34,12 @@ trait BsonDecoderUtils {
       seq.traverse(d.apply).map(_.toMap)
     case b => Left(UnexpectedType(b, BsonType.ARRAY))
   }
+
+  final def enumDecoder[E <: Enumeration](enum: E): BsonDecoder[E#Value] = b =>
+    BsonDecoder.stringDecoder(b).flatMap { str =>
+      Try(enum.withName(str))
+        .toEither
+        .leftMap(WrappedThrowable.apply)
+    }
 
 }

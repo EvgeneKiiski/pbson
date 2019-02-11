@@ -7,7 +7,11 @@
 pbson is a BSON library for Scala.
 
 The goal of this library is to create at compile-time the boilerplate necessary to encode and decode of a certain type.
-The pbson provides generic codec derivation using [Shapeless](https://github.com/milessabin/shapeless).    
+The pbson provides generic codec derivation using [Shapeless](https://github.com/milessabin/shapeless).
+This library provides another way encode and decode case classes for 
+[mongo scala driver](https://docs.mongodb.com/ecosystem/drivers/scala/#mongo-scala-driver).
+Decoder instead of throw Exception return ```Either[BsonError, T]```
+    
 
 pbson can derive bson encoder and decoder:
 

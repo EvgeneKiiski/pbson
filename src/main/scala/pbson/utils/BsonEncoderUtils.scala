@@ -17,4 +17,7 @@ trait BsonEncoderUtils {
       BsonArray(t.map(e.apply))
     }
 
+  final def enumEncoder[E <: Enumeration](enum: E): BsonEncoder[E#Value] = e =>
+    BsonEncoder.stringEncoder(e.toString)
+
 }
