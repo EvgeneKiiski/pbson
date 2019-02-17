@@ -25,7 +25,7 @@ trait DerivedBsonEncoderInstances extends LowPriorityDerivedBsonEncoderInstances
                                                              avh: AnyValHelper.Aux[R, U],
                                                              encode: Lazy[BsonEncoder[U]]
                                                             ): DerivedBsonEncoder[A] = new DerivedBsonEncoder[A] {
-    override def apply(t: A): BsonValue = encode.value(avh.unwrap(gen.to(t)))
+    final def apply(t: A): BsonValue = encode.value(avh.unwrap(gen.to(t)))
   }
 
 }

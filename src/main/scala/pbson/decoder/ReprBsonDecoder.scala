@@ -30,12 +30,14 @@ object ReprBsonDecoder extends ReprBsonDecoderInstances {
   implicit final def cpDecoder[K <: Symbol, V, T <: Coproduct : ReprBsonDecoder](implicit
     w: Witness.Aux[K],
     d: Lazy[BsonDecoder[V]]
-  ): ReprBsonDecoder[FieldType[K, V] :+: T] = b =>
-    if (b.get(CoProductType) == BsonString(w.value.name)) {
+  ): ReprBsonDecoder[FieldType[K, V] :+: T] = b => {
+    val coProductTypeField = b.get(CoProductType)
+    if (coProductTypeField != null && coProductTypeField == BsonString(w.value.name)) {
       d.value.apply(b).map(v => Inl(v.asInstanceOf[FieldType[K, V]]))
     } else {
       ReprBsonDecoder[T].apply(b).map(Inr(_))
     }
+  }
 
 }
 

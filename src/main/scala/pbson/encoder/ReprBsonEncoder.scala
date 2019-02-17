@@ -1,6 +1,5 @@
 package pbson.encoder
 
-
 import org.mongodb.scala.bson.{BsonString, BsonValue}
 import pbson.BsonConst._
 import pbson.{BsonEncoder, BsonConst}

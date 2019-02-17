@@ -26,7 +26,7 @@ trait DerivedBsonDecoderInstances extends LowPriorityDerivedBsonDecoderInstances
                                                              avh: AnyValHelper.Aux[R, U],
                                                              decode: Lazy[BsonDecoder[U]]
                                                             ): DerivedBsonDecoder[A] = new DerivedBsonDecoder[A] {
-    override def apply(b: BsonValue): Result[A] = decode.value(b).map(v => gen.from(avh.wrap(v)))
+    final def apply(b: BsonValue): Result[A] = decode.value(b).map(v => gen.from(avh.wrap(v)))
   }
 
 }
@@ -36,7 +36,7 @@ trait LowPriorityDerivedBsonDecoderInstances {
                                       gen: LabelledGeneric.Aux[A, R],
                                       decode: Lazy[ReprBsonDecoder[R]]
                                      ): DerivedBsonDecoder[A] = new DerivedBsonDecoder[A] {
-    override def apply(b: BsonValue): Either[BsonError, A] = {
+    final def apply(b: BsonValue): Either[BsonError, A] = {
       if (b.isDocument) {
         decode.value(b.asDocument()) match {
           case Right(r) => Right(gen.from(r))

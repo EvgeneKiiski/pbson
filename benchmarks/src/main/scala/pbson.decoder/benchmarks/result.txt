@@ -35,3 +35,12 @@ v8
 [info] SpeedTest.cicreSmall   thrpt   10  245.369 ±  3.088  ops/ms
 [info] SpeedTest.manualSmall  thrpt   10  883.856 ± 12.155  ops/ms
 [info] SpeedTest.pbsonSmall   thrpt   10  701.192 ±  8.041  ops/ms
+
+[info] SpeedTest.cicreSmall   thrpt   10  237.258 ± 4.296  ops/ms
+[info] SpeedTest.manualSmall  thrpt   10  945.804 ± 3.212  ops/ms
+[info] SpeedTest.pbsonSmall   thrpt   10  669.983 ± 2.387  ops/ms
+
+v9 pre
+[info] SpeedTest.cicreSmall   thrpt   10  248.738 ±  2.791  ops/ms
+[info] SpeedTest.manualSmall  thrpt   10  971.346 ± 11.840  ops/ms
+[info] SpeedTest.pbsonSmall   thrpt   10  663.758 ±  5.551  ops/ms
