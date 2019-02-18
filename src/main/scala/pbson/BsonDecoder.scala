@@ -2,6 +2,7 @@ package pbson
 
 import org.bson.BsonType
 import org.mongodb.scala.bson.{BsonArray, BsonBoolean, BsonDocument, BsonDouble, BsonInt32, BsonInt64, BsonNull, BsonString, BsonValue}
+import pbson.BsonDecoder.Result
 import pbson.BsonError._
 import pbson.decoder.DerivedBsonDecoder
 import shapeless.Lazy
@@ -12,8 +13,43 @@ import scala.collection.JavaConverters._
 /**
   * @author Evgenii Kiiski 
   */
-abstract class BsonDecoder[A] {
+abstract class BsonDecoder[A] { self =>
   def apply(b: BsonValue): BsonDecoder.Result[A]
+
+  final def map[B](f: A => B): BsonDecoder[B] = new BsonDecoder[B] {
+    override def apply(b: BsonValue): Result[B] = self(b).map(f)
+  }
+
+  final def flatMap[B](f: A => BsonDecoder[B]): BsonDecoder[B] = new BsonDecoder[B] {
+    override def apply(b: BsonValue): Result[B] = self(b) match {
+      case Right(a) => f(a)(b)
+      case l@Left(_) => l.asInstanceOf[Result[B]]
+    }
+  }
+
+  final def handleErrorWith(f: BsonError => BsonDecoder[A]): BsonDecoder[A] = new BsonDecoder[A] {
+    override def apply(b: BsonValue): Result[A] = self(b) match {
+      case r@Right(_) => r
+      case Left(e) => f(e)(b)
+    }
+  }
+
+  final def product[B](fb: BsonDecoder[B]): BsonDecoder[(A, B)] = new BsonDecoder[(A, B)] {
+    override def apply(b: BsonValue): Result[(A, B)] = self(b) match {
+      case Right(a) => fb(b) match {
+        case Right(b) => Right((a, b))
+        case l@Left(_) => l.asInstanceOf[Result[(A, B)]]
+      }
+      case l@Left(_) => l.asInstanceOf[Result[(A, B)]]
+    }
+  }
+
+  final def or[AA >: A](d: => BsonDecoder[AA]): BsonDecoder[AA] = new BsonDecoder[AA] {
+    override def apply(b: BsonValue): Result[AA] = self(b) match {
+      case r@Right(_) => r
+      case Left(_) => d(b)
+    }
+  }
 }
 
 object BsonDecoder extends BsonDecoderInstances {
