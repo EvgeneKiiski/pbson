@@ -27,11 +27,13 @@ lazy val root = (project in file("."))
     libraryDependencies ++= Seq(
       "org.mongodb.scala" %% "mongo-scala-bson" % "2.6.0",
       "com.chuusai" %% "shapeless" % "2.3.3",
-      "org.typelevel" %% "cats-core" % "1.5.0" % Test,
-      "junit" % "junit" % "4.12" % Test,
-      "org.typelevel" %% "discipline" % "0.10.0" % Test,
+      //"junit" % "junit" % "4.12" % Test,
       "org.scalactic" %% "scalactic" % "3.0.5"  % Test,
-      "org.scalatest" %% "scalatest" % "3.0.5" % Test
+      "org.scalatest" %% "scalatest" % "3.0.5" % Test,
+      //"org.typelevel" %% "cats-core" % "1.5.0" % Test,
+      "org.scalacheck" %% "scalacheck" % "1.14.0" % Test,
+      "org.typelevel" %% "cats-laws" % "1.5.0" % Test,
+      "org.typelevel" %% "discipline" % "0.10.0" % Test
     ),
     publishTo := Some(Resolver.file("file",  new File( "repository" )) )
   )

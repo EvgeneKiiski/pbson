@@ -57,6 +57,10 @@ object BsonDecoder extends BsonDecoderInstances {
   type Result[A] = Either[BsonError, A]
 
   @inline final def apply[A](implicit d: BsonDecoder[A]): BsonDecoder[A] = d
+
+  final def pure[A](x: A): BsonDecoder[A] = _ => Right(x)
+
+  final def raiseError[A](e: BsonError): BsonDecoder[A] = _ => Left(e)
 }
 
 

@@ -3,11 +3,11 @@ package pbson.gen
 import java.util.Date
 
 import org.bson.BsonValue
-import org.mongodb.scala.bson.{BsonArray, BsonBinary, BsonBoolean, BsonDateTime, BsonDecimal128, BsonDocument, BsonDouble, BsonInt32, BsonInt64, BsonJavaScript, BsonJavaScriptWithScope, BsonMaxKey, BsonMinKey, BsonNull, BsonObjectId, BsonRegularExpression, BsonString, BsonSymbol, BsonTimestamp, BsonUndefined}
+import org.mongodb.scala.bson._
 import org.scalacheck.Gen
 
 /**
-  * @author Evgenii Kiiski 
+  * @author Evgenii Kiiski
   */
 object AnyBsonGen {
 
