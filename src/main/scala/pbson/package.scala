@@ -1,4 +1,5 @@
-import org.mongodb.scala.bson.{BsonDocument, BsonValue}
+
+import org.bson.BsonValue
 import pbson.BsonError._
 import pbson.utils.{BsonDecoderUtils, BsonEncoderUtils}
 

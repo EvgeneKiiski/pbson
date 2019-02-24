@@ -25,9 +25,10 @@ lazy val root = (project in file("."))
     commonSettings,
     name := "pbson",
     libraryDependencies ++= Seq(
-      "org.mongodb.scala" %% "mongo-scala-bson" % "2.6.0",
+      "org.mongodb" % "bson" % "3.10.1",
       "com.chuusai" %% "shapeless" % "2.3.3",
       //"junit" % "junit" % "4.12" % Test,
+      "org.mongodb.scala" %% "mongo-scala-bson" % "2.6.0" % Test,
       "org.scalactic" %% "scalactic" % "3.0.5"  % Test,
       "org.scalatest" %% "scalatest" % "3.0.5" % Test,
       //"org.typelevel" %% "cats-core" % "1.5.0" % Test,

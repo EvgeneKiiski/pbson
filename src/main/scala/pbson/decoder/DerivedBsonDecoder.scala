@@ -1,11 +1,10 @@
 package pbson.decoder
 
-import org.bson.BsonType
-import org.mongodb.scala.bson.BsonValue
+import org.bson.{BsonType, BsonValue}
 import pbson.BsonDecoder.Result
 import pbson.BsonError.UnexpectedType
 import pbson.utils.AnyValUtils
-import pbson.{ BsonDecoder, BsonError }
+import pbson.{BsonDecoder, BsonError}
 import shapeless._
 
 /**

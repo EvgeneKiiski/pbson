@@ -2,7 +2,6 @@ package pbson.utils
 
 import java.util
 
-import org.mongodb.scala.bson.BsonValue
 
 import scala.util.control.ControlThrowable
 

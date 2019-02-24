@@ -1,14 +1,11 @@
 package pbson
 
-import org.bson.BsonType
-import org.mongodb.scala.bson.{BsonArray, BsonBoolean, BsonDocument, BsonDouble, BsonInt32, BsonInt64, BsonNull, BsonString, BsonValue}
+import org.bson._
 import pbson.BsonDecoder.Result
 import pbson.BsonError._
 import pbson.decoder.DerivedBsonDecoder
 import shapeless.Lazy
 import pbson.utils.TraversableUtils._
-
-import scala.collection.JavaConverters._
 
 /**
   * @author Evgenii Kiiski 

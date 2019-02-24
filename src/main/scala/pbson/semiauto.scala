@@ -1,7 +1,5 @@
 package pbson
 
-import org.mongodb.scala.bson.{ BsonArray, BsonNull, BsonString, BsonValue }
-import pbson.BsonError.UnexpectedType
 import pbson.decoder.DerivedBsonDecoder
 import pbson.encoder.DerivedBsonEncoder
 import shapeless._

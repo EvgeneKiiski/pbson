@@ -1,6 +1,6 @@
 package pbson
 
-import org.mongodb.scala.bson.BsonValue
+import org.bson.BsonValue
 import shapeless.{Lazy, Strict, Unwrapped}
 
 /**

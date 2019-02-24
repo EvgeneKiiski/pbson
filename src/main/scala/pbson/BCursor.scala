@@ -1,7 +1,6 @@
 package pbson
 
-import org.bson.{BsonType, BsonUndefined}
-import org.mongodb.scala.bson.{BsonArray, BsonValue}
+import org.bson.{BsonArray, BsonType, BsonUndefined, BsonValue}
 import pbson.BCursor.{BCursorArray, BCursorError, BCursorValue}
 import pbson.BsonError.{ArrayValueNotFound, FieldNotFound, UnexpectedType}
 

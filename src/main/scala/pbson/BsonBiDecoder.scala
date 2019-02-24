@@ -1,9 +1,8 @@
 package pbson
 
-import org.bson.BsonType
-import org.mongodb.scala.bson.BsonValue
+import org.bson.{BsonType, BsonValue}
 import pbson.BsonError.UnexpectedType
-import shapeless.{ Lazy, Strict, Unwrapped }
+import shapeless.{Lazy, Strict, Unwrapped}
 
 /**
   * @author Evgenii Kiiski 

@@ -1,7 +1,6 @@
 package pbson
 
-import org.bson.BsonType
-import org.mongodb.scala.bson.BsonValue
+import org.bson.{BsonType, BsonValue}
 
 /**
   * @author Evgenii Kiiski 
