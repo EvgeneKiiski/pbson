@@ -12,6 +12,8 @@ lazy val commonSettings = Seq(
     "-Xfatal-warnings",  
     "-deprecation",
     "-unchecked",
+//    "-opt:l:inline",
+//    "-opt-inline-from:**",
     "-Ypartial-unification",
     "-language:implicitConversions",
     "-language:higherKinds",

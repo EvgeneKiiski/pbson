@@ -4,7 +4,8 @@ import pbson._
 import pbson.semiauto._
 
 /**
-  * @author Evgenii Kiiski 
+  * @author Evgenii Kiiski
+  * @see [[https://evgenekiiski.github.io/pbson/]]
   */
 object CaseClassExample extends App {
 

@@ -5,6 +5,7 @@ import pbson.semiauto._
 
 /**
   * @author Eugene Kiyski
+  * @see [[https://evgenekiiski.github.io/pbson/]]
   */
 object SeqExample extends App {
 
