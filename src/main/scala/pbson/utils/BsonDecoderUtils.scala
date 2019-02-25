@@ -1,11 +1,10 @@
 package pbson.utils
 
-import org.mongodb.scala.bson.BsonValue
-import pbson.{ BsonBiDecoder, BsonDecoder }
-import pbson.BsonError.{ UnexpectedType, UnexpectedValue, WrappedThrowable }
+import pbson.{BsonBiDecoder, BsonDecoder}
+import pbson.BsonError.{UnexpectedType, UnexpectedValue, WrappedThrowable}
 
 import scala.collection.JavaConverters._
-import org.bson.BsonType
+import org.bson.{BsonType, BsonValue}
 import pbson.utils.TraversableUtils.traverse2Map
 
 import scala.util.Try

@@ -1,9 +1,8 @@
 package pbson.encoder
 
-
-import org.mongodb.scala.bson.{BsonString, BsonValue}
+import org.bson.{BsonString, BsonValue}
 import pbson.BsonConst._
-import pbson.{BsonEncoder, BsonConst}
+import pbson.{BsonConst, BsonEncoder}
 import shapeless._
 import shapeless.labelled.FieldType
 
@@ -40,7 +39,7 @@ object ReprBsonEncoder {
     case Inl(head) =>
       e.value.apply(head.asInstanceOf[V])
         .asDocument()
-        .append(CoProductType, BsonString(w.value.name))
+        .append(CoProductType, new BsonString(w.value.name))
         .entrySet()
         .asScala
         .map(e => (e.getKey, e.getValue))

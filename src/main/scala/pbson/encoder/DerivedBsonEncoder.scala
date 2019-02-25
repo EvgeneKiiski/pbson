@@ -1,10 +1,11 @@
 package pbson.encoder
 
-import org.mongodb.scala.bson.{BsonDocument, BsonNull, BsonValue}
+import org.bson.{BsonDocument, BsonElement, BsonType, BsonValue}
 import pbson.BsonEncoder
 import pbson.utils.AnyValUtils
 import shapeless._
 
+import scala.collection.JavaConverters._
 import scala.language.experimental.macros
 
 /**
@@ -25,7 +26,7 @@ trait DerivedBsonEncoderInstances extends LowPriorityDerivedBsonEncoderInstances
                                                              avh: AnyValHelper.Aux[R, U],
                                                              encode: Lazy[BsonEncoder[U]]
                                                             ): DerivedBsonEncoder[A] = new DerivedBsonEncoder[A] {
-    override def apply(t: A): BsonValue = encode.value(avh.unwrap(gen.to(t)))
+    final def apply(t: A): BsonValue = encode.value(avh.unwrap(gen.to(t)))
   }
 
 }
@@ -34,15 +35,19 @@ trait LowPriorityDerivedBsonEncoderInstances {
 
   implicit final def deriveEncoder[A, R](implicit
                                          gen: LabelledGeneric.Aux[A, R],
+
                                          encode: Lazy[ReprBsonEncoder[R]]
                                         ): DerivedBsonEncoder[A] = new DerivedBsonEncoder[A] {
     final def apply(t: A): BsonValue = {
-      BsonDocument(
-        encode.value.apply(gen.to(t)).filterNot {
-          case (_, v) if v == BsonNull() => true
-          case _ => false
+      val doc = new BsonDocument()
+      val iterator = encode.value.apply(gen.to(t)).iterator
+      while (iterator.hasNext) {
+        val (k, v) = iterator.next()
+        if (v.getBsonType != BsonType.NULL) {
+          doc.append(k, v)
         }
-      )
+      }
+      doc
     }
   }
 

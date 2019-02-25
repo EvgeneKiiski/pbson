@@ -1,7 +1,6 @@
 package pbson.decoder
 
 import org.bson.BsonDocument
-import org.mongodb.scala.bson.BsonString
 import pbson.BsonError.{ADTValueNotFound, FieldNotFound}
 import pbson.BsonConst._
 import pbson.BsonDecoder.BsonDecoderNotNull
@@ -28,25 +27,29 @@ object ReprBsonDecoder extends ReprBsonDecoderInstances {
   implicit val cnilDecoder: ReprBsonDecoder[CNil] = _ => Left(ADTValueNotFound)
 
   implicit final def cpDecoder[K <: Symbol, V, T <: Coproduct : ReprBsonDecoder](implicit
-    w: Witness.Aux[K],
-    d: Lazy[BsonDecoder[V]]
-  ): ReprBsonDecoder[FieldType[K, V] :+: T] = b =>
-    if (b.get(CoProductType) == BsonString(w.value.name)) {
+                                                                                 w: Witness.Aux[K],
+                                                                                 d: Lazy[BsonDecoder[V]]
+                                                                                ): ReprBsonDecoder[FieldType[K, V] :+: T] = b => {
+    val coProductTypeField = b.get(CoProductType)
+    if (coProductTypeField != null &&
+          coProductTypeField.isString &&
+          coProductTypeField.asString().getValue == w.value.name) {
       d.value.apply(b).map(v => Inl(v.asInstanceOf[FieldType[K, V]]))
     } else {
       ReprBsonDecoder[T].apply(b).map(Inr(_))
     }
+  }
 
 }
 
 trait ReprBsonDecoderInstances extends LowPriorityReprBsonDecoderInstances {
 
   implicit final def hlistNotNullDecoder[K <: Symbol, V, U, T <: HList](implicit
-    w: Witness.Aux[K],
-    uw: Strict[Unwrapped.Aux[V, U]],
-    d: Lazy[BsonDecoderNotNull[U]],
-    rt: Strict[ReprBsonDecoder[T]]
-  ): ReprBsonDecoder[FieldType[K, V] :: T] = b => {
+                                                                        w: Witness.Aux[K],
+                                                                        uw: Strict[Unwrapped.Aux[V, U]],
+                                                                        d: Lazy[BsonDecoderNotNull[U]],
+                                                                        rt: Strict[ReprBsonDecoder[T]]
+                                                                       ): ReprBsonDecoder[FieldType[K, V] :: T] = b => {
     val value = b.get(w.value.name)
     if (value == null) {
       Left(FieldNotFound(w.value.name))
@@ -62,11 +65,11 @@ trait ReprBsonDecoderInstances extends LowPriorityReprBsonDecoderInstances {
 trait LowPriorityReprBsonDecoderInstances {
 
   implicit final def hlistDecoder[K <: Symbol, V, U, T <: HList](implicit
-    w: Witness.Aux[K],
-    uw: Strict[Unwrapped.Aux[V, U]],
-    d: Lazy[BsonDecoder[U]],
-    rt: Strict[ReprBsonDecoder[T]]
-  ): ReprBsonDecoder[FieldType[K, V] :: T] = b => {
+                                                                 w: Witness.Aux[K],
+                                                                 uw: Strict[Unwrapped.Aux[V, U]],
+                                                                 d: Lazy[BsonDecoder[U]],
+                                                                 rt: Strict[ReprBsonDecoder[T]]
+                                                                ): ReprBsonDecoder[FieldType[K, V] :: T] = b => {
     val value = b.get(w.value.name)
     d.value.apply(value)
       .map(v => uw.value.wrap(v)).asInstanceOf[Either[BsonError, FieldType[K, V]]]

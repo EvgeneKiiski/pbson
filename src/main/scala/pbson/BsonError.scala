@@ -1,7 +1,6 @@
 package pbson
 
-import org.bson.BsonType
-import org.mongodb.scala.bson.BsonValue
+import org.bson.{BsonType, BsonValue}
 
 /**
   * @author Evgenii Kiiski 
@@ -40,6 +39,10 @@ object BsonError {
 
   final case class ValidateError(s: String) extends BsonError {
     override def toString: String = s"Invalid value $s"
+  }
+
+  final case class ArrayValueNotFound() extends BsonError {
+    override def toString: String = s"BsonArray value not found"
   }
 
 }

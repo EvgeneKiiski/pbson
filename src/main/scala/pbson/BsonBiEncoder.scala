@@ -1,6 +1,6 @@
 package pbson
 
-import org.mongodb.scala.bson.{BsonDocument, BsonValue}
+import org.bson.{BsonDocument, BsonValue}
 import shapeless.{Lazy, Strict, Unwrapped}
 
 import scala.collection.JavaConverters._
@@ -22,15 +22,27 @@ object BsonBiEncoder {
     case (k, v) =>
       val key = ke.value.apply(uw.value.unwrap(k))
       val value = ve.value.apply(v)
-      BsonDocument(value2doc(value, BsonConst.Value).asScala ++ value2doc(key, BsonConst.Key).asScala)
-  }
-
-  private def value2doc(b: BsonValue, key: => String): BsonDocument = {
-    if (b.isDocument) {
-      b.asDocument()
-    } else {
-      BsonDocument(key -> b)
-    }
+      if (key.isDocument && value.isDocument) {
+        val doc = key.asDocument()
+        val iterator = value.asDocument().entrySet().iterator()
+        while (iterator.hasNext) {
+          val v = iterator.next()
+          doc.append(v.getKey, v.getValue)
+        }
+        doc
+      } else if (key.isDocument && !value.isDocument) {
+        val doc = key.asDocument()
+        doc.append(BsonConst.Value, value)
+        doc
+      } else if (!key.isDocument && value.isDocument) {
+        val doc = value.asDocument()
+        doc.append(BsonConst.Key, key)
+        doc
+      } else {
+        val doc = new BsonDocument(BsonConst.Key, key)
+        doc.append(BsonConst.Value, value)
+        doc
+      }
   }
 
 }

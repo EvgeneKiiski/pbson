@@ -5,6 +5,7 @@ import pbson.semiauto._
 
 /**
   * @author Eugene Kiyski
+  * [[https://evgenekiiski.github.io/pbson/]]
   */
 object MapExample extends App {
 
