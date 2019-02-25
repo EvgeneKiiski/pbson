@@ -48,7 +48,7 @@ The current stable version is 0.0.9
 If you're using SBT, add the following line to your build file:
 
 ```scala
-libraryDependencies += "ru.twistedlogic" %% "pbson" % "0.0.9"
+libraryDependencies += "ru.twistedlogic" %% "pbson" % "0.0.10"
 ```
 
 ## Resources
