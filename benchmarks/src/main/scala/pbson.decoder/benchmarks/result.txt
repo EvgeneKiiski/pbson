@@ -44,3 +44,8 @@ v9 pre
 [info] SpeedTest.cicreSmall   thrpt   10  248.738 ±  2.791  ops/ms
 [info] SpeedTest.manualSmall  thrpt   10  971.346 ± 11.840  ops/ms
 [info] SpeedTest.pbsonSmall   thrpt   10  663.758 ±  5.551  ops/ms
+
+v9
+[info] SpeedTest.cicreSmall   thrpt   10  235.474 ±  1.193  ops/ms
+[info] SpeedTest.manualSmall  thrpt   10  933.742 ±  4.876  ops/ms
+[info] SpeedTest.pbsonSmall   thrpt   10  749.722 ± 11.190  ops/ms
