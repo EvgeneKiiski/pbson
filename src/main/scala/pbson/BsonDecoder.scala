@@ -69,8 +69,10 @@ trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
 
   abstract class BsonDecoderNotNull[A] extends BsonDecoder[A]
 
-  implicit final val unitDecoder: BsonDecoderNotNull[Unit] = { b =>
-    if (b.getBsonType == BsonType.NULL) {
+  implicit final val unitDecoder: BsonDecoder[Unit] = { b =>
+    if(b == null) {
+      Right(())
+    } else if (b.getBsonType == BsonType.NULL) {
       Right(())
     } else {
       Left(UnexpectedType(b, BsonType.NULL))

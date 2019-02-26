@@ -17,10 +17,10 @@ import scala.collection.immutable
 abstract class BsonEncoder[A] { self =>
   def apply(t: A): BsonValue
 
-  final def contramap[B](f: B => A): BsonEncoder[B] = (a: B) => self(f(a))
+  @inline final def contramap[B](f: B => A): BsonEncoder[B] = (a: B) => self(f(a))
 
-  final def contramapOrNull[B](f: B => A): BsonEncoder[B] = (a: B) =>
-    if(a == null) BSON_NULL else self(f(a))
+  @inline final def contramapOrNull[B](f: B => A): BsonEncoder[B] = (a: B) =>
+    if(a == null) BSON_NULL else contramap(f)(a)
 }
 
 object BsonEncoder extends BsonEncoderInstances {

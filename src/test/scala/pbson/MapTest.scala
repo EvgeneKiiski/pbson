@@ -43,6 +43,10 @@ class MapTest extends WordSpec with ParallelTestExecution with Matchers {
       val bson = BsonDocument()
       bson.fromBson[TestCase] shouldEqual Right(TestCase(Map.empty))
     }
+    "decode map not document" in {
+      val bson = BsonString("343")
+      bson.fromBson[TestCase] shouldEqual Left(UnexpectedType(BsonString("343"), BsonType.DOCUMENT))
+    }
   }
 
   "Map simple -> simple as array" should {
@@ -75,6 +79,120 @@ class MapTest extends WordSpec with ParallelTestExecution with Matchers {
           BsonDocument("_k" -> BsonString("23"), "_v" -> BsonString("45"))
         ))
       bson.fromBson[TestCase] shouldEqual Right(TestCase(Map("45" -> "34", "23" -> "45")))
+    }
+    "decode map empty" in {
+      val bson = BsonDocument()
+      bson.fromBson[TestCase] shouldEqual Right(TestCase(Map.empty))
+    }
+    "decode map invalid key" in {
+      val bson = BsonDocument(
+        "a" -> BsonArray(
+          BsonDocument("k" -> BsonString("45"), "_v" -> BsonString("34")),
+          BsonDocument("_k" -> BsonString("23"), "_v" -> BsonString("45"))
+        ))
+      bson.fromBson[TestCase].isLeft shouldEqual true
+    }
+    "decode map invalid type" in {
+      val bson = BsonDocument(
+        "a" -> BsonString("2"))
+      bson.fromBson[TestCase] shouldEqual Left(UnexpectedType(BsonString("2"), BsonType.ARRAY))
+    }
+    "decode map invalid type inarray" in {
+      val bson = BsonDocument(
+        "a" -> BsonArray(BsonString("2")))
+      bson.fromBson[TestCase] shouldEqual Left(UnexpectedType(BsonString("2"), BsonType.DOCUMENT))
+    }
+  }
+
+  "Map simple -> case as array" should {
+
+    case class Nested(sd: String)
+    case class TestCase(a: Map[String, Nested])
+
+    implicit val nestedEncoder: BsonEncoder[Nested] = deriveEncoder
+    implicit val nestedDecoder: BsonDecoder[Nested] = deriveDecoder
+
+    implicit val mapEncoder: BsonEncoder[Map[String, Nested]] = map2ArrayEncoder
+    implicit val mapDecoder: BsonDecoder[Map[String, Nested]] = array2MapDecoder
+
+    implicit val testCaseEncoder: BsonEncoder[TestCase] = deriveEncoder
+    implicit val testCaseDecoder: BsonDecoder[TestCase] = deriveDecoder
+
+
+    "encode map" in {
+      val test = TestCase(Map("45" -> Nested("34"), "23" -> Nested("45")))
+      val bson = test.toBson
+      bson.asDocument().get("a") shouldEqual BsonArray(
+        BsonDocument("_k" -> BsonString("45"), "sd" -> BsonString("34")),
+        BsonDocument("_k" -> BsonString("23"), "sd" -> BsonString("45"))
+      )
+    }
+    "encode map empty" in {
+      val test = TestCase(Map.empty)
+      val bson = test.toBson
+      bson.asDocument().containsKey("a") shouldEqual false
+    }
+    "decode map" in {
+      val bson = BsonDocument(
+        "a" -> BsonArray(
+          BsonDocument("_k" -> BsonString("45"), "sd" -> BsonString("34")),
+          BsonDocument("_k" -> BsonString("23"), "sd" -> BsonString("45"))
+        ))
+      bson.fromBson[TestCase] shouldEqual Right(TestCase(Map("45" -> Nested("34"), "23" -> Nested("45"))))
+    }
+    "decode map empty" in {
+      val bson = BsonDocument()
+      bson.fromBson[TestCase] shouldEqual Right(TestCase(Map.empty))
+    }
+    "decode map invalid key" in {
+      val bson = BsonDocument(
+        "a" -> BsonArray(
+          BsonDocument("k" -> BsonString("45"), "_v" -> BsonString("34")),
+          BsonDocument("_k" -> BsonString("23"), "_v" -> BsonString("45"))
+        ))
+      bson.fromBson[TestCase].isLeft shouldEqual true
+    }
+    "decode map invalid type" in {
+      val bson = BsonDocument(
+        "a" -> BsonString("2"))
+      bson.fromBson[TestCase] shouldEqual Left(UnexpectedType(BsonString("2"), BsonType.ARRAY))
+    }
+  }
+
+  "Map case -> simple as array" should {
+    case class Nested(sd: String)
+    case class TestCase(a: Map[Nested, String])
+
+    implicit val nestedEncoder: BsonEncoder[Nested] = deriveEncoder
+    implicit val nestedDecoder: BsonDecoder[Nested] = deriveDecoder
+
+    implicit val mapEncoder: BsonEncoder[Map[Nested, String]] = map2ArrayEncoder
+    implicit val mapDecoder: BsonDecoder[Map[Nested, String]] = array2MapDecoder
+
+    implicit val testCaseEncoder: BsonEncoder[TestCase] = deriveEncoder
+    implicit val testCaseDecoder: BsonDecoder[TestCase] = deriveDecoder
+
+
+    "encode map" in {
+      val test = TestCase(Map(Nested("45") -> "34", Nested("23") -> "45"))
+      val bson = test.toBson
+      bson.asDocument().get("a") shouldEqual BsonArray(
+        BsonDocument("sd" -> BsonString("45"), "_v" -> BsonString("34")),
+        BsonDocument("sd" -> BsonString("23"), "_v" -> BsonString("45"))
+      )
+    }
+    "encode map empty" in {
+      val test = TestCase(Map.empty)
+      val bson = test.toBson
+      bson.asDocument().containsKey("a") shouldEqual false
+    }
+    "decode map" in {
+      val bson = BsonDocument(
+        "a" -> BsonArray(
+          BsonDocument("sd" -> BsonString("45"), "_v" -> BsonString("34")),
+          BsonDocument("sd" -> BsonString("23"), "_v" -> BsonString("45"))
+        ))
+      bson.fromBson[TestCase] shouldEqual Right(TestCase(Map(Nested("45") -> "34", Nested("23") -> "45")))
     }
     "decode map empty" in {
       val bson = BsonDocument()
@@ -139,6 +257,11 @@ class MapTest extends WordSpec with ParallelTestExecution with Matchers {
         ))
       bson.fromBson[TestCase] shouldEqual Left(FieldNotFound("sd"))
     }
+    "decode map invalid type" in {
+      val bson = BsonDocument(
+        "a" -> BsonString("2"))
+      bson.fromBson[TestCase] shouldEqual Left(UnexpectedType(BsonString("2"), BsonType.DOCUMENT))
+    }
   }
 
   "Map case -> case" should {
@@ -196,6 +319,11 @@ class MapTest extends WordSpec with ParallelTestExecution with Matchers {
     "decode map empty" in {
       val bson = BsonDocument()
       bson.fromBson[TestCase] shouldEqual Right(TestCase(Map.empty))
+    }
+    "decode map invalid type" in {
+      val bson = BsonDocument(
+        "a" -> BsonString("2"))
+      bson.fromBson[TestCase] shouldEqual Left(UnexpectedType(BsonString("2"), BsonType.ARRAY))
     }
   }
 

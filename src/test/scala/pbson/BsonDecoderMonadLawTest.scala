@@ -18,7 +18,7 @@ import pbson.gen.AnyBsonGen
   */
 class BsonDecoderMonadLawTest extends FunSuite with Discipline {
 
-  implicit val monad = new MonadError[BsonDecoder, BsonError] {
+  implicit val monad = new MonadError[BsonDecoder, BsonError] with Alternative[BsonDecoder] {
 
     override def flatMap[A, B](fa: BsonDecoder[A])(f: A => BsonDecoder[B]): BsonDecoder[B] =
       fa.flatMap(f)
@@ -34,6 +34,10 @@ class BsonDecoderMonadLawTest extends FunSuite with Discipline {
       fa.handleErrorWith(f)
 
     override def pure[A](x: A): BsonDecoder[A] = BsonDecoder.pure(x)
+
+    override def empty[A]: BsonDecoder[A] = BsonDecoder.raiseError(BsonError.Error)
+
+    override def combineK[A](x: BsonDecoder[A], y: BsonDecoder[A]): BsonDecoder[A] = x.or(y)
   }
 
   implicit val int2intDecoder: BsonDecoder[Int => Int] = new BsonDecoder[Int => Int] {
@@ -47,7 +51,11 @@ class BsonDecoderMonadLawTest extends FunSuite with Discipline {
   implicit def eqBsonDecoder[T](implicit t: Eq[T]): Eq[BsonDecoder[T]] = new Eq[BsonDecoder[T]] {
     override def eqv(x: BsonDecoder[T], y: BsonDecoder[T]): Boolean = {
       val bson: BsonValue = AnyBsonGen.anyBsonGen.sample.get
-      x(bson) == y(bson)
+      (x(bson), y(bson)) match {
+        case (Right(xx), Right(yy)) => xx == yy
+        case (Left(_), Left(_)) => true
+        case _ => false
+      }
     }
   }
 
@@ -62,6 +70,9 @@ class BsonDecoderMonadLawTest extends FunSuite with Discipline {
     override def eqv(x: Int, y: Int): Boolean = x == y
   }
 
-  checkAll("BsonDecoder[Int]", MonadErrorTests[BsonDecoder, BsonError].monad[Int, Int, Int])
+  checkAll("BsonDecoder[Int] MonadErrorTests", MonadErrorTests[BsonDecoder, BsonError].monad[Int, Int, Int])
+
+  checkAll("BsonDecoder[Int] AlternativeTests", AlternativeTests[BsonDecoder].alternative[Int, Int, Int])
+
 
 }

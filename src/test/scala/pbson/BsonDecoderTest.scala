@@ -171,6 +171,63 @@ class BsonDecoderTest extends WordSpec with Matchers with Checkers {
       v.asString().getValue.length equals 36
       v.fromBson[UUID].isLeft shouldEqual true
     }
+    "invalid value int" in {
+      val v: BsonValue = BsonInt32(12)
+      v.fromBson[UUID].isLeft shouldEqual true
+    }
+  }
+
+  "BsonDecoder" should {
+    "handleErrorWith left" in {
+      val decoder = new BsonDecoder[Int] {
+        override def apply(b: BsonValue): BsonDecoder.Result[Int] = Left(BsonError.Error)
+      }
+      val f: BsonError => BsonDecoder[Int] = _ => _ => Right(2)
+      decoder.handleErrorWith(f)(BsonString("1")) shouldEqual Right(2)
+    }
+    "handleErrorWith right" in {
+      val decoder = new BsonDecoder[Int] {
+        override def apply(b: BsonValue): BsonDecoder.Result[Int] = Right(5)
+      }
+      val f: BsonError => BsonDecoder[Int] = _ => _ => Right(2)
+      decoder.handleErrorWith(f)(BsonString("1")) shouldEqual Right(5)
+    }
+    "product right, right" in {
+      val decoder1 = new BsonDecoder[Int] {
+        override def apply(b: BsonValue): BsonDecoder.Result[Int] = Right(5)
+      }
+      val decoder2 = new BsonDecoder[Int] {
+        override def apply(b: BsonValue): BsonDecoder.Result[Int] = Right(8)
+      }
+      decoder1.product(decoder2)(BsonString("1")) shouldEqual Right((5, 8))
+    }
+    "product right, left" in {
+      val decoder1 = new BsonDecoder[Int] {
+        override def apply(b: BsonValue): BsonDecoder.Result[Int] = Right(5)
+      }
+      val decoder2 = new BsonDecoder[Int] {
+        override def apply(b: BsonValue): BsonDecoder.Result[Int] = Left(BsonError.Error)
+      }
+      decoder1.product(decoder2)(BsonString("1")) shouldEqual Left(BsonError.Error)
+    }
+    "product left, right" in {
+      val decoder1 = new BsonDecoder[Int] {
+        override def apply(b: BsonValue): BsonDecoder.Result[Int] = Left(BsonError.Error)
+      }
+      val decoder2 = new BsonDecoder[Int] {
+        override def apply(b: BsonValue): BsonDecoder.Result[Int] = Right(8)
+      }
+      decoder1.product(decoder2)(BsonString("1")) shouldEqual Left(BsonError.Error)
+    }
+    "product left, left" in {
+      val decoder1 = new BsonDecoder[Int] {
+        override def apply(b: BsonValue): BsonDecoder.Result[Int] = Left(BsonError.Error)
+      }
+      val decoder2 = new BsonDecoder[Int] {
+        override def apply(b: BsonValue): BsonDecoder.Result[Int] = Left(BsonError.UnexpectedEmptyString)
+      }
+      decoder1.product(decoder2)(BsonString("1")) shouldEqual Left(BsonError.Error)
+    }
   }
 
 }

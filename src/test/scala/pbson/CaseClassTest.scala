@@ -38,6 +38,17 @@ class CaseClassTest extends WordSpec with Matchers {
         val bson = test.toBson
         bson.fromBson[TestCase] shouldEqual Right(test)
       }
+      "simple example with unit" in {
+        case class TestCase(a: Unit, b: Option[String], id: MyId)
+
+        implicit val testCaseEncoder: BsonEncoder[TestCase] = deriveEncoder
+        implicit val testCaseDecoder: BsonDecoder[TestCase] = deriveDecoder
+
+        val test = TestCase((), Some("45"), MyId("000"))
+
+        val bson = test.toBson
+        bson.fromBson[TestCase] shouldEqual Right(test)
+      }
       "invalid type" in {
         case class TestCase(a: Int, b: Option[String])
 
