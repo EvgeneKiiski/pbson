@@ -16,7 +16,7 @@ trait BsonEncoderUtils {
 
   final def map2ArrayEncoder[K, V](implicit e: BsonBiEncoder[K, V]): BsonEncoder[Map[K, V]] = t =>
     if (t.isEmpty) {
-      BsonEncoder.BSON_NULL
+      BsonEncoder.BSON_UNDEFINED
     } else {
       val list = new util.ArrayList[BsonValue](t.map(e.apply).asJavaCollection)
       new BsonArray(list)

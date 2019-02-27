@@ -2,7 +2,8 @@ package pbson
 
 import java.util.UUID
 
-import org.mongodb.scala.bson.{ BsonBoolean, BsonDouble, BsonInt32, BsonInt64, BsonNull, BsonString }
+import org.bson.types.Decimal128
+import org.mongodb.scala.bson.{ BsonBoolean, BsonDateTime, BsonDecimal128, BsonDouble, BsonInt32, BsonInt64, BsonNull, BsonString }
 import org.scalatest.{ Matchers, ParallelTestExecution, WordSpec }
 
 import scala.xml.Null
@@ -176,6 +177,28 @@ class BsonEncoderTest extends WordSpec with ParallelTestExecution with Matchers 
     "same value" in {
       val v : UUID = UUID.randomUUID()
       v.toBson shouldEqual BsonString(v.toString)
+    }
+  }
+
+  "Decimal128 encode" should {
+    "same value" in {
+      val v : Decimal128 = Decimal128.parse("5.56")
+      v.toBson shouldEqual BsonDecimal128(5.56)
+    }
+    "null value" in {
+      val v : Decimal128 = null
+      v.toBson.isNull shouldEqual true
+    }
+  }
+
+  "java.util.Date encode" should {
+    "same value" in {
+      val v : java.util.Date = new java.util.Date()
+      v.toBson shouldEqual BsonDateTime(v.getTime)
+    }
+    "null value" in {
+      val v : java.util.Date = null
+      v.toBson.isNull shouldEqual true
     }
   }
 

@@ -4,6 +4,7 @@ import java.util
 import java.util.UUID
 
 import org.bson._
+import org.bson.types.Decimal128
 import pbson.BsonEncoder.BSON_NULL
 import pbson.encoder.DerivedBsonEncoder
 import shapeless.Lazy
@@ -28,6 +29,8 @@ object BsonEncoder extends BsonEncoderInstances {
   @inline final def apply[A](implicit e: BsonEncoder[A]): BsonEncoder[A] = e
 
   private[pbson] val BSON_NULL = new BsonNull()
+
+  private[pbson] val BSON_UNDEFINED = new BsonUndefined()
 
 }
 
@@ -77,28 +80,34 @@ trait BsonEncoderInstances extends LowPriorityBsonEncoderInstances {
 
   implicit final val uuidEncoder: BsonEncoder[UUID] = u => new BsonString(u.toString)
 
+  implicit final val decimal128Encoder: BsonEncoder[Decimal128] = s =>
+    if(s == null) BSON_NULL else new BsonDecimal128(s)
+
+  implicit final val javaDateEncoder: BsonEncoder[java.util.Date] = d =>
+    if(d == null) BSON_NULL else new BsonDateTime(d.getTime)
+
   implicit final def optionEncoder[A](implicit e: BsonEncoder[A]): BsonEncoder[Option[A]] = {
     case Some(v) => e(v)
-    case None => BSON_NULL
+    case None => BSON_UNDEFINED
   }
 
   implicit final def seqEncoder[A](implicit e: BsonEncoder[A]): BsonEncoder[Seq[A]] = t =>
     if (t.isEmpty) {
-      BSON_NULL
+      BSON_UNDEFINED
     } else {
       new BsonArray(t.map(e.apply).asJava)
     }
 
   implicit final def listEncoder[A](implicit e: BsonEncoder[A]): BsonEncoder[List[A]] = t =>
     if (t.isEmpty) {
-      BSON_NULL
+      BSON_UNDEFINED
     } else {
       new BsonArray(t.map(e.apply).asJava)
     }
 
   implicit final def setEncoder[A](implicit e: BsonEncoder[A]): BsonEncoder[Set[A]] = t =>
     if (t.isEmpty) {
-      BSON_NULL
+      BSON_UNDEFINED
     } else {
       val set: util.Set[BsonValue] = t.map(e.apply).asJava
       val list = new util.ArrayList[BsonValue](set)
@@ -107,7 +116,7 @@ trait BsonEncoderInstances extends LowPriorityBsonEncoderInstances {
 
   implicit final def vectorEncoder[A](implicit e: BsonEncoder[A]): BsonEncoder[Vector[A]] = t =>
     if (t.isEmpty) {
-      BSON_NULL
+      BSON_UNDEFINED
     } else {
       new BsonArray(t.map(e.apply).asJava)
     }
@@ -116,7 +125,7 @@ trait BsonEncoderInstances extends LowPriorityBsonEncoderInstances {
                                               e: BsonMapEncoder[K, V]
                                              ): BsonEncoder[Map[K, V]] = t =>
     if (t.isEmpty) {
-      BSON_NULL
+      BSON_UNDEFINED
     } else {
       val doc = new BsonDocument()
       doc.putAll(t.map(e.apply).asJava)

@@ -15,7 +15,7 @@ object BsonDecoderNotSupportSpecification extends Properties("Not support types 
     BsonDecoder[Unit].apply(v).left.value.isInstanceOf[BsonError.UnexpectedType]
   }
 
-  property("String") = forAll(AnyBsonGen.anyBsonGen.filterNot(_.isString)) { v: BsonValue =>
+  property("String") = forAll(AnyBsonGen.anyBsonGen.filterNot(b => b.isString || b.isNull)) { v: BsonValue =>
     BsonDecoder[String].apply(v).left.value.isInstanceOf[BsonError.UnexpectedType]
   }
 
@@ -23,7 +23,7 @@ object BsonDecoderNotSupportSpecification extends Properties("Not support types 
     BsonDecoder[Char].apply(v).left.value.isInstanceOf[BsonError.UnexpectedType]
   }
 
-  property("java.lang.Character") = forAll(AnyBsonGen.anyBsonGen.filterNot(_.isString)) { v: BsonValue =>
+  property("java.lang.Character") = forAll(AnyBsonGen.anyBsonGen.filterNot(b => b.isString || b.isNull)) { v: BsonValue =>
     BsonDecoder[java.lang.Character].apply(v).left.value.isInstanceOf[BsonError.UnexpectedType]
   }
 
@@ -31,7 +31,7 @@ object BsonDecoderNotSupportSpecification extends Properties("Not support types 
     BsonDecoder[Short].apply(v).left.value.isInstanceOf[BsonError.UnexpectedType]
   }
 
-  property("java.lang.Short") = forAll(AnyBsonGen.anyBsonGen.filterNot(_.isInt32)) { v: BsonValue =>
+  property("java.lang.Short") = forAll(AnyBsonGen.anyBsonGen.filterNot(b => b.isInt32 || b.isNull)) { v: BsonValue =>
     BsonDecoder[java.lang.Short].apply(v).left.value.isInstanceOf[BsonError.UnexpectedType]
   }
 
@@ -39,7 +39,7 @@ object BsonDecoderNotSupportSpecification extends Properties("Not support types 
     BsonDecoder[Int].apply(v).left.value.isInstanceOf[BsonError.UnexpectedType]
   }
 
-  property("java.lang.Integer") = forAll(AnyBsonGen.anyBsonGen.filterNot(_.isInt32)) { v: BsonValue =>
+  property("java.lang.Integer") = forAll(AnyBsonGen.anyBsonGen.filterNot(b => b.isInt32 || b.isNull)) { v: BsonValue =>
     BsonDecoder[java.lang.Integer].apply(v).left.value.isInstanceOf[BsonError.UnexpectedType]
   }
 
@@ -47,7 +47,7 @@ object BsonDecoderNotSupportSpecification extends Properties("Not support types 
     BsonDecoder[Long].apply(v).left.value.isInstanceOf[BsonError.UnexpectedType]
   }
 
-  property("java.lang.Long") = forAll(AnyBsonGen.anyBsonGen.filterNot(_.isInt64)) { v: BsonValue =>
+  property("java.lang.Long") = forAll(AnyBsonGen.anyBsonGen.filterNot(b => b.isInt64 || b.isNull)) { v: BsonValue =>
     BsonDecoder[java.lang.Long].apply(v).left.value.isInstanceOf[BsonError.UnexpectedType]
   }
 
@@ -55,7 +55,7 @@ object BsonDecoderNotSupportSpecification extends Properties("Not support types 
     BsonDecoder[Float].apply(v).left.value.isInstanceOf[BsonError.UnexpectedType]
   }
 
-  property("java.lang.Float") = forAll(AnyBsonGen.anyBsonGen.filterNot(_.isDouble)) { v: BsonValue =>
+  property("java.lang.Float") = forAll(AnyBsonGen.anyBsonGen.filterNot(b => b.isDouble || b.isNull)) { v: BsonValue =>
     BsonDecoder[java.lang.Float].apply(v).left.value.isInstanceOf[BsonError.UnexpectedType]
   }
 
@@ -63,7 +63,7 @@ object BsonDecoderNotSupportSpecification extends Properties("Not support types 
     BsonDecoder[Double].apply(v).left.value.isInstanceOf[BsonError.UnexpectedType]
   }
 
-  property("java.lang.Double") = forAll(AnyBsonGen.anyBsonGen.filterNot(_.isDouble)) { v: BsonValue =>
+  property("java.lang.Double") = forAll(AnyBsonGen.anyBsonGen.filterNot(b => b.isDouble || b.isNull)) { v: BsonValue =>
     BsonDecoder[java.lang.Double].apply(v).left.value.isInstanceOf[BsonError.UnexpectedType]
   }
 
@@ -71,7 +71,7 @@ object BsonDecoderNotSupportSpecification extends Properties("Not support types 
     BsonDecoder[Boolean].apply(v).left.value.isInstanceOf[BsonError.UnexpectedType]
   }
 
-  property("java.lang.Boolean") = forAll(AnyBsonGen.anyBsonGen.filterNot(_.isBoolean)) { v: BsonValue =>
+  property("java.lang.Boolean") = forAll(AnyBsonGen.anyBsonGen.filterNot(b => b.isBoolean || b.isNull)) { v: BsonValue =>
     BsonDecoder[java.lang.Boolean].apply(v).left.value.isInstanceOf[BsonError.UnexpectedType]
   }
 
