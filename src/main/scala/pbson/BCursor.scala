@@ -1,70 +1,54 @@
 package pbson
 
-import org.bson.{BsonArray, BsonType, BsonUndefined, BsonValue}
-import pbson.BCursor.{BCursorArray, BCursorError, BCursorValue}
+import org.bson.{BsonType, BsonValue}
 import pbson.BsonError.{ArrayValueNotFound, FieldNotFound, UnexpectedType}
 
 import scala.collection.JavaConverters._
+import BsonDecoder.Result
 
 /**
   * @author Evgenii Kiiski
   */
-abstract sealed class BCursor() {
-  def value: BsonValue
+final case class BCursor(private[BCursor] val value: Result[BsonValue]) extends AnyVal {
 
-  def downField(key: String): BCursor = {
-    if (value.getBsonType == BsonType.DOCUMENT) {
-      val doc = value.asDocument()
-      if (doc.containsKey(key)) {
-        BCursorValue(doc.get(key))
+  def down(key: String): BCursor = BCursor {
+    value.flatMap { v =>
+      if (v.getBsonType == BsonType.DOCUMENT) {
+        val doc = v.asDocument()
+        if (doc.containsKey(key)) {
+          Right(doc.get(key))
+        } else {
+          Left(FieldNotFound(key))
+        }
       } else {
-        BCursorError(FieldNotFound(key))
+        Left(UnexpectedType(v, BsonType.DOCUMENT))
       }
-    } else {
-      BCursorError(UnexpectedType(value, BsonType.DOCUMENT))
     }
   }
 
-  def downArray(key: String): BCursor = {
-    if (value.getBsonType == BsonType.ARRAY) {
-      BCursorArray(value.asArray())
-    } else {
-      BCursorError(UnexpectedType(value, BsonType.DOCUMENT))
+  def find(f: BsonValue => Boolean): BCursor = BCursor {
+    value.flatMap { v =>
+      if (v.getBsonType == BsonType.ARRAY) {
+        v.asArray()
+          .getValues
+          .asScala
+          .find(f)
+          .fold[Result[BsonValue]](Left(ArrayValueNotFound()))(Right.apply)
+      } else {
+        Left(UnexpectedType(v, BsonType.ARRAY))
+      }
     }
   }
 
-  final def as[A](implicit d: BsonDecoder[A]): BsonDecoder.Result[A] = d.apply(value)
+  def as[A](implicit d: BsonDecoder[A]): Result[A] = value.flatMap(d.apply)
 
-  final def get[A](k: String)(implicit d: BsonDecoder[A]): BsonDecoder.Result[A] = downField(k).as[A]
+  def get[A](k: String)(implicit d: BsonDecoder[A]): Result[A] = down(k).as[A]
 
-  final def getOrElse[A](k: String)(fallback: => A)(implicit d: BsonDecoder[A]): BsonDecoder.Result[A] =
-    get[Option[A]](k) match {
-      case Right(Some(a)) => Right(a)
-      case Right(None) => Right(fallback)
-      case l@Left(_) => l.asInstanceOf[BsonDecoder.Result[A]]
+  def getOrElse[A](k: String)(fallback: => A)(implicit d: BsonDecoder[A]): Result[A] =
+    get[A](k) match {
+      case Right(a) => Right(a)
+      case Left(FieldNotFound(_)) => Right(fallback)
+      case l@Left(_) => l.asInstanceOf[Result[A]]
     }
 }
 
-object BCursor {
-
-  final case class BCursorValue(value: BsonValue) extends BCursor {
-
-  }
-
-  final case class BCursorError(error: BsonError) extends BCursor {
-    override def downField(key: String): BCursor = this
-
-    override def value: BsonValue = new BsonUndefined()
-  }
-
-  final case class BCursorArray(value: BsonArray) extends BCursor {
-    def find(f: BsonValue => Boolean): BCursor = {
-      value
-        .getValues
-        .asScala
-        .find(f)
-        .fold[BCursor](BCursorError(ArrayValueNotFound()))(BCursorValue.apply)
-    }
-  }
-
-}
