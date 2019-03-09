@@ -43,7 +43,7 @@ println(bson.fromBson[TestCase])
 
 ## Getting pbson
 
-The current stable version is 0.0.9
+The current stable version is 0.0.10
 
 If you're using SBT, add the following line to your build file:
 

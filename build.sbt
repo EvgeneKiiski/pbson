@@ -46,9 +46,6 @@ lazy val examples = (project in file("examples"))
     commonSettings,
     name := "examples",
     libraryDependencies ++= Seq(
-//      "org.typelevel" %% "cats-core" % "1.5.0",
-//      "org.typelevel" %% "cats-macros" % "1.5.0",
-//      "org.typelevel" %% "cats-kernel" % "1.5.0",
       "org.mongodb.scala" %% "mongo-scala-driver" % "2.6.0",
       "junit" % "junit" % "4.12" % Test,
       "org.typelevel" %% "discipline" % "0.10.0" % Test,
