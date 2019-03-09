@@ -5,7 +5,7 @@ logBuffered in Test := false
 
 lazy val commonSettings = Seq(
   organization := "ru.twistedlogic",
-  version := "0.0.9",
+  version := "0.0.10",
   scalaVersion := "2.12.8",
   scalacOptions ++= Seq(
     "-encoding", "utf8", 
@@ -13,7 +13,7 @@ lazy val commonSettings = Seq(
     "-deprecation",
     "-unchecked",
     "-opt:l:inline",
-    "-opt-inline-from:**",
+    "-opt-inline-from:pbson.**",
     "-Ypartial-unification",
     "-language:implicitConversions",
     "-language:higherKinds",
@@ -29,11 +29,9 @@ lazy val root = (project in file("."))
     libraryDependencies ++= Seq(
       "org.mongodb" % "bson" % "3.10.1",
       "com.chuusai" %% "shapeless" % "2.3.3",
-      //"junit" % "junit" % "4.12" % Test,
       "org.mongodb.scala" %% "mongo-scala-bson" % "2.6.0" % Test,
       "org.scalactic" %% "scalactic" % "3.0.5"  % Test,
       "org.scalatest" %% "scalatest" % "3.0.5" % Test,
-      //"org.typelevel" %% "cats-core" % "1.5.0" % Test,
       "org.scalacheck" %% "scalacheck" % "1.14.0" % Test,
       "org.typelevel" %% "cats-laws" % "1.5.0" % Test,
       "org.typelevel" %% "discipline" % "0.10.0" % Test
@@ -48,9 +46,7 @@ lazy val examples = (project in file("examples"))
     commonSettings,
     name := "examples",
     libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-core" % "1.5.0",
-      "org.typelevel" %% "cats-macros" % "1.5.0",
-      "org.typelevel" %% "cats-kernel" % "1.5.0",
+      "org.mongodb.scala" %% "mongo-scala-driver" % "2.6.0",
       "junit" % "junit" % "4.12" % Test,
       "org.typelevel" %% "discipline" % "0.10.0" % Test,
       "org.scalactic" %% "scalactic" % "3.0.5"  % Test,

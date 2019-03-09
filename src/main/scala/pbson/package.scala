@@ -15,11 +15,9 @@ package object pbson extends BsonDecoderUtils with BsonEncoderUtils {
   }
 
   implicit class BsonReaderOps(val d: BsonValue) extends AnyVal {
-    final def fromBson[T]()(implicit decoder: BsonDecoder[T]): Either[BsonError, T] = try {
-      decoder(d)
-    } catch {
-      case NonFatal(e) => Left(WrappedThrowable(e))
-    }
+    final def fromBson[T]()(implicit decoder: BsonDecoder[T]): Either[BsonError, T] = decoder(d)
+
+    final def cursor(): BCursor = BCursor(Right(d))
   }
 
 }

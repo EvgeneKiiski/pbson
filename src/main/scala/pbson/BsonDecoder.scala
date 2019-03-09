@@ -3,6 +3,7 @@ package pbson
 import java.util.UUID
 
 import org.bson._
+import org.bson.types.Decimal128
 import pbson.BsonDecoder.Result
 import pbson.BsonError._
 import pbson.decoder.DerivedBsonDecoder
@@ -62,6 +63,8 @@ object BsonDecoder extends BsonDecoderInstances {
   final def raiseError[A](e: BsonError): BsonDecoder[A] = _ => Left(e)
 
   final def fromEither[A](a: Result[A]): BsonDecoder[A] = _ => a
+
+  private[pbson] val RIGHT_NULL = Right(null)
 }
 
 
@@ -80,6 +83,8 @@ trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
   implicit final val stringDecoder: BsonDecoderNotNull[String] = { b =>
     if (b.getBsonType == BsonType.STRING) {
       Right(b.asInstanceOf[BsonString].getValue)
+    } else if (b.getBsonType == BsonType.NULL) {
+      BsonDecoder.RIGHT_NULL
     } else {
       Left(UnexpectedType(b, BsonType.STRING))
     }
@@ -98,7 +103,11 @@ trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
   }
 
   implicit final val javaCharDecoder: BsonDecoderNotNull[java.lang.Character] = b =>
-    charDecoder.map(java.lang.Character.valueOf)(b)
+    if (b.getBsonType == BsonType.NULL) {
+      BsonDecoder.RIGHT_NULL
+    } else {
+      charDecoder.map(java.lang.Character.valueOf)(b)
+    }
 
 
   implicit final val shortDecoder: BsonDecoderNotNull[Short] = { b =>
@@ -110,7 +119,11 @@ trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
   }
 
   implicit final val javaShortDecoder: BsonDecoderNotNull[java.lang.Short] = b =>
-    shortDecoder.map(java.lang.Short.valueOf)(b)
+    if (b.getBsonType == BsonType.NULL) {
+      BsonDecoder.RIGHT_NULL
+    } else {
+      shortDecoder.map(java.lang.Short.valueOf)(b)
+    }
 
   implicit final val intDecoder: BsonDecoderNotNull[Int] = { b =>
     if (b.getBsonType == BsonType.INT32) {
@@ -121,7 +134,11 @@ trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
   }
 
   implicit final val javaIntDecoder: BsonDecoderNotNull[java.lang.Integer] = b =>
-    intDecoder.map(java.lang.Integer.valueOf)(b)
+    if (b.getBsonType == BsonType.NULL) {
+      BsonDecoder.RIGHT_NULL
+    } else {
+      intDecoder.map(java.lang.Integer.valueOf)(b)
+    }
 
   implicit final val longDecoder: BsonDecoderNotNull[Long] = { b =>
     if (b.getBsonType == BsonType.INT64) {
@@ -132,7 +149,11 @@ trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
   }
 
   implicit final val javaLongDecoder: BsonDecoderNotNull[java.lang.Long] = b =>
-    longDecoder.map(java.lang.Long.valueOf)(b)
+    if (b.getBsonType == BsonType.NULL) {
+      BsonDecoder.RIGHT_NULL
+    } else {
+      longDecoder.map(java.lang.Long.valueOf)(b)
+    }
 
   implicit final val doubleDecoder: BsonDecoderNotNull[Double] = { b =>
     if (b.getBsonType == BsonType.DOUBLE) {
@@ -143,7 +164,11 @@ trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
   }
 
   implicit final val javaDoubleDecoder: BsonDecoderNotNull[java.lang.Double] = b =>
-    doubleDecoder.map(java.lang.Double.valueOf)(b)
+    if (b.getBsonType == BsonType.NULL) {
+      BsonDecoder.RIGHT_NULL
+    } else {
+      doubleDecoder.map(java.lang.Double.valueOf)(b)
+    }
 
   implicit final val floatDecoder: BsonDecoderNotNull[Float] = { b =>
     if (b.getBsonType == BsonType.DOUBLE) {
@@ -154,7 +179,11 @@ trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
   }
 
   implicit final val javaFloatDecoder: BsonDecoderNotNull[java.lang.Float] = b =>
-    floatDecoder.map(java.lang.Float.valueOf)(b)
+    if (b.getBsonType == BsonType.NULL) {
+      BsonDecoder.RIGHT_NULL
+    } else {
+      floatDecoder.map(java.lang.Float.valueOf)(b)
+    }
 
   implicit final val booleanDecoder: BsonDecoderNotNull[Boolean] = { b =>
     if (b.getBsonType == BsonType.BOOLEAN) {
@@ -165,10 +194,16 @@ trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
   }
 
   implicit final val javaBooleanDecoder: BsonDecoderNotNull[java.lang.Boolean] = b =>
-    booleanDecoder.map(java.lang.Boolean.valueOf)(b)
+    if (b.getBsonType == BsonType.NULL) {
+      BsonDecoder.RIGHT_NULL
+    } else {
+      booleanDecoder.map(java.lang.Boolean.valueOf)(b)
+    }
 
   implicit final val uuidDecoder: BsonDecoderNotNull[UUID] = { b =>
-    if (b.getBsonType == BsonType.STRING) {
+    if (b.getBsonType == BsonType.NULL) {
+      BsonDecoder.RIGHT_NULL
+    } else if (b.getBsonType == BsonType.STRING) {
       val str = b.asInstanceOf[BsonString].getValue
       if (str.length == 36) {
         try Right(UUID.fromString(str)) catch {
@@ -181,6 +216,25 @@ trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
       Left(UnexpectedType(b, BsonType.STRING))
     }
   }
+
+  implicit final val decimal128Decoder: BsonDecoderNotNull[Decimal128] = { b =>
+    if (b.getBsonType == BsonType.DECIMAL128) {
+      Right(b.asInstanceOf[BsonDecimal128].getValue)
+    } else if (b.getBsonType == BsonType.NULL) {
+      BsonDecoder.RIGHT_NULL
+    } else {
+      Left(UnexpectedType(b, BsonType.DECIMAL128))
+    }
+  }
+
+  implicit final val javaDateDecoder: BsonDecoderNotNull[java.util.Date] = b =>
+    if(b.getBsonType == BsonType.DATE_TIME){
+      Right(new java.util.Date(b.asInstanceOf[BsonDateTime].getValue))
+    } else if (b.getBsonType == BsonType.NULL) {
+      BsonDecoder.RIGHT_NULL
+    } else {
+      Left(UnexpectedType(b, BsonType.DATE_TIME))
+    }
 
   implicit final def optionDecoder[A](implicit d: BsonDecoder[A]): BsonDecoder[Option[A]] = { b =>
     if (b == null) {

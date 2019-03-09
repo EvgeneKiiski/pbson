@@ -1,8 +1,10 @@
 package pbson
 
+import java.time.Instant
 import java.util.UUID
 
-import org.mongodb.scala.bson.{ BsonBoolean, BsonDouble, BsonInt32, BsonInt64, BsonNull, BsonString, BsonValue }
+import org.bson.types.Decimal128
+import org.mongodb.scala.bson.{ BsonBoolean, BsonDateTime, BsonDecimal128, BsonDouble, BsonInt32, BsonInt64, BsonNull, BsonString, BsonValue }
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Prop
 import org.scalacheck.Prop._
@@ -31,6 +33,10 @@ class BsonDecoderTest extends WordSpec with Matchers with Checkers {
     "some string" in {
       val v: BsonValue = BsonString("sadadsa")
       v.fromBson[String] shouldEqual Right("sadadsa")
+    }
+    "BsonNull" in {
+      val v: BsonValue = BsonNull()
+      v.fromBson[String] shouldEqual Right(null)
     }
   }
 
@@ -62,6 +68,10 @@ class BsonDecoderTest extends WordSpec with Matchers with Checkers {
       val v: BsonValue = BsonString("")
       v.fromBson[java.lang.Character] shouldEqual Left(UnexpectedEmptyString)
     }
+    "BsonNull" in {
+      val v: BsonValue = BsonNull()
+      v.fromBson[java.lang.Character] shouldEqual Right(null)
+    }
   }
 
   "Short decode" should {
@@ -75,6 +85,10 @@ class BsonDecoderTest extends WordSpec with Matchers with Checkers {
     "some value" in {
       val v: BsonValue = BsonInt32(5)
       v.fromBson[java.lang.Short] shouldEqual Right(5:Short)
+    }
+    "BsonNull" in {
+      val v: BsonValue = BsonNull()
+      v.fromBson[java.lang.Short] shouldEqual Right(null)
     }
   }
 
@@ -90,6 +104,10 @@ class BsonDecoderTest extends WordSpec with Matchers with Checkers {
       val v: BsonValue = BsonInt32(5)
       v.fromBson[java.lang.Integer] shouldEqual Right(5)
     }
+    "BsonNull" in {
+      val v: BsonValue = BsonNull()
+      v.fromBson[java.lang.Integer] shouldEqual Right(null)
+    }
   }
 
   "Long decode" should {
@@ -103,6 +121,10 @@ class BsonDecoderTest extends WordSpec with Matchers with Checkers {
     "some value" in {
       val v: BsonValue = BsonInt64(5)
       v.fromBson[java.lang.Long] shouldEqual Right(5)
+    }
+    "BsonNull" in {
+      val v: BsonValue = BsonNull()
+      v.fromBson[java.lang.Long] shouldEqual Right(null)
     }
   }
 
@@ -118,6 +140,10 @@ class BsonDecoderTest extends WordSpec with Matchers with Checkers {
       val v: BsonValue = BsonDouble(5.56)
       v.fromBson[java.lang.Double] shouldEqual Right(5.56)
     }
+    "BsonNull" in {
+      val v: BsonValue = BsonNull()
+      v.fromBson[java.lang.Double] shouldEqual Right(null)
+    }
   }
 
   "Float decode" should {
@@ -131,6 +157,10 @@ class BsonDecoderTest extends WordSpec with Matchers with Checkers {
     "some value" in {
       val v: BsonValue = BsonDouble(5.56)
       v.fromBson[java.lang.Float] shouldEqual Right(5.56f)
+    }
+    "BsonNull" in {
+      val v: BsonValue = BsonNull()
+      v.fromBson[java.lang.Float] shouldEqual Right(null)
     }
   }
 
@@ -154,6 +184,10 @@ class BsonDecoderTest extends WordSpec with Matchers with Checkers {
       val v: BsonValue = BsonBoolean(false)
       v.fromBson[java.lang.Boolean] shouldEqual Right(false)
     }
+    "BsonNull" in {
+      val v: BsonValue = BsonNull()
+      v.fromBson[java.lang.Boolean] shouldEqual Right(null)
+    }
   }
 
   "UUID decode" should {
@@ -170,6 +204,97 @@ class BsonDecoderTest extends WordSpec with Matchers with Checkers {
       val v: BsonValue = BsonString("012345678901234567890123456789012345")
       v.asString().getValue.length equals 36
       v.fromBson[UUID].isLeft shouldEqual true
+    }
+    "invalid value int" in {
+      val v: BsonValue = BsonInt32(12)
+      v.fromBson[UUID].isLeft shouldEqual true
+    }
+    "BsonNull" in {
+      val v: BsonValue = BsonNull()
+      v.fromBson[UUID] shouldEqual Right(null)
+    }
+  }
+
+  "Decimal128 decode" should {
+    "some value" in {
+      val v: BsonValue = BsonDecimal128(5.56)
+      v.fromBson[Decimal128] shouldEqual Right(Decimal128.parse("5.56"))
+    }
+    "invalid value int" in {
+      val v: BsonValue = BsonInt32(12)
+      v.fromBson[Decimal128].isLeft shouldEqual true
+    }
+    "BsonNull" in {
+      val v: BsonValue = BsonNull()
+      v.fromBson[Decimal128] shouldEqual Right(null)
+    }
+  }
+
+  "java.utilDate decode" should {
+    "some value" in {
+      val v: BsonValue = BsonDateTime(5l)
+      v.fromBson[java.util.Date] shouldEqual Right(java.util.Date.from(Instant.ofEpochMilli(5l)))
+    }
+    "invalid value int" in {
+      val v: BsonValue = BsonInt32(12)
+      v.fromBson[java.util.Date].isLeft shouldEqual true
+    }
+    "BsonNull" in {
+      val v: BsonValue = BsonNull()
+      v.fromBson[java.util.Date] shouldEqual Right(null)
+    }
+  }
+
+  "BsonDecoder" should {
+    "handleErrorWith left" in {
+      val decoder = new BsonDecoder[Int] {
+        override def apply(b: BsonValue): BsonDecoder.Result[Int] = Left(BsonError.Error)
+      }
+      val f: BsonError => BsonDecoder[Int] = _ => _ => Right(2)
+      decoder.handleErrorWith(f)(BsonString("1")) shouldEqual Right(2)
+    }
+    "handleErrorWith right" in {
+      val decoder = new BsonDecoder[Int] {
+        override def apply(b: BsonValue): BsonDecoder.Result[Int] = Right(5)
+      }
+      val f: BsonError => BsonDecoder[Int] = _ => _ => Right(2)
+      decoder.handleErrorWith(f)(BsonString("1")) shouldEqual Right(5)
+    }
+    "product right, right" in {
+      val decoder1 = new BsonDecoder[Int] {
+        override def apply(b: BsonValue): BsonDecoder.Result[Int] = Right(5)
+      }
+      val decoder2 = new BsonDecoder[Int] {
+        override def apply(b: BsonValue): BsonDecoder.Result[Int] = Right(8)
+      }
+      decoder1.product(decoder2)(BsonString("1")) shouldEqual Right((5, 8))
+    }
+    "product right, left" in {
+      val decoder1 = new BsonDecoder[Int] {
+        override def apply(b: BsonValue): BsonDecoder.Result[Int] = Right(5)
+      }
+      val decoder2 = new BsonDecoder[Int] {
+        override def apply(b: BsonValue): BsonDecoder.Result[Int] = Left(BsonError.Error)
+      }
+      decoder1.product(decoder2)(BsonString("1")) shouldEqual Left(BsonError.Error)
+    }
+    "product left, right" in {
+      val decoder1 = new BsonDecoder[Int] {
+        override def apply(b: BsonValue): BsonDecoder.Result[Int] = Left(BsonError.Error)
+      }
+      val decoder2 = new BsonDecoder[Int] {
+        override def apply(b: BsonValue): BsonDecoder.Result[Int] = Right(8)
+      }
+      decoder1.product(decoder2)(BsonString("1")) shouldEqual Left(BsonError.Error)
+    }
+    "product left, left" in {
+      val decoder1 = new BsonDecoder[Int] {
+        override def apply(b: BsonValue): BsonDecoder.Result[Int] = Left(BsonError.Error)
+      }
+      val decoder2 = new BsonDecoder[Int] {
+        override def apply(b: BsonValue): BsonDecoder.Result[Int] = Left(BsonError.UnexpectedEmptyString)
+      }
+      decoder1.product(decoder2)(BsonString("1")) shouldEqual Left(BsonError.Error)
     }
   }
 

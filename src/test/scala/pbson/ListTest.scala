@@ -1,8 +1,8 @@
 package pbson
 
 import org.bson.BsonType
-import org.mongodb.scala.bson.{BsonArray, BsonDocument, BsonString}
-import org.scalatest.{Matchers, ParallelTestExecution, WordSpec}
+import org.mongodb.scala.bson.{ BsonArray, BsonDocument, BsonInt64, BsonString }
+import org.scalatest.{ Matchers, ParallelTestExecution, WordSpec }
 import pbson.BsonError.UnexpectedType
 import pbson.semiauto._
 
@@ -38,6 +38,10 @@ class ListTest extends WordSpec with ParallelTestExecution with Matchers {
     "decode unexpected type" in {
       val bson = BsonDocument("a" -> BsonString("45"))
       bson.fromBson[TestCase] shouldEqual Left(UnexpectedType(BsonString("45"), BsonType.ARRAY))
+    }
+    "decode list with error" in {
+      val bson = BsonDocument("a" -> BsonArray(BsonString("45"), BsonInt64(23)))
+      bson.fromBson[TestCase] shouldEqual Left(UnexpectedType(BsonInt64(23), BsonType.STRING))
     }
   }
 

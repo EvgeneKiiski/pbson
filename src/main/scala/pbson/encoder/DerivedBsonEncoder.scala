@@ -43,7 +43,7 @@ trait LowPriorityDerivedBsonEncoderInstances {
       val iterator = encode.value.apply(gen.to(t)).iterator
       while (iterator.hasNext) {
         val (k, v) = iterator.next()
-        if (v.getBsonType != BsonType.NULL) {
+        if (v.getBsonType != BsonType.UNDEFINED) {
           doc.append(k, v)
         }
       }
