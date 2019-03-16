@@ -3,6 +3,7 @@ package pbson
 import java.time.Instant
 import java.util.UUID
 
+import org.bson.BsonBinary
 import org.bson.types.Decimal128
 import org.mongodb.scala.bson.{BsonBoolean, BsonDateTime, BsonDecimal128, BsonDouble, BsonInt32, BsonInt64, BsonNull, BsonString, BsonValue}
 import org.scalatest.prop._
@@ -189,12 +190,8 @@ class BsonDecoderTest extends WordSpec with Matchers with Checkers {
   "UUID decode" should {
     "some uuid" in {
       val u = UUID.randomUUID()
-      val v: BsonValue = BsonString(u.toString)
+      val v: BsonValue = new BsonBinary(u)
       v.fromBson[UUID] shouldEqual Right(u)
-    }
-    "invalid length" in {
-      val v: BsonValue = BsonString("123123")
-      v.fromBson[UUID].isLeft shouldEqual true
     }
     "invalid value" in {
       val v: BsonValue = BsonString("012345678901234567890123456789012345")
@@ -202,7 +199,7 @@ class BsonDecoderTest extends WordSpec with Matchers with Checkers {
       v.fromBson[UUID].isLeft shouldEqual true
     }
     "invalid value int" in {
-      val v: BsonValue = BsonInt32(12)
+      val v: BsonValue = new BsonBinary(Array.emptyByteArray)
       v.fromBson[UUID].isLeft shouldEqual true
     }
     "BsonNull" in {

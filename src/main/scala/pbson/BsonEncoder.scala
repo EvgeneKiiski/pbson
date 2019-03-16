@@ -77,7 +77,7 @@ trait BsonEncoderInstances extends LowPriorityBsonEncoderInstances {
   implicit final val javaBooleanEncoder: BsonEncoder[java.lang.Boolean] =
     booleanEncoder.contramapOrNull(_.booleanValue())
 
-  implicit final val uuidEncoder: BsonEncoder[UUID] = u => new BsonString(u.toString)
+  implicit final val uuidEncoder: BsonEncoder[UUID] = u => new BsonBinary(u)
 
   implicit final val decimal128Encoder: BsonEncoder[Decimal128] = s =>
     if(s == null) BSON_NULL else new BsonDecimal128(s)

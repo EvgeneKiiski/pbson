@@ -3,7 +3,7 @@ package pbson
 import java.util.UUID
 
 import org.bson.types.Decimal128
-import org.mongodb.scala.bson.{BsonBoolean, BsonDateTime, BsonDecimal128, BsonInt32, BsonInt64, BsonNull, BsonString}
+import org.mongodb.scala.bson.{BsonBinary, BsonBoolean, BsonDateTime, BsonDecimal128, BsonInt32, BsonInt64, BsonNull, BsonString}
 import org.scalatest.{Matchers, ParallelTestExecution, WordSpec}
 
 /**
@@ -174,7 +174,7 @@ class BsonEncoderTest extends WordSpec with ParallelTestExecution with Matchers 
   "UUID encode" should {
     "same value" in {
       val v : UUID = UUID.randomUUID()
-      v.toBson shouldEqual BsonString(v.toString)
+      v.toBson shouldEqual new BsonBinary(v)
     }
   }
 
