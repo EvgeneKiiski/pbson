@@ -1,8 +1,8 @@
 package pbson
 
 import org.bson.BsonType
-import org.mongodb.scala.bson.{BsonDocument, BsonString}
-import org.scalatest.{Matchers, ParallelTestExecution, WordSpec}
+import org.mongodb.scala.bson.BsonString
+import org.scalatest.{Matchers, WordSpec}
 import pbson.BsonError.UnexpectedType
 import pbson.semiauto._
 

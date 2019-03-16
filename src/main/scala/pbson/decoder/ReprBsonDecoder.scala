@@ -4,7 +4,7 @@ import org.bson.BsonDocument
 import pbson.BsonError.{ADTValueNotFound, FieldNotFound}
 import pbson.BsonConst._
 import pbson.BsonDecoder.BsonDecoderNotNull
-import pbson.{BsonConst, BsonDecoder, BsonError}
+import pbson.{BsonDecoder, BsonError}
 import shapeless._
 import shapeless.labelled.FieldType
 

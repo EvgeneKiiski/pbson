@@ -2,12 +2,11 @@ package pbson.encoder
 
 import org.bson.{BsonString, BsonValue}
 import pbson.BsonConst._
-import pbson.{BsonConst, BsonEncoder}
+import pbson.BsonEncoder
 import shapeless._
 import shapeless.labelled.FieldType
 
 import scala.collection.JavaConverters._
-import scala.language.experimental.macros
 
 /**
   * @author Evgenii Kiiski

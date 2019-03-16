@@ -10,7 +10,6 @@ import pbson.encoder.DerivedBsonEncoder
 import shapeless.Lazy
 
 import scala.collection.JavaConverters._
-import scala.collection.immutable
 
 /**
   * @author Evgenii Kiiski 
@@ -48,7 +47,7 @@ trait BsonEncoderInstances extends LowPriorityBsonEncoderInstances {
   implicit final val javaCharEncoder: BsonEncoder[java.lang.Character] =
     charEncoder.contramapOrNull(_.charValue())
 
-  implicit final val shortEncoder: BsonEncoder[Short] = s => new BsonInt32(s)
+  implicit final val shortEncoder: BsonEncoder[Short] = s => new BsonInt32(s.toInt)
 
   implicit final val javaShortEncoder: BsonEncoder[java.lang.Short] =
     shortEncoder.contramapOrNull(_.shortValue())
@@ -78,7 +77,7 @@ trait BsonEncoderInstances extends LowPriorityBsonEncoderInstances {
   implicit final val javaBooleanEncoder: BsonEncoder[java.lang.Boolean] =
     booleanEncoder.contramapOrNull(_.booleanValue())
 
-  implicit final val uuidEncoder: BsonEncoder[UUID] = u => new BsonString(u.toString)
+  implicit final val uuidEncoder: BsonEncoder[UUID] = u => new BsonBinary(u)
 
   implicit final val decimal128Encoder: BsonEncoder[Decimal128] = s =>
     if(s == null) BSON_NULL else new BsonDecimal128(s)

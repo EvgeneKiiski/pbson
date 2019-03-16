@@ -1,9 +1,7 @@
 
 import org.bson.BsonValue
-import pbson.BsonError._
 import pbson.utils.{BsonDecoderUtils, BsonEncoderUtils}
 
-import scala.util.control.NonFatal
 
 /**
   * @author Evgenii Kiiski 

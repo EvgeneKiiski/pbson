@@ -1,7 +1,7 @@
 package pbson
 
-import org.mongodb.scala.bson.{ BsonString, BsonValue }
-import org.scalatest.{ Matchers, WordSpec }
+import org.mongodb.scala.bson.{BsonString, BsonValue}
+import org.scalatest.{Matchers, WordSpec}
 
 /**
   * @author Eugene Kiyski

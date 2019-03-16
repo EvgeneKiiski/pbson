@@ -2,7 +2,7 @@ package pbson.gen
 
 import java.util.Date
 
-import org.bson.{ BsonType, BsonValue }
+import org.bson.{BsonType, BsonValue}
 import org.mongodb.scala.bson._
 import org.scalacheck.Gen
 import pbson.BsonError

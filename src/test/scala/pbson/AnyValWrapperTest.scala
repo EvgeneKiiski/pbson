@@ -4,7 +4,6 @@ import org.bson.BsonType
 import org.mongodb.scala.bson.{BsonInt32, BsonString, BsonValue}
 import org.scalatest.{Matchers, ParallelTestExecution, WordSpec}
 import pbson.BsonError.UnexpectedType
-import pbson.CaseClassTest.MyId
 import pbson.semiauto.{deriveDecoder, deriveEncoder}
 
 /**

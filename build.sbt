@@ -5,11 +5,14 @@ logBuffered in Test := false
 
 lazy val commonSettings = Seq(
   organization := "ru.twistedlogic",
-  version := "0.0.10",
+  organizationName := "Twistedlogic",
+  organizationHomepage := Some(new URL("http://twistedlogic.ru/")),
+  version := "0.0.11",
   scalaVersion := "2.12.8",
+  licenses := Seq("Apache 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
   scalacOptions ++= Seq(
-    "-encoding", "utf8", 
-    "-Xfatal-warnings",  
+    "-encoding", "utf8",
+    "-Xfatal-warnings",
     "-deprecation",
     "-unchecked",
     "-opt:l:inline",
@@ -18,7 +21,12 @@ lazy val commonSettings = Seq(
     "-language:implicitConversions",
     "-language:higherKinds",
     "-language:existentials",
-    "-language:postfixOps"
+    "-language:postfixOps",
+    "-Ywarn-dead-code",
+    "-Ywarn-numeric-widen",
+    "-Xfuture",
+    //"-Yno-predef",
+    "-Ywarn-unused-import"
   )
 )
 
@@ -26,17 +34,25 @@ lazy val root = (project in file("."))
   .settings(
     commonSettings,
     name := "pbson",
+    homepage := Some(url("https://evgenekiiski.github.io/pbson/")),
+    description := "Scala bson library",
     libraryDependencies ++= Seq(
       "org.mongodb" % "bson" % "3.10.1",
       "com.chuusai" %% "shapeless" % "2.3.3",
       "org.mongodb.scala" %% "mongo-scala-bson" % "2.6.0" % Test,
-      "org.scalactic" %% "scalactic" % "3.0.5"  % Test,
+      "org.scalactic" %% "scalactic" % "3.0.5" % Test,
       "org.scalatest" %% "scalatest" % "3.0.5" % Test,
       "org.scalacheck" %% "scalacheck" % "1.14.0" % Test,
       "org.typelevel" %% "cats-laws" % "1.5.0" % Test,
       "org.typelevel" %% "discipline" % "0.10.0" % Test
     ),
-    publishTo := Some(Resolver.file("file",  new File( "repository" )) )
+    scmInfo := Some(
+      ScmInfo(
+        url("https://github.com/EvgeneKiiski/pbson"),
+        "scm:git:git@github.com:EvgeneKiiski/pbson.git"
+      )
+    ),
+    publishTo := Some(Resolver.file("file", new File("repository")))
   )
 
 
@@ -49,7 +65,7 @@ lazy val examples = (project in file("examples"))
       "org.mongodb.scala" %% "mongo-scala-driver" % "2.6.0",
       "junit" % "junit" % "4.12" % Test,
       "org.typelevel" %% "discipline" % "0.10.0" % Test,
-      "org.scalactic" %% "scalactic" % "3.0.5"  % Test,
+      "org.scalactic" %% "scalactic" % "3.0.5" % Test,
       "org.scalatest" %% "scalatest" % "3.0.5" % Test
     )
   )

@@ -4,7 +4,6 @@ import org.bson.BsonType
 import org.mongodb.scala.bson.{BsonInt32, BsonString}
 import org.scalatest.{EitherValues, Matchers, ParallelTestExecution, WordSpec}
 import pbson.BsonError._
-import pbson._
 
 /**
   * @author Eugene Kiyski

@@ -1,12 +1,10 @@
 package pbson.encoder
 
-import org.bson.{BsonDocument, BsonElement, BsonType, BsonValue}
+import org.bson.{BsonDocument, BsonType, BsonValue}
 import pbson.BsonEncoder
 import pbson.utils.AnyValUtils
 import shapeless._
 
-import scala.collection.JavaConverters._
-import scala.language.experimental.macros
 
 /**
   * @author Evgenii Kiiski 

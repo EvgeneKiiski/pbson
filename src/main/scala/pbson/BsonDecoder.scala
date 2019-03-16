@@ -10,10 +10,13 @@ import pbson.decoder.DerivedBsonDecoder
 import shapeless.Lazy
 import pbson.utils.TraversableUtils._
 
+import scala.util.control.NonFatal
+
 /**
   * @author Evgenii Kiiski 
   */
-abstract class BsonDecoder[A] { self =>
+abstract class BsonDecoder[A] {
+  self =>
   def apply(b: BsonValue): BsonDecoder.Result[A]
 
   final def map[B](f: A => B): BsonDecoder[B] = new BsonDecoder[B] {
@@ -23,13 +26,13 @@ abstract class BsonDecoder[A] { self =>
   final def flatMap[B](f: A => BsonDecoder[B]): BsonDecoder[B] = new BsonDecoder[B] {
     override def apply(b: BsonValue): Result[B] = self(b) match {
       case Right(a) => f(a)(b)
-      case l @ Left(_) => l.asInstanceOf[Result[B]]
+      case l@Left(_) => l.asInstanceOf[Result[B]]
     }
   }
 
   final def handleErrorWith(f: BsonError => BsonDecoder[A]): BsonDecoder[A] = new BsonDecoder[A] {
     override def apply(b: BsonValue): Result[A] = self(b) match {
-      case r @ Right(_) => r
+      case r@Right(_) => r
       case Left(e) => f(e)(b)
     }
   }
@@ -38,15 +41,15 @@ abstract class BsonDecoder[A] { self =>
     override def apply(b: BsonValue): Result[(A, B)] = self(b) match {
       case Right(a) => fb(b) match {
         case Right(b) => Right((a, b))
-        case l @ Left(_) => l.asInstanceOf[Result[(A, B)]]
+        case l@Left(_) => l.asInstanceOf[Result[(A, B)]]
       }
-      case l @ Left(_) => l.asInstanceOf[Result[(A, B)]]
+      case l@Left(_) => l.asInstanceOf[Result[(A, B)]]
     }
   }
 
   final def or[AA >: A](d: => BsonDecoder[AA]): BsonDecoder[AA] = new BsonDecoder[AA] {
     override def apply(b: BsonValue): Result[AA] = self(b) match {
-      case r @ Right(_) => r
+      case r@Right(_) => r
       case Left(_) => d(b)
     }
   }
@@ -203,14 +206,11 @@ trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
   implicit final val uuidDecoder: BsonDecoderNotNull[UUID] = { b =>
     if (b.getBsonType == BsonType.NULL) {
       BsonDecoder.RIGHT_NULL
-    } else if (b.getBsonType == BsonType.STRING) {
-      val str = b.asInstanceOf[BsonString].getValue
-      if (str.length == 36) {
-        try Right(UUID.fromString(str)) catch {
-          case _: IllegalArgumentException => Left(UnexpectedValue(s"invalid uuid: $str"))
-        }
-      } else {
-        Left(UnexpectedValue(s"invalid uuid length: $str"))
+    } else if (b.getBsonType == BsonType.BINARY) {
+      try {
+        Right(b.asInstanceOf[BsonBinary].asUuid())
+      } catch {
+        case NonFatal(e) => Left(WrappedThrowable(e))
       }
     } else {
       Left(UnexpectedType(b, BsonType.STRING))
@@ -228,7 +228,7 @@ trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
   }
 
   implicit final val javaDateDecoder: BsonDecoderNotNull[java.util.Date] = b =>
-    if(b.getBsonType == BsonType.DATE_TIME){
+    if (b.getBsonType == BsonType.DATE_TIME) {
       Right(new java.util.Date(b.asInstanceOf[BsonDateTime].getValue))
     } else if (b.getBsonType == BsonType.NULL) {
       BsonDecoder.RIGHT_NULL
@@ -285,8 +285,8 @@ trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
   }
 
   implicit final def mapDecoder[K, V](implicit
-    d: BsonMapDecoder[K, V]
-  ): BsonDecoder[Map[K, V]] = { b =>
+                                      d: BsonMapDecoder[K, V]
+                                     ): BsonDecoder[Map[K, V]] = { b =>
     if (b == null) {
       Right(Map.empty)
     } else if (b.getBsonType == BsonType.DOCUMENT) {

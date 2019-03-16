@@ -2,11 +2,8 @@ package pbson.utils
 
 import pbson.{BsonBiDecoder, BsonDecoder}
 import pbson.BsonError.{UnexpectedType, UnexpectedValue, WrappedThrowable}
-
-import scala.collection.JavaConverters._
 import org.bson.{BsonType, BsonValue}
 import pbson.utils.TraversableUtils.traverse2Map
-
 import scala.util.Try
 
 
@@ -35,7 +32,24 @@ trait BsonDecoderUtils {
   final def enumDecoder[E <: Enumeration](enum: E): BsonDecoder[E#Value] = b =>
     BsonDecoder.stringDecoder(b).flatMap { str =>
       Try(enum.withName(str))
-        .toEither.fold(e => Left(WrappedThrowable.apply(e)), Right.apply)
+        .toEither.fold(e => Left(WrappedThrowable(e)), Right.apply)
+    }
+
+  final def eitherDecoder[A, B](leftKey: String, rightKey: String)(implicit
+                                                                   da: BsonDecoder[A],
+                                                                   db: BsonDecoder[B]
+  ): BsonDecoder[Either[A, B]] = b =>
+    if (b.getBsonType == BsonType.DOCUMENT) {
+      val doc = b.asDocument()
+      if (doc.containsKey(rightKey)) {
+        db(doc.get(rightKey)).map(Right.apply)
+      } else if (doc.containsKey(leftKey)) {
+        da(doc.get(leftKey)).map(Left.apply)
+      } else {
+        Left(UnexpectedValue(b))
+      }
+    } else {
+      Left(UnexpectedType(b, BsonType.DOCUMENT))
     }
 
 }

@@ -3,8 +3,6 @@ package pbson
 import org.bson.{BsonDocument, BsonValue}
 import shapeless.{Lazy, Strict, Unwrapped}
 
-import scala.collection.JavaConverters._
-
 /**
   * @author Evgenii Kiiski 
   */
