@@ -1,8 +1,7 @@
 package pbson
 
-import org.mongodb.scala.bson.{ BsonDocument, BsonString }
-import org.scalatest.{ Matchers, ParallelTestExecution, WordSpec }
-import pbson.CaseClassTest.MyId
+import org.mongodb.scala.bson.{BsonDocument, BsonString}
+import org.scalatest.{Matchers, ParallelTestExecution, WordSpec}
 import pbson.semiauto._
 
 /**

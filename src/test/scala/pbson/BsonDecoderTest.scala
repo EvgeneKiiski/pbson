@@ -4,14 +4,10 @@ import java.time.Instant
 import java.util.UUID
 
 import org.bson.types.Decimal128
-import org.mongodb.scala.bson.{ BsonBoolean, BsonDateTime, BsonDecimal128, BsonDouble, BsonInt32, BsonInt64, BsonNull, BsonString, BsonValue }
-import org.scalacheck.Arbitrary._
-import org.scalacheck.Prop
-import org.scalacheck.Prop._
+import org.mongodb.scala.bson.{BsonBoolean, BsonDateTime, BsonDecimal128, BsonDouble, BsonInt32, BsonInt64, BsonNull, BsonString, BsonValue}
 import org.scalatest.prop._
-import org.scalatest.{ Assertion, Matchers, ParallelTestExecution, WordSpec }
+import org.scalatest.{Matchers, WordSpec}
 import pbson.BsonError.UnexpectedEmptyString
-import pbson.semiauto._
 
 /**
   * @author Evgenii Kiiski 

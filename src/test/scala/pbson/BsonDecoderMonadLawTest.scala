@@ -1,14 +1,14 @@
 package pbson
 
-import cats.laws.discipline._
 import cats._
-import org.mongodb.scala.bson.{ BsonInt32, BsonValue }
-import org.scalacheck.{ Arbitrary, Gen }
+import cats.instances.int._
+import cats.instances.tuple._
+import cats.laws.discipline._
+import org.mongodb.scala.bson.BsonValue
+import org.scalacheck.Arbitrary
 import org.scalatest.FunSuite
 import org.typelevel.discipline.scalatest.Discipline
 import pbson.BsonDecoder.Result
-import cats.instances.tuple._
-import cats.instances.int._
 import pbson.gen.AnyBsonGen
 //import cats.implicits._
 

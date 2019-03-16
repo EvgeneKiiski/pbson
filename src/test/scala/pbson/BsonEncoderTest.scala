@@ -3,10 +3,8 @@ package pbson
 import java.util.UUID
 
 import org.bson.types.Decimal128
-import org.mongodb.scala.bson.{ BsonBoolean, BsonDateTime, BsonDecimal128, BsonDouble, BsonInt32, BsonInt64, BsonNull, BsonString }
-import org.scalatest.{ Matchers, ParallelTestExecution, WordSpec }
-
-import scala.xml.Null
+import org.mongodb.scala.bson.{BsonBoolean, BsonDateTime, BsonDecimal128, BsonInt32, BsonInt64, BsonNull, BsonString}
+import org.scalatest.{Matchers, ParallelTestExecution, WordSpec}
 
 /**
   * @author Evgenii Kiiski 

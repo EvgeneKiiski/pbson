@@ -1,10 +1,8 @@
 package pbson.utils
 
 import java.util
-
 import org.bson.{BsonArray, BsonString, BsonValue}
 import pbson.{BsonBiEncoder, BsonEncoder}
-
 import scala.collection.JavaConverters._
 
 /**
