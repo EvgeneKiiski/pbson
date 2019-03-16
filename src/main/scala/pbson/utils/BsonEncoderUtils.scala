@@ -1,8 +1,10 @@
 package pbson.utils
 
 import java.util
-import org.bson.{BsonArray, BsonString, BsonValue}
+
+import org.bson.{BsonArray, BsonDocument, BsonString, BsonValue}
 import pbson.{BsonBiEncoder, BsonEncoder}
+
 import scala.collection.JavaConverters._
 
 /**
@@ -22,5 +24,13 @@ trait BsonEncoderUtils {
 
   final def enumEncoder[E <: Enumeration](enum: E): BsonEncoder[E#Value] = e =>
     BsonEncoder.stringEncoder(e.toString)
+
+  final def eitherEncoder[A, B](leftKey: String, rightKey: String)(implicit
+                                                                   ea: BsonEncoder[A],
+                                                                   eb: BsonEncoder[B]
+  ): BsonEncoder[Either[A, B]] = {
+    case Right(r) => new BsonDocument(rightKey, eb(r))
+    case Left(l) => new BsonDocument(leftKey, ea(l))
+  }
 
 }
