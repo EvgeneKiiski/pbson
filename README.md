@@ -58,4 +58,12 @@ libraryDependencies += "ru.twistedlogic" %% "pbson" % "0.0.11"
 
 [examples](https://github.com/EvgeneKiiski/pbson/blob/master/examples/src/main/scala/pbson/examples/)
 
+## Cats 
+
+[pbson-cats](https://github.com/EvgeneKiiski/pbson-cats)
+
+## Scalaz
+
+[pbson-scalaz under construction](https://evgenekiiski.github.io/pbson/)
+
 
