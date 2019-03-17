@@ -25,7 +25,6 @@ lazy val commonSettings = Seq(
     "-Ywarn-dead-code",
     "-Ywarn-numeric-widen",
     "-Xfuture",
-    //"-Yno-predef",
     "-Ywarn-unused-import"
   )
 )

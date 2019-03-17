@@ -48,6 +48,7 @@ The current stable version is 0.0.11
 If you're using SBT, add the following line to your build file:
 
 ```scala
+resolvers += "JCenter" at "https://jcenter.bintray.com/"
 libraryDependencies += "ru.twistedlogic" %% "pbson" % "0.0.11"
 ```
 
@@ -56,5 +57,13 @@ libraryDependencies += "ru.twistedlogic" %% "pbson" % "0.0.11"
 [docs](https://evgenekiiski.github.io/pbson/)
 
 [examples](https://github.com/EvgeneKiiski/pbson/blob/master/examples/src/main/scala/pbson/examples/)
+
+## Cats 
+
+[pbson-cats](https://github.com/EvgeneKiiski/pbson-cats)
+
+## Scalaz
+
+[pbson-scalaz under construction](https://evgenekiiski.github.io/pbson/)
 
 
