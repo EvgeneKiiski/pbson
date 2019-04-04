@@ -1,9 +1,11 @@
 package pbson.utils
 
-import pbson.{BsonBiDecoder, BsonDecoder}
+import pbson.{BsonBiDecoder, BsonDecoder, BsonError}
 import pbson.BsonError.{UnexpectedType, UnexpectedValue, WrappedThrowable}
 import org.bson.{BsonType, BsonValue}
 import pbson.utils.TraversableUtils.traverse2Map
+import pbson.utils.TraversableUtils.traverse2Seq
+
 import scala.util.Try
 
 
@@ -51,5 +53,12 @@ trait BsonDecoderUtils {
     } else {
       Left(UnexpectedType(b, BsonType.DOCUMENT))
     }
+
+  final def mapAsValueDecoder[K, V](f: V => K)(implicit d: BsonDecoder[V]): BsonDecoder[Map[K, V]] = {
+    case null => Right(Map.empty)
+    case b: BsonValue if b.isArray =>
+      traverse2Seq(b.asArray().getValues)(d.apply).map(_.map(v => f(v) -> v).toMap)
+    case b => Left(UnexpectedType(b, BsonType.ARRAY))
+  }
 
 }
