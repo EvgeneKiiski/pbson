@@ -1,7 +1,6 @@
 package pbson.examples
 
-import org.mongodb.scala.bson.{BsonArray, BsonDocument, BsonInt64, BsonString}
-import pbson.BsonDecoder.Result
+import org.mongodb.scala.bson._
 import pbson._
 
 

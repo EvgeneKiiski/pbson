@@ -1,7 +1,6 @@
 package pbson.examples
 
 import pbson._
-import pbson.semiauto._
 
 /**
   * @author Evgenii Kiiski

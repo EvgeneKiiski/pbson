@@ -1,6 +1,7 @@
 package pbson.examples
 
 import pbson._
+import pbson.encoder.ReprBsonMaybeEncoder
 import pbson.semiauto._
 
 /**
@@ -14,7 +15,7 @@ object MapArrayExample extends App {
   implicit val testCaseEncoder: BsonEncoder[TestCase] = deriveEncoder
   implicit val testCaseDecoder: BsonDecoder[TestCase] = deriveDecoder
 
-  implicit val mapEncoder: BsonEncoder[Map[String, String]] = map2ArrayEncoder
+  implicit val mapEncoder: ReprBsonMaybeEncoder[Map[String, String]] = map2ArrayEncoder
   implicit val mapDecoder: BsonDecoder[Map[String, String]] = array2MapDecoder
 
   val test : TestCase = TestCase(Map("key1" -> "value1", "key2" -> "value2"))

@@ -1,6 +1,6 @@
 
 import org.bson.BsonValue
-import pbson.utils.{BsonDecoderUtils, BsonEncoderUtils}
+import pbson.utils.{ BsonDecoderUtils, BsonEncoderUtils }
 
 
 /**

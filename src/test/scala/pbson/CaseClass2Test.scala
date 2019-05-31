@@ -1,7 +1,7 @@
 package pbson
 
 import org.scalatest.{Matchers, WordSpec}
-import pbson.semiauto.{deriveDecoder, deriveEncoder}
+import pbson.semiauto._
 
 /**
   * @author Evgenii Kiiski 
@@ -23,10 +23,9 @@ class CaseClass2Test extends WordSpec with Matchers {
                        b: Option[String],
                        c: Long,
                        d: Seq[Long],
-                       e: Map[String, NestedCase],
+                       //e: Map[String, NestedCase],
                        st: SealedTest
                      )
-
 
   implicit val testCaseEncoder: BsonEncoder[TestCase] = deriveEncoder
   implicit val testCaseDecoder: BsonDecoder[TestCase] = deriveDecoder
@@ -40,7 +39,7 @@ class CaseClass2Test extends WordSpec with Matchers {
         Some("45"),
         34l,
         List(2l, 5l),
-        Map("32" -> NestedCase("r", 5)),
+        //Map("32" -> NestedCase("r", 5)),
         One()
       )
 
