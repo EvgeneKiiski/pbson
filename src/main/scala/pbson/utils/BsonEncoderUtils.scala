@@ -36,4 +36,12 @@ trait BsonEncoderUtils {
     case Left(l) => new BsonDocument(leftKey, ea(l))
   }
 
+  final def mapAsValueEncoder[K, V](implicit e: BsonEncoder[V]): BsonEncoder[Map[K, V]] = t =>
+    if (t.isEmpty) {
+      BsonEncoder.BSON_UNDEFINED
+    } else {
+      val list = new util.ArrayList[BsonValue](t.values.map(e.apply).asJavaCollection)
+      new BsonArray(list)
+    }
+
 }
