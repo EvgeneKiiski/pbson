@@ -1,8 +1,8 @@
 package pbson
 
-import org.bson.{BsonType, BsonValue}
+import org.bson.{ BsonType, BsonValue }
 import pbson.BsonError.UnexpectedType
-import shapeless.{Lazy, Strict, Unwrapped}
+import shapeless.{ Lazy, Strict, Unwrapped }
 
 /**
   * @author Evgenii Kiiski 
@@ -15,10 +15,10 @@ object BsonBiDecoder {
 
   // TODO dual behavior ???
   implicit final def biDecoderJoin[K, V, U](implicit
-                                            uw: Strict[Unwrapped.Aux[K, U]],
-                                            ke: Lazy[BsonDecoder[U]],
-                                            vd: Lazy[BsonDecoder[V]]
-                                           ): BsonBiDecoder[K, V] = { b =>
+    uw: Strict[Unwrapped.Aux[K, U]],
+    ke: Lazy[BsonDecoder[U]],
+    vd: Lazy[BsonDecoder[V]]
+  ): BsonBiDecoder[K, V] = { b =>
     if (b.isDocument) {
       val doc = b.asDocument()
       val key = if (doc.containsKey(BsonConst.Key)) {

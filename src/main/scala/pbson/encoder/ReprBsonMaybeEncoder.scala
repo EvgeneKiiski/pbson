@@ -22,12 +22,11 @@ object ReprBsonMaybeEncoder {
 
   implicit final def optionEncoder[A](implicit
     e: Lazy[BsonEncoder[A]]
-  ): ReprBsonMaybeEncoder[Option[A]] = new ReprBsonMaybeEncoder[Option[A]] {
-    override def apply(doc: BsonDocument, name: String, value: Option[A]): BsonDocument = value match {
+  ): ReprBsonMaybeEncoder[Option[A]] = (doc: BsonDocument, name: String, value: Option[A]) =>
+    value match {
       case Some(v) => doc.append(name, e.value.apply(v))
       case None => doc
     }
-  }
 
   implicit final def seqEncoder[A](
     implicit e: BsonEncoder[A]

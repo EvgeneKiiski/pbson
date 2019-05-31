@@ -15,6 +15,7 @@ abstract class ReprBsonProductEncoder[R] {
 }
 
 object ReprBsonProductEncoder extends ReprBsonProductEncoderInstances {
+
   @inline final def apply[A](implicit e: ReprBsonProductEncoder[A]): ReprBsonProductEncoder[A] = e
 
 }
@@ -28,26 +29,21 @@ trait ReprBsonProductEncoderInstances extends LowPriorityReprBsonProductEncoderI
     w: Witness.Aux[K],
     e: Lazy[ReprBsonMaybeEncoder[V]],
     rt: Strict[ReprBsonProductEncoder[T]]
-  ): ReprBsonProductEncoder[FieldType[K, V] :: T] = new ReprBsonProductEncoder[FieldType[K, V] :: T] {
-    override def apply(doc: BsonDocument, l: FieldType[K, V] :: T): BsonDocument = {
-      e.value.apply(doc, w.value.name, l.head)
-      rt.value.apply(doc, l.tail)
-    }
+  ): ReprBsonProductEncoder[FieldType[K, V] :: T] = (doc: BsonDocument, l: FieldType[K, V] :: T) => {
+    e.value.apply(doc, w.value.name, l.head)
+    rt.value.apply(doc, l.tail)
   }
 }
 
 trait LowPriorityReprBsonProductEncoderInstances {
 
-  //TODO option
   implicit final def hlistEncoder[K <: Symbol, V, T <: HList](implicit
     w: Witness.Aux[K],
     e: Lazy[BsonEncoder[V]],
     rt: Strict[ReprBsonProductEncoder[T]]
-  ): ReprBsonProductEncoder[FieldType[K, V] :: T] = new ReprBsonProductEncoder[FieldType[K, V] :: T] {
-    override def apply(doc: BsonDocument, l: FieldType[K, V] :: T): BsonDocument = {
-      doc.append(w.value.name, e.value.apply(l.head))
-      rt.value.apply(doc, l.tail)
-    }
+  ): ReprBsonProductEncoder[FieldType[K, V] :: T] = (doc: BsonDocument, l: FieldType[K, V] :: T) => {
+    doc.append(w.value.name, e.value.apply(l.head))
+    rt.value.apply(doc, l.tail)
   }
 
 }

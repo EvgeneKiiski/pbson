@@ -1,8 +1,8 @@
 package pbson.utils
 
-import pbson.{BsonBiDecoder, BsonDecoder, BsonError}
-import pbson.BsonError.{UnexpectedType, UnexpectedValue, WrappedThrowable}
-import org.bson.{BsonType, BsonValue}
+import pbson.{ BsonBiDecoder, BsonDecoder }
+import pbson.BsonError.{ UnexpectedType, UnexpectedValue, WrappedThrowable }
+import org.bson.{ BsonType, BsonValue }
 import pbson.utils.TraversableUtils.traverse2Map
 import pbson.utils.TraversableUtils.traverse2Seq
 
@@ -38,8 +38,8 @@ trait BsonDecoderUtils {
     }
 
   final def eitherDecoder[A, B](leftKey: String, rightKey: String)(implicit
-                                                                   da: BsonDecoder[A],
-                                                                   db: BsonDecoder[B]
+    da: BsonDecoder[A],
+    db: BsonDecoder[B]
   ): BsonDecoder[Either[A, B]] = b =>
     if (b.getBsonType == BsonType.DOCUMENT) {
       val doc = b.asDocument()

@@ -1,6 +1,6 @@
 package pbson.encoder
 
-import org.bson.{ BsonDocument, BsonValue }
+import org.bson.BsonDocument
 import pbson.BsonEncoder
 import pbson.utils.AnyValUtils
 import shapeless._
@@ -23,9 +23,7 @@ trait DerivedBsonEncoderInstances extends MidPriorityDerivedBsonEncoderInstances
     gen: Generic.Aux[A, R],
     avh: AnyValHelper.Aux[R, U],
     encode: Lazy[BsonEncoder[U]]
-  ): DerivedBsonEncoder[A] = new DerivedBsonEncoder[A] {
-    final def apply(t: A): BsonValue = encode.value(avh.unwrap(gen.to(t)))
-  }
+  ): DerivedBsonEncoder[A] = t => encode.value(avh.unwrap(gen.to(t)))
 
 }
 
@@ -34,20 +32,15 @@ trait MidPriorityDerivedBsonEncoderInstances extends LowPriorityDerivedBsonEncod
   implicit final def deriveProductEncoder[A, R](implicit
     gen: LabelledGeneric.Aux[A, R],
     encode: Lazy[ReprBsonProductEncoder[R]]
-  ): DerivedBsonEncoder[A] = new DerivedBsonEncoder[A] {
-    final def apply(t: A): BsonValue = encode.value.apply(new BsonDocument(), gen.to(t))
-  }
+  ): DerivedBsonEncoder[A] = t => encode.value.apply(new BsonDocument(), gen.to(t))
 
 }
 
 trait LowPriorityDerivedBsonEncoderInstances {
 
-
   implicit final def deriveCoproductEncoder[A, R](implicit
     gen: LabelledGeneric.Aux[A, R],
     encode: Lazy[ReprBsonCoproductEncoder[R]]
-  ): DerivedBsonEncoder[A] = new DerivedBsonEncoder[A] {
-    final def apply(t: A): BsonValue = encode.value.apply(gen.to(t))
-  }
+  ): DerivedBsonEncoder[A] = t => encode.value.apply(gen.to(t))
 
 }

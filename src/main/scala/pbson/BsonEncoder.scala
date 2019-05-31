@@ -9,7 +9,6 @@ import pbson.encoder.DerivedBsonEncoder
 import shapeless.Lazy
 
 
-
 /**
   * @author Evgenii Kiiski 
   */

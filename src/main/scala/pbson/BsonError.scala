@@ -1,6 +1,6 @@
 package pbson
 
-import org.bson.{BsonType, BsonValue}
+import org.bson.{ BsonType, BsonValue }
 
 /**
   * @author Evgenii Kiiski 

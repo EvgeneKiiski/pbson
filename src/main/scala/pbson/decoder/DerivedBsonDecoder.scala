@@ -1,10 +1,9 @@
 package pbson.decoder
 
-import org.bson.{BsonType, BsonValue}
-import pbson.BsonDecoder.Result
+import org.bson.BsonType
 import pbson.BsonError.UnexpectedType
 import pbson.utils.AnyValUtils
-import pbson.{BsonDecoder, BsonError}
+import pbson.{ BsonDecoder, BsonError }
 import shapeless._
 
 /**
@@ -21,29 +20,25 @@ object DerivedBsonDecoder extends DerivedBsonDecoderInstances {
 trait DerivedBsonDecoderInstances extends LowPriorityDerivedBsonDecoderInstances with AnyValUtils {
 
   implicit final def deriveWrappedDecoder[A <: AnyVal, R, U](implicit
-                                                             gen: Generic.Aux[A, R],
-                                                             avh: AnyValHelper.Aux[R, U],
-                                                             decode: Lazy[BsonDecoder[U]]
-                                                            ): DerivedBsonDecoder[A] = new DerivedBsonDecoder[A] {
-    final def apply(b: BsonValue): Result[A] = decode.value(b).map(v => gen.from(avh.wrap(v)))
-  }
+    gen: Generic.Aux[A, R],
+    avh: AnyValHelper.Aux[R, U],
+    decode: Lazy[BsonDecoder[U]]
+  ): DerivedBsonDecoder[A] = b => decode.value(b).map(v => gen.from(avh.wrap(v)))
 
 }
 
 trait LowPriorityDerivedBsonDecoderInstances {
-  implicit def deriveDecoder[A, R, K](implicit
-                                      gen: LabelledGeneric.Aux[A, R],
-                                      decode: Lazy[ReprBsonDecoder[R]]
-                                     ): DerivedBsonDecoder[A] = new DerivedBsonDecoder[A] {
-    final def apply(b: BsonValue): Either[BsonError, A] = {
-      if (b.isDocument) {
-        decode.value(b.asDocument()) match {
-          case Right(r) => Right(gen.from(r))
-          case l@Left(_) => l.asInstanceOf[Either[BsonError, A]]
-        }
-      } else {
-        Left(UnexpectedType(b, BsonType.DOCUMENT))
+  implicit final def deriveDecoder[A, R, K](implicit
+    gen: LabelledGeneric.Aux[A, R],
+    decode: Lazy[ReprBsonDecoder[R]]
+  ): DerivedBsonDecoder[A] = b => {
+    if (b.isDocument) {
+      decode.value(b.asDocument()) match {
+        case Right(r) => Right(gen.from(r))
+        case l @ Left(_) => l.asInstanceOf[Either[BsonError, A]]
       }
+    } else {
+      Left(UnexpectedType(b, BsonType.DOCUMENT))
     }
   }
 }
