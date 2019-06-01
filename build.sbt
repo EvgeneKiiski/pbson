@@ -3,11 +3,15 @@ resolvers += "Artima Maven Repository" at "http://repo.artima.com/releases"
 
 logBuffered in Test := false
 
+autoCompilerPlugins := true
+
+addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.0")
+
 lazy val commonSettings = Seq(
   organization := "ru.twistedlogic",
   organizationName := "Twistedlogic",
   organizationHomepage := Some(new URL("http://twistedlogic.ru/")),
-  version := "0.0.11",
+  version := "0.0.12",
   scalaVersion := "2.12.8",
   licenses := Seq("Apache 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
   scalacOptions ++= Seq(
@@ -25,7 +29,7 @@ lazy val commonSettings = Seq(
     "-Ywarn-dead-code",
     "-Ywarn-numeric-widen",
     "-Xfuture",
-    "-Ywarn-unused-import"
+    "-Ywarn-unused-import",
   )
 )
 
@@ -62,6 +66,22 @@ lazy val examples = (project in file("examples"))
     name := "examples",
     libraryDependencies ++= Seq(
       "org.mongodb.scala" %% "mongo-scala-driver" % "2.6.0",
+      "junit" % "junit" % "4.12" % Test,
+      "org.typelevel" %% "discipline" % "0.10.0" % Test,
+      "org.scalactic" %% "scalactic" % "3.0.5" % Test,
+      "org.scalatest" %% "scalatest" % "3.0.5" % Test
+    )
+  )
+
+lazy val compiler = (project in file("compiler"))
+  .dependsOn(root)
+  .settings(
+    commonSettings,
+    scalacOptions ++= Seq(
+      "-Ystatistics:typer",
+    ),
+    name := "compiler-tests",
+    libraryDependencies ++= Seq(
       "junit" % "junit" % "4.12" % Test,
       "org.typelevel" %% "discipline" % "0.10.0" % Test,
       "org.scalactic" %% "scalactic" % "3.0.5" % Test,

@@ -1,7 +1,5 @@
 package pbson.decoder.benchmarks
 
-import org.bson.codecs.{Codec, DecoderContext, EncoderContext}
-import org.mongodb.scala.bson.codecs.Macros
 import org.openjdk.jmh.annotations.{Scope, State}
 
 

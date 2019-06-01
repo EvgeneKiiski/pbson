@@ -1,7 +1,7 @@
 package pbson
 
-import org.bson.{BsonType, BsonValue}
-import pbson.BsonError.{ArrayValueNotFound, FieldNotFound, UnexpectedType}
+import org.bson.{ BsonType, BsonValue }
+import pbson.BsonError.{ ArrayValueNotFound, FieldNotFound, UnexpectedType }
 
 import scala.collection.JavaConverters._
 import BsonDecoder.Result
@@ -48,7 +48,7 @@ final case class BCursor(private[BCursor] val value: Result[BsonValue]) extends 
     get[A](k) match {
       case Right(a) => Right(a)
       case Left(FieldNotFound(_)) => Right(fallback)
-      case l@Left(_) => l.asInstanceOf[Result[A]]
+      case l @ Left(_) => l.asInstanceOf[Result[A]]
     }
 }
 

@@ -1,6 +1,6 @@
 package pbson.encoder
 
-import org.bson.{BsonDocument, BsonType, BsonValue}
+import org.bson.BsonDocument
 import pbson.BsonEncoder
 import pbson.utils.AnyValUtils
 import shapeless._
@@ -17,36 +17,30 @@ object DerivedBsonEncoder extends DerivedBsonEncoderInstances {
 
 }
 
-trait DerivedBsonEncoderInstances extends LowPriorityDerivedBsonEncoderInstances with AnyValUtils {
+trait DerivedBsonEncoderInstances extends MidPriorityDerivedBsonEncoderInstances with AnyValUtils {
 
   implicit final def deriveWrappedEncoder[A <: AnyVal, R, U](implicit
-                                                             gen: Generic.Aux[A, R],
-                                                             avh: AnyValHelper.Aux[R, U],
-                                                             encode: Lazy[BsonEncoder[U]]
-                                                            ): DerivedBsonEncoder[A] = new DerivedBsonEncoder[A] {
-    final def apply(t: A): BsonValue = encode.value(avh.unwrap(gen.to(t)))
-  }
+    gen: Generic.Aux[A, R],
+    avh: AnyValHelper.Aux[R, U],
+    encode: Lazy[BsonEncoder[U]]
+  ): DerivedBsonEncoder[A] = t => encode.value(avh.unwrap(gen.to(t)))
+
+}
+
+trait MidPriorityDerivedBsonEncoderInstances extends LowPriorityDerivedBsonEncoderInstances {
+
+  implicit final def deriveProductEncoder[A, R](implicit
+    gen: LabelledGeneric.Aux[A, R],
+    encode: Lazy[ReprBsonProductEncoder[R]]
+  ): DerivedBsonEncoder[A] = t => encode.value.apply(new BsonDocument(), gen.to(t))
 
 }
 
 trait LowPriorityDerivedBsonEncoderInstances {
 
-  implicit final def deriveEncoder[A, R](implicit
-                                         gen: LabelledGeneric.Aux[A, R],
-
-                                         encode: Lazy[ReprBsonEncoder[R]]
-                                        ): DerivedBsonEncoder[A] = new DerivedBsonEncoder[A] {
-    final def apply(t: A): BsonValue = {
-      val doc = new BsonDocument()
-      val iterator = encode.value.apply(gen.to(t)).iterator
-      while (iterator.hasNext) {
-        val (k, v) = iterator.next()
-        if (v.getBsonType != BsonType.UNDEFINED) {
-          doc.append(k, v)
-        }
-      }
-      doc
-    }
-  }
+  implicit final def deriveCoproductEncoder[A, R](implicit
+    gen: LabelledGeneric.Aux[A, R],
+    encode: Lazy[ReprBsonCoproductEncoder[R]]
+  ): DerivedBsonEncoder[A] = t => encode.value.apply(gen.to(t))
 
 }

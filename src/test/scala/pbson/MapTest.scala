@@ -1,9 +1,10 @@
 package pbson
 
 import org.bson.BsonType
-import org.mongodb.scala.bson.{BsonArray, BsonDocument, BsonString}
-import org.scalatest.{Matchers, ParallelTestExecution, WordSpec}
-import pbson.BsonError.{FieldNotFound, UnexpectedType}
+import org.mongodb.scala.bson.{ BsonArray, BsonDocument, BsonString }
+import org.scalatest.{ Matchers, ParallelTestExecution, WordSpec }
+import pbson.BsonError.{ FieldNotFound, UnexpectedType }
+import pbson.encoder.ReprBsonMaybeEncoder
 import pbson.semiauto._
 
 /**
@@ -51,7 +52,7 @@ class MapTest extends WordSpec with ParallelTestExecution with Matchers {
   "Map simple -> simple as array" should {
     case class TestCase(a: Map[String, String])
 
-    implicit val mapEncoder: BsonEncoder[Map[String, String]] = map2ArrayEncoder
+    implicit val mapEncoder: ReprBsonMaybeEncoder[Map[String, String]] = map2ArrayEncoder
     implicit val mapDecoder: BsonDecoder[Map[String, String]] = array2MapDecoder
 
     implicit val testCaseEncoder: BsonEncoder[TestCase] = deriveEncoder
@@ -111,7 +112,7 @@ class MapTest extends WordSpec with ParallelTestExecution with Matchers {
     implicit val nestedEncoder: BsonEncoder[Nested] = deriveEncoder
     implicit val nestedDecoder: BsonDecoder[Nested] = deriveDecoder
 
-    implicit val mapEncoder: BsonEncoder[Map[String, Nested]] = map2ArrayEncoder
+    implicit val mapEncoder: ReprBsonMaybeEncoder[Map[String, Nested]] = map2ArrayEncoder
     implicit val mapDecoder: BsonDecoder[Map[String, Nested]] = array2MapDecoder
 
     implicit val testCaseEncoder: BsonEncoder[TestCase] = deriveEncoder
@@ -165,7 +166,7 @@ class MapTest extends WordSpec with ParallelTestExecution with Matchers {
     implicit val nestedEncoder: BsonEncoder[Nested] = deriveEncoder
     implicit val nestedDecoder: BsonDecoder[Nested] = deriveDecoder
 
-    implicit val mapEncoder: BsonEncoder[Map[Nested, String]] = map2ArrayEncoder
+    implicit val mapEncoder: ReprBsonMaybeEncoder[Map[Nested, String]] = map2ArrayEncoder
     implicit val mapDecoder: BsonDecoder[Map[Nested, String]] = array2MapDecoder
 
     implicit val testCaseEncoder: BsonEncoder[TestCase] = deriveEncoder
@@ -275,7 +276,7 @@ class MapTest extends WordSpec with ParallelTestExecution with Matchers {
     implicit val nestedEncoder: BsonEncoder[Nested] = deriveEncoder
     implicit val nestedDecoder: BsonDecoder[Nested] = deriveDecoder
 
-    implicit val mapEncoder: BsonEncoder[Map[Key, Nested]] = map2ArrayEncoder
+    implicit val mapEncoder: ReprBsonMaybeEncoder[Map[Key, Nested]] = map2ArrayEncoder
     implicit val mapDecoder: BsonDecoder[Map[Key, Nested]] = array2MapDecoder
 
     implicit val testCaseEncoder: BsonEncoder[TestCase] = deriveEncoder
