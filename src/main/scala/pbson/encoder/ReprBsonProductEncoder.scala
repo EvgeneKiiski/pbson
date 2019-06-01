@@ -24,7 +24,6 @@ trait ReprBsonProductEncoderInstances extends LowPriorityReprBsonProductEncoderI
 
   implicit final val hnilEncoder: ReprBsonProductEncoder[HNil] = (doc: BsonDocument, _: HNil) => doc
 
-
   implicit final def hlistConsEncoder[K <: Symbol, V, T <: HList](implicit
     w: Witness.Aux[K],
     e: Lazy[ReprBsonMaybeEncoder[V]],

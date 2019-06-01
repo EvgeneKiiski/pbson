@@ -25,7 +25,7 @@ object BsonEncoder extends BsonEncoderInstances {
 
   @inline final def apply[A](implicit e: BsonEncoder[A]): BsonEncoder[A] = e
 
-  private[pbson] val BSON_NULL = new BsonNull()
+  private[pbson] final val BSON_NULL = new BsonNull()
 
 }
 

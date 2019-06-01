@@ -4,18 +4,12 @@ import java.util.concurrent.TimeUnit
 
 import org.openjdk.jmh.annotations._
 import pbson._
-import pbson.examples.CaseClass2Example.{NestedCase, TestCase}
 import pbson.semiauto._
-import cats.syntax.either._
 import io.circe._
 import io.circe.parser._
 import io.circe.generic.auto._
 import io.circe.syntax._
-import org.bson._
-import org.bson.codecs.{Codec, DecoderContext, EncoderContext}
-import org.bson.types.{Decimal128, ObjectId}
 import org.mongodb.scala.bson.{BsonArray, BsonDocument, BsonInt64, BsonString}
-import org.mongodb.scala.bson.codecs.Macros
 import pbson.decoder.benchmarks.Examples._
 
 import scala.collection.JavaConverters._

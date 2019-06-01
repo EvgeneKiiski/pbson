@@ -1,0 +1,22 @@
+one call
+
+typer                       : 1 spans, ()913.185ms (55.1%)
+
+[info] #implicit searches            : 289
+[info]   #plausibly compatible       : 316 (109.3%)
+[info]   #matching                   : 316 (109.3%)
+[info]   #typed                      : 316 (109.3%)
+[info]   #found                      : 210 (72.7%)
+[info]   #implicit improves tests    : 60 (20.8%)
+[info]   #implicit inscope hits      : 8 (2.8%)
+[info]   #implicit oftype hits       : 197 (68.2%)
+
+[info] time spent in implicits       : 289 spans, ()831.042ms (91.0%)
+[info]   successful in scope         : 8 spans, ()3.569ms (0.4%)
+[info]   failed in scope             : 281 spans, ()62.612ms (6.9%)
+[info]   successful of type          : 197 spans, ()814.83ms (89.2%)
+[info]   failed of type              : 84 spans, ()241.593ms (26.5%)
+[info]   assembling parts            : 255 spans, ()46.341ms (5.1%)
+[info]   matchesPT                   : 1903 spans, ()26.348ms (2.9%)
+[info] time spent in macroExpand     : 480 spans, ()806.22ms (88.3%)
+

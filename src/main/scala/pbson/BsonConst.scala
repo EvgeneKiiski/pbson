@@ -5,9 +5,9 @@ package pbson
   */
 private[pbson] object BsonConst {
 
-  val Key = "_k"
-  val Value = "_v"
+  final val Key = "_k"
+  final val Value = "_v"
 
-  val CoProductType = "type"
+  final val CoProductType = "type"
 
 }

@@ -18,39 +18,29 @@ import scala.util.control.NonFatal
 abstract class BsonDecoder[A] { self =>
   def apply(b: BsonValue): BsonDecoder.Result[A]
 
-  final def map[B](f: A => B): BsonDecoder[B] = new BsonDecoder[B] {
-    override def apply(b: BsonValue): Result[B] = self(b).map(f)
+  final def map[B](f: A => B): BsonDecoder[B] = b => self(b).map(f)
+
+  final def flatMap[B](f: A => BsonDecoder[B]): BsonDecoder[B] = b => self(b) match {
+    case Right(a) => f(a)(b)
+    case l@Left(_) => l.asInstanceOf[Result[B]]
   }
 
-  final def flatMap[B](f: A => BsonDecoder[B]): BsonDecoder[B] = new BsonDecoder[B] {
-    override def apply(b: BsonValue): Result[B] = self(b) match {
-      case Right(a) => f(a)(b)
-      case l @ Left(_) => l.asInstanceOf[Result[B]]
-    }
+  final def handleErrorWith(f: BsonError => BsonDecoder[A]): BsonDecoder[A] = b => self(b) match {
+    case r@Right(_) => r
+    case Left(e) => f(e)(b)
   }
 
-  final def handleErrorWith(f: BsonError => BsonDecoder[A]): BsonDecoder[A] = new BsonDecoder[A] {
-    override def apply(b: BsonValue): Result[A] = self(b) match {
-      case r @ Right(_) => r
-      case Left(e) => f(e)(b)
+  final def product[B](fb: BsonDecoder[B]): BsonDecoder[(A, B)] = b => self(b) match {
+    case Right(a) => fb(b) match {
+      case Right(rb) => Right((a, rb))
+      case l@Left(_) => l.asInstanceOf[Result[(A, B)]]
     }
+    case l@Left(_) => l.asInstanceOf[Result[(A, B)]]
   }
 
-  final def product[B](fb: BsonDecoder[B]): BsonDecoder[(A, B)] = new BsonDecoder[(A, B)] {
-    override def apply(b: BsonValue): Result[(A, B)] = self(b) match {
-      case Right(a) => fb(b) match {
-        case Right(b) => Right((a, b))
-        case l @ Left(_) => l.asInstanceOf[Result[(A, B)]]
-      }
-      case l @ Left(_) => l.asInstanceOf[Result[(A, B)]]
-    }
-  }
-
-  final def or[AA >: A](d: => BsonDecoder[AA]): BsonDecoder[AA] = new BsonDecoder[AA] {
-    override def apply(b: BsonValue): Result[AA] = self(b) match {
-      case r @ Right(_) => r
-      case Left(_) => d(b)
-    }
+  final def or[AA >: A](d: => BsonDecoder[AA]): BsonDecoder[AA] = b => self(b) match {
+    case r@Right(_) => r
+    case Left(_) => d(b)
   }
 }
 
@@ -66,7 +56,7 @@ object BsonDecoder extends BsonDecoderInstances {
 
   final def fromEither[A](a: Result[A]): BsonDecoder[A] = _ => a
 
-  private[pbson] val RIGHT_NULL = Right(null)
+  private[pbson] final val RIGHT_NULL = Right(null)
 }
 
 

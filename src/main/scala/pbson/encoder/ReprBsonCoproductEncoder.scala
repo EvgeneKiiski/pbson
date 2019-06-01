@@ -19,7 +19,7 @@ object ReprBsonCoproductEncoder {
 
   @inline final def apply[A](implicit e: ReprBsonCoproductEncoder[A]): ReprBsonCoproductEncoder[A] = e
 
-  implicit val cnilEncoder: ReprBsonCoproductEncoder[CNil] =
+  implicit final val cnilEncoder: ReprBsonCoproductEncoder[CNil] =
     (r: CNil) => throw new RuntimeException("impossible state")
 
   implicit final def cpEncoder[K <: Symbol, V, T <: Coproduct](implicit

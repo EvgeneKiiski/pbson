@@ -1,9 +1,9 @@
 package pbson.decoder
 
-import org.bson.BsonType
+import org.bson.{ BsonDocument, BsonType }
 import pbson.BsonError.UnexpectedType
 import pbson.utils.AnyValUtils
-import pbson.{ BsonDecoder, BsonError }
+import pbson.BsonDecoder
 import shapeless._
 
 /**
@@ -31,14 +31,8 @@ trait LowPriorityDerivedBsonDecoderInstances {
   implicit final def deriveDecoder[A, R, K](implicit
     gen: LabelledGeneric.Aux[A, R],
     decode: Lazy[ReprBsonDecoder[R]]
-  ): DerivedBsonDecoder[A] = b => {
-    if (b.isDocument) {
-      decode.value(b.asDocument()) match {
-        case Right(r) => Right(gen.from(r))
-        case l @ Left(_) => l.asInstanceOf[Either[BsonError, A]]
-      }
-    } else {
-      Left(UnexpectedType(b, BsonType.DOCUMENT))
-    }
+  ): DerivedBsonDecoder[A] = {
+    case b: BsonDocument => decode.value(b).map(gen.from)
+    case b => Left(UnexpectedType(b, BsonType.DOCUMENT))
   }
 }
