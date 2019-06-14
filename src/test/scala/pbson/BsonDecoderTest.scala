@@ -5,8 +5,8 @@ import java.util.UUID
 
 import org.bson.BsonBinary
 import org.bson.types.Decimal128
-import org.mongodb.scala.bson.{BsonBoolean, BsonDateTime, BsonDecimal128, BsonDouble, BsonInt32, BsonInt64, BsonNull, BsonString, BsonValue}
-import org.scalatest.prop._
+import org.mongodb.scala.bson._
+import org.scalatestplus.scalacheck.Checkers
 import org.scalatest.{Matchers, WordSpec}
 import pbson.BsonError.UnexpectedEmptyString
 
