@@ -100,7 +100,7 @@ class BsonEncoderTest extends WordSpec with ParallelTestExecution with Matchers 
 
   "java.lang.Long encode" should {
     "same value" in {
-      val v : java.lang.Long = 4l
+      val v : java.lang.Long = 4L
       v.toBson shouldEqual BsonInt64(4)
     }
     "null value" in {

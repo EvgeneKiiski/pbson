@@ -1,10 +1,10 @@
 package pbson
 
-import org.mongodb.scala.bson.{BsonArray, BsonDocument, BsonInt64, BsonString}
-import org.scalatest.{Matchers, ParallelTestExecution, WordSpec}
+import org.mongodb.scala.bson.{ BsonArray, BsonDocument, BsonInt32, BsonInt64, BsonString }
+import org.scalatest.{ Matchers, ParallelTestExecution, WordSpec }
 import pbson.semiauto._
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
   * @author Evgenii Kiiski 
@@ -57,9 +57,9 @@ class SpeedTest extends WordSpec with ParallelTestExecution with Matchers {
   implicit val aDecoder: BsonDecoder[A] = deriveDecoder
 
   val bson = BsonDocument(
-    "int" -> 3,
-    "str" -> "str",
-    "map" -> BsonDocument("str" -> 5, "s" -> 4),
+    "int" -> BsonInt32(3),
+    "str" -> BsonString("str"),
+    "map" -> BsonDocument("str" -> BsonInt32(5), "s" -> BsonInt32(4)),
     "seq" -> BsonArray(Seq(
       BsonDocument("id"-> BsonInt64(23), "name" -> BsonString("1")),
       BsonDocument("id"-> BsonInt64(24), "name" -> BsonString("5"))
@@ -81,7 +81,7 @@ class SpeedTest extends WordSpec with ParallelTestExecution with Matchers {
       val str = if (doc.containsKey("str")) Some(doc.get("str").asString().getValue) else None
       val map = doc.get("map").asDocument().asScala.map { case (k, v) => (k, v.asInt32().getValue)}.toMap
       val sq = doc.get("seq").asArray().asScala
-        .map(_.asDocument()).map(d => B(d.get("id").asInt64().getValue, d.get("name").asString().getValue))
+        .map(_.asDocument()).map(d => B(d.get("id").asInt64().getValue, d.get("name").asString().getValue)).toSeq
       val adt = doc.get("adt").asString().getValue match {
         case "A" => ADT1()
         case "B" => ADT2()

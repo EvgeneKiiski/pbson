@@ -225,8 +225,8 @@ class BsonDecoderTest extends WordSpec with Matchers with Checkers {
 
   "java.utilDate decode" should {
     "some value" in {
-      val v: BsonValue = BsonDateTime(5l)
-      v.fromBson[java.util.Date] shouldEqual Right(java.util.Date.from(Instant.ofEpochMilli(5l)))
+      val v: BsonValue = BsonDateTime(5L)
+      v.fromBson[java.util.Date] shouldEqual Right(java.util.Date.from(Instant.ofEpochMilli(5L)))
     }
     "invalid value int" in {
       val v: BsonValue = BsonInt32(12)

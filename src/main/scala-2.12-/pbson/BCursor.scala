@@ -1,10 +1,10 @@
 package pbson
 
 import org.bson.{ BsonType, BsonValue }
+import pbson.BsonDecoder.Result
 import pbson.BsonError.{ ArrayValueNotFound, FieldNotFound, UnexpectedType }
 
 import scala.collection.JavaConverters._
-import BsonDecoder.Result
 
 /**
   * @author Evgenii Kiiski

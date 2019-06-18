@@ -1,16 +1,14 @@
 package pbson.utils
 
-import pbson.{ BsonBiDecoder, BsonDecoder }
-import pbson.BsonError.{ UnexpectedType, UnexpectedValue, WrappedThrowable }
 import org.bson.{ BsonType, BsonValue }
-import pbson.utils.TraversableUtils.traverse2Map
-import pbson.utils.TraversableUtils.traverse2Seq
+import pbson.BsonError._
+import pbson._
+import pbson.utils.TraversableUtils._
 
 import scala.util.Try
 
-
 /**
-  * @author Evgenii Kiiski 
+  * @author Evgenii Kiiski
   */
 trait BsonDecoderUtils {
 

@@ -37,8 +37,8 @@ class CaseClass2Test extends WordSpec with Matchers {
       val test = TestCase(
         3,
         Some("45"),
-        34l,
-        List(2l, 5l),
+        34L,
+        List(2L, 5L),
         //Map("32" -> NestedCase("r", 5)),
         One()
       )
