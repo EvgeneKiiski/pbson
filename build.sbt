@@ -6,7 +6,7 @@ logBuffered in Test := false
 
 autoCompilerPlugins := true
 
-//addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.0")
+addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.0")
 
 lazy val compilerOptions = Seq(
   "-encoding", "utf8",
@@ -15,7 +15,7 @@ lazy val compilerOptions = Seq(
   "-unchecked",
   "-opt:l:inline",
   "-opt-inline-from:pbson.**",
-  //"-Ypartial-unification",
+  "-Ypartial-unification",
   "-language:implicitConversions",
   "-language:higherKinds",
   "-language:existentials",
@@ -26,31 +26,30 @@ lazy val compilerOptions = Seq(
   "-Ywarn-unused-import",
 )
 
-def priorTo2_13(scalaVersion: String): Boolean =
-  CrossVersion.partialVersion(scalaVersion) match {
-    case Some((2, minor)) if minor < 13 => true
-    case _ => false
-  }
-
-
 lazy val commonSettings = Seq(
   organization := "ru.twistedlogic",
   organizationName := "Twistedlogic",
   organizationHomepage := Some(new URL("http://twistedlogic.ru/")),
   version := "0.0.13",
-  crossScalaVersions := Seq("2.12.8", "2.13.0"),
-  crossPaths := false,
-  scalaVersion := "2.12.8",
-  //scalaVersion := "2.13.0",
+  crossScalaVersions := Seq("2.11.12", "2.12.8", "2.13.0"),
   licenses := Seq("Apache 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
   scalacOptions ++= {
-    if (priorTo2_13(scalaVersion.value)) compilerOptions
-    else
-      compilerOptions.flatMap {
-        case "-Ywarn-unused-import" => Seq("-Ywarn-unused:imports")
-        case "-Xfuture" => Nil
-        case other => Seq(other)
-      }
+    CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((2, minor)) if minor == 11 =>
+        compilerOptions.flatMap {
+          case "-opt:l:inline" => Nil
+          case other => Seq(other)
+        }
+      case Some((2, minor)) if minor == 12 => compilerOptions
+      case Some((2, minor)) if minor >= 13 =>
+        compilerOptions.flatMap {
+          case "-Ywarn-unused-import" => Seq("-Ywarn-unused:imports")
+          case "-Ypartial-unification" => Nil
+          case "-Xfuture" => Nil
+          case other => Seq(other)
+        }
+      case _ => Nil
+    }
   }
 )
 
@@ -81,7 +80,6 @@ lazy val root = (project in file("."))
           Seq(
             "org.mongodb" % "bson" % "3.10.1",
             "com.chuusai" %% "shapeless" % "2.3.3",
-            //"org.mongodb.scala" %% "mongo-scala-bson" % "2.6.0" % Test,
             "org.scalactic" %% "scalactic" % "3.0.8" % Test,
             "org.scalatest" %% "scalatest" % "3.0.8" % Test,
             "org.scalacheck" %% "scalacheck" % "1.14.0" % Test,
@@ -92,7 +90,6 @@ lazy val root = (project in file("."))
           Seq(
             "org.mongodb" % "bson" % "3.10.1",
             "com.chuusai" %% "shapeless" % "2.3.3",
-            //"org.mongodb.scala" %% "mongo-scala-bson" % "2.6.0" % Test,
             "org.scalactic" %% "scalactic" % "3.0.8" % Test,
             "org.scalatest" %% "scalatest" % "3.0.8" % Test,
             "org.scalacheck" %% "scalacheck" % "1.14.0" % Test,
