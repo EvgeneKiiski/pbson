@@ -5,8 +5,8 @@ import java.util.UUID
 
 import org.bson.BsonBinary
 import org.bson.types.Decimal128
-import org.mongodb.scala.bson.{BsonBoolean, BsonDateTime, BsonDecimal128, BsonDouble, BsonInt32, BsonInt64, BsonNull, BsonString, BsonValue}
-import org.scalatest.prop._
+import org.mongodb.scala.bson._
+import org.scalatestplus.scalacheck.Checkers
 import org.scalatest.{Matchers, WordSpec}
 import pbson.BsonError.UnexpectedEmptyString
 
@@ -225,8 +225,8 @@ class BsonDecoderTest extends WordSpec with Matchers with Checkers {
 
   "java.utilDate decode" should {
     "some value" in {
-      val v: BsonValue = BsonDateTime(5l)
-      v.fromBson[java.util.Date] shouldEqual Right(java.util.Date.from(Instant.ofEpochMilli(5l)))
+      val v: BsonValue = BsonDateTime(5L)
+      v.fromBson[java.util.Date] shouldEqual Right(java.util.Date.from(Instant.ofEpochMilli(5L)))
     }
     "invalid value int" in {
       val v: BsonValue = BsonInt32(12)

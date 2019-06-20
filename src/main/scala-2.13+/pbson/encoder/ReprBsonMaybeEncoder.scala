@@ -5,7 +5,8 @@ import java.util
 import org.bson.{ BsonArray, BsonDocument, BsonValue }
 import pbson.{ BsonEncoder, BsonMapEncoder }
 import shapeless.Lazy
-import scala.collection.JavaConverters._
+
+import scala.jdk.CollectionConverters._
 
 /**
   * @author Eugene Kiyski
@@ -32,7 +33,7 @@ object ReprBsonMaybeEncoder {
     implicit e: BsonEncoder[A]
   ): ReprBsonMaybeEncoder[Seq[A]] = (doc: BsonDocument, name: String, t: Seq[A]) => {
     if (t.nonEmpty) {
-      doc.append(name, new BsonArray(t.map(e.apply).asJava))
+      doc.append(name, new BsonArray(t.map(e.apply(_)).asJava))
     } else {
       doc
     }
@@ -44,7 +45,7 @@ object ReprBsonMaybeEncoder {
     if (t.isEmpty) {
       doc
     } else {
-      doc.append(name, new BsonArray(t.map(e.apply).asJava))
+      doc.append(name, new BsonArray(t.map(e.apply(_)).asJava))
     }
 
   implicit final def setEncoder[A](implicit
@@ -53,7 +54,7 @@ object ReprBsonMaybeEncoder {
     if (t.isEmpty) {
       doc
     } else {
-      val set: util.Set[BsonValue] = t.map(e.apply).asJava
+      val set: util.Set[BsonValue] = t.map(e.apply(_)).asJava
       val list = new util.ArrayList[BsonValue](set)
       doc.append(name, new BsonArray(list))
     }
@@ -64,7 +65,7 @@ object ReprBsonMaybeEncoder {
     if (t.isEmpty) {
       doc
     } else {
-      doc.append(name, new BsonArray(t.map(e.apply).asJava))
+      doc.append(name, new BsonArray(t.map(e.apply(_)).asJava))
     }
 
   implicit final def mapEncoderDocument[K, V](implicit
@@ -74,7 +75,7 @@ object ReprBsonMaybeEncoder {
       doc
     } else {
       val d = new BsonDocument()
-      d.putAll(t.map(e.apply).asJava)
+      d.putAll(t.map(e.apply(_)).asJava)
       doc.append(name, d)
     }
 

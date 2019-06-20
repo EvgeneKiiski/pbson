@@ -2,8 +2,8 @@ package pbson.gen
 
 import java.util.Date
 
-import org.bson.{BsonType, BsonValue}
-import org.mongodb.scala.bson._
+import org.bson.{ BsonType, BsonValue }
+import org.mongodb.scala.bson.{ BsonDocument, _ }
 import org.scalacheck.Gen
 import pbson.BsonError
 
@@ -25,8 +25,8 @@ object AnyBsonGen {
     BsonNull(): BsonValue,
     BsonRegularExpression(".*"),
     BsonJavaScript(""),
-    BsonSymbol('a),
-    BsonJavaScriptWithScope(""),
+    BsonSymbol(Symbol("a")),
+    BsonJavaScriptWithScope("", BsonDocument()),
     BsonInt32(23423),
     BsonTimestamp(),
     BsonInt64(23423),
