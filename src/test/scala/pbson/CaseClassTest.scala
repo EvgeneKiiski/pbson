@@ -64,7 +64,8 @@ class CaseClassTest extends WordSpec with Matchers {
 
         case class TestCase(a: Int, b: Option[String], id: MyIdV)
 
-        implicit val idDecoder: BsonDecoder[MyIdV] = validateDeriveDecoder(MyIdV.validate)
+        //implicit val idDecoder: BsonDecoder[MyIdV] = validateDeriveDecoder(MyIdV.validate)
+        implicit val idDecoder: BsonDecoder[MyIdV] = deriveDecoder
 
         implicit val testCaseEncoder: BsonEncoder[TestCase] = deriveEncoder
         implicit val testCaseDecoder: BsonDecoder[TestCase] = deriveDecoder

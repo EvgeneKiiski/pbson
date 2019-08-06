@@ -15,10 +15,13 @@ import scala.util.control.NonFatal
 /**
   * @author Evgenii Kiiski 
   */
-abstract class BsonDecoder[A] { self =>
-  def apply(b: BsonValue): BsonDecoder.Result[A]
+abstract class BsonDecoder[A] extends Decoder[A] { self =>
+  final type Value = BsonValue
+  final type Error = BsonError
 
-  final def map[B](f: A => B): BsonDecoder[B] = b => self(b).map(f)
+//  def apply(b: BsonValue): BsonDecoder.Result[A]
+//
+   final def map[B](f: A => B): BsonDecoder[B] = b => self(b).map(f)
 
   final def flatMap[B](f: A => BsonDecoder[B]): BsonDecoder[B] = b => self(b) match {
     case Right(a) => f(a)(b)
@@ -63,6 +66,7 @@ object BsonDecoder extends BsonDecoderInstances {
 trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
 
   abstract class BsonDecoderNotNull[A] extends BsonDecoder[A]
+
 
   implicit final val unitDecoder: BsonDecoderNotNull[Unit] = { b =>
     if (b.getBsonType == BsonType.NULL) {

@@ -17,8 +17,8 @@ object semiauto {
     decode: Lazy[DerivedBsonDecoder[A]]
   ): BsonDecoder[A] = decode.value
 
-  final def validateDeriveDecoder[A](validator: A => BsonDecoder.Result[A])(implicit
-    decode: Lazy[DerivedBsonDecoder[A]]
-  ): BsonDecoder[A] = decode.value.flatMap(a => BsonDecoder.fromEither(validator(a)))
+//  final def validateDeriveDecoder[A](validator: A => BsonDecoder.Result[A])(implicit
+//    decode: Lazy[DerivedBsonDecoder[A]]
+//  ): BsonDecoder[A] = decode.value.flatMap(a => Decoder.fromEither(validator(a)))
 
 }

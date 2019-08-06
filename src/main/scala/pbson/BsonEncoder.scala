@@ -12,8 +12,8 @@ import shapeless.Lazy
 /**
   * @author Evgenii Kiiski 
   */
-abstract class BsonEncoder[A] { self =>
-  def apply(t: A): BsonValue
+abstract class BsonEncoder[A] extends Encoder[A] { self =>
+  type Value = BsonValue
 
   @inline final def contramap[B](f: B => A): BsonEncoder[B] = (a: B) => self(f(a))
 
