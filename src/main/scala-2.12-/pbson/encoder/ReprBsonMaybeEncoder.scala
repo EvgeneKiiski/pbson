@@ -33,7 +33,7 @@ object ReprBsonMaybeEncoder {
     implicit e: BsonEncoder[A]
   ): ReprBsonMaybeEncoder[Seq[A]] = (doc: BsonDocument, name: String, t: Seq[A]) => {
     if (t.nonEmpty) {
-      doc.append(name, new BsonArray(t.map(e.apply(_)).asJava))
+      doc.append(name, new BsonArray(t.map(e.apply).asJava))
     } else {
       doc
     }
@@ -45,7 +45,7 @@ object ReprBsonMaybeEncoder {
     if (t.isEmpty) {
       doc
     } else {
-      doc.append(name, new BsonArray(t.map(e.apply(_)).asJava))
+      doc.append(name, new BsonArray(t.map(e.apply).asJava))
     }
 
   implicit final def setEncoder[A](implicit
@@ -54,7 +54,7 @@ object ReprBsonMaybeEncoder {
     if (t.isEmpty) {
       doc
     } else {
-      val set: util.Set[BsonValue] = t.map(e.apply(_)).asJava
+      val set: util.Set[BsonValue] = t.map(e.apply).asJava
       val list = new util.ArrayList[BsonValue](set)
       doc.append(name, new BsonArray(list))
     }
@@ -65,7 +65,7 @@ object ReprBsonMaybeEncoder {
     if (t.isEmpty) {
       doc
     } else {
-      doc.append(name, new BsonArray(t.map(e.apply(_)).asJava))
+      doc.append(name, new BsonArray(t.map(e.apply).asJava))
     }
 
   implicit final def mapEncoderDocument[K, V](implicit
@@ -75,7 +75,7 @@ object ReprBsonMaybeEncoder {
       doc
     } else {
       val d = new BsonDocument()
-      d.putAll(t.map(e.apply(_)).asJava)
+      d.putAll(t.map(e.apply).asJava)
       doc.append(name, d)
     }
 

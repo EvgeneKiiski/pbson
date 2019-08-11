@@ -18,5 +18,4 @@ object BsonMapDecoder {
   ): BsonMapDecoder[K, V] = {
     case (k, v) => vd.value.apply(v).map(uw.value.wrap(k) -> _)
   }
-
 }

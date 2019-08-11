@@ -36,7 +36,6 @@ object BsonBiDecoder {
       Left(UnexpectedType(b, BsonType.DOCUMENT))
     }
   }
-
 }
 
 

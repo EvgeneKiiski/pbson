@@ -12,7 +12,6 @@ import shapeless.{ :+:, CNil, Coproduct, Inl, Inr, Lazy, Strict, Witness }
 abstract class ReprBsonCoproductEncoder[R] {
 
   def apply(r: R): BsonValue
-
 }
 
 object ReprBsonCoproductEncoder {
@@ -33,5 +32,4 @@ object ReprBsonCoproductEncoder {
       doc
     case Inr(tail) => t.value.apply(tail)
   }
-
 }

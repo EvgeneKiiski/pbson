@@ -3,7 +3,7 @@ package pbson
 import org.mongodb.scala.bson.{BsonDocument, BsonInt32, BsonString, BsonValue}
 import org.scalatest.{Matchers, ParallelTestExecution, WordSpec}
 import pbson.BsonError.ADTValueNotFound
-import pbson.semiauto.{deriveDecoder, deriveEncoder}
+import pbson.semiauto._
 
 /**
   * @author Evgenii Kiiski 
