@@ -12,21 +12,16 @@ import shapeless.Lazy
 /**
   * @author Evgenii Kiiski 
   */
-abstract class BsonEncoder[A] extends Encoder[A] { self =>
-  type Value = BsonValue
+object BsonEncoder {
 
-  @inline final def contramap[B](f: B => A): BsonEncoder[B] = (a: B) => self(f(a))
-
-  @inline final def contramapOrNull[B](f: B => A): BsonEncoder[B] = (a: B) =>
-    if (a == null) BSON_NULL else contramap(f)(a)
-}
-
-object BsonEncoder extends BsonEncoderInstances {
+  implicit class BsonEncoderOps[A](val encoder: BsonEncoder[A]) extends AnyVal {
+    @inline final def contramapOrNull[B](f: B => A): BsonEncoder[B] = (a: B) =>
+      if (a == null) BSON_NULL else encoder.contramap(f)(a)
+  }
 
   @inline final def apply[A](implicit e: BsonEncoder[A]): BsonEncoder[A] = e
 
   private[pbson] final val BSON_NULL = new BsonNull()
-
 }
 
 trait BsonEncoderInstances extends LowPriorityBsonEncoderInstances {
@@ -85,8 +80,7 @@ trait BsonEncoderInstances extends LowPriorityBsonEncoderInstances {
 
 trait LowPriorityBsonEncoderInstances {
 
-  implicit final def deriveEncoder[A](implicit
+  implicit final def deriveEncoderLow[A](implicit
     encode: Lazy[DerivedBsonEncoder[A]]
   ): BsonEncoder[A] = encode.value
-
 }

@@ -25,8 +25,8 @@ trait BsonEncoderUtils {
       doc.append(name, new BsonArray(list))
     }
 
-  final def enumEncoder[E <: Enumeration](enum: E): BsonEncoder[E#Value] = e =>
-    BsonEncoder.stringEncoder(e.toString)
+  final def enumEncoder[E <: Enumeration](enum: E): BsonEncoder[E#Value] =
+    BsonEncoder[String].contramap(_.toString)
 
   final def eitherEncoder[A, B](leftKey: String, rightKey: String)(implicit
     ea: BsonEncoder[A],

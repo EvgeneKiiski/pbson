@@ -1,15 +1,15 @@
 package pbson.decoder
 
-import org.bson.{ BsonDocument, BsonType }
+import org.bson.{ BsonDocument, BsonType, BsonValue }
 import pbson.BsonError.UnexpectedType
 import pbson.utils.AnyValUtils
-import pbson.BsonDecoder
+import pbson.{ BsonDecoder, BsonError, Decoder }
 import shapeless._
 
 /**
   * @author Evgenii Kiiski 
   */
-abstract class DerivedBsonDecoder[A] extends BsonDecoder[A]
+abstract class DerivedBsonDecoder[A] extends Decoder[BsonValue, BsonError, A]
 
 object DerivedBsonDecoder extends DerivedBsonDecoderInstances {
 

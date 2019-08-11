@@ -44,5 +44,4 @@ object BsonError {
   final case class ArrayValueNotFound() extends BsonError {
     override def toString: String = s"BsonArray value not found"
   }
-
 }

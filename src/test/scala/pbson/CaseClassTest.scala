@@ -64,8 +64,8 @@ class CaseClassTest extends WordSpec with Matchers {
 
         case class TestCase(a: Int, b: Option[String], id: MyIdV)
 
-        //implicit val idDecoder: BsonDecoder[MyIdV] = validateDeriveDecoder(MyIdV.validate)
-        implicit val idDecoder: BsonDecoder[MyIdV] = deriveDecoder
+        implicit val idDecoder: BsonDecoder[MyIdV] = validateDeriveDecoder(MyIdV.validate)
+        //implicit val idDecoder: BsonDecoder[MyIdV] = deriveDecoder
 
         implicit val testCaseEncoder: BsonEncoder[TestCase] = deriveEncoder
         implicit val testCaseDecoder: BsonDecoder[TestCase] = deriveDecoder
@@ -76,7 +76,6 @@ class CaseClassTest extends WordSpec with Matchers {
         bson.fromBson[TestCase] shouldEqual Right(test)
       }
     }
-
 }
 object CaseClassTest {
 
@@ -89,5 +88,4 @@ object CaseClassTest {
 
     def validate(value: MyIdV): Either[BsonError, MyIdV] = Right(value)
   }
-
 }
