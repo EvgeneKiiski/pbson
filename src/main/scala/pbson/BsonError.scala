@@ -1,11 +1,14 @@
 package pbson
 
 import org.bson.{ BsonType, BsonValue }
+import scala.util.control.NoStackTrace
 
 /**
   * @author Evgenii Kiiski 
   */
-sealed trait BsonError
+sealed trait BsonError extends NoStackTrace {
+  override def getMessage: String = this.toString
+}
 
 object BsonError {
 
