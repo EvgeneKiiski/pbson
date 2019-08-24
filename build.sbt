@@ -24,7 +24,6 @@ lazy val compilerOptions = Seq(
   "-Ywarn-numeric-widen",
   "-Xfuture",
   "-Ywarn-unused-import",
-  //"-Xlog-implicits"
 )
 
 lazy val commonSettings = Seq(
