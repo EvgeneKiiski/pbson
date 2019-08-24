@@ -19,11 +19,13 @@ object DerivedBsonDecoder extends DerivedBsonDecoderInstances {
 
 trait DerivedBsonDecoderInstances extends LowPriorityDerivedBsonDecoderInstances with AnyValUtils {
 
-  implicit final def deriveWrappedDecoder[A <: AnyVal, R, U](implicit
+  implicit
+  final def deriveWrappedDecoder[A <: AnyVal, R, U](implicit
     gen: Generic.Aux[A, R],
     avh: AnyValHelper.Aux[R, U],
     decode: Lazy[BsonDecoder[U]]
-  ): DerivedBsonDecoder[A] = b => decode.value(b).map(v => gen.from(avh.wrap(v)))
+  ): DerivedBsonDecoder[A] = b =>
+    decode.value(b).map(v => gen.from(avh.wrap(v)))
 
 }
 

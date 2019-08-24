@@ -1,8 +1,8 @@
 package pbson
 
 import org.bson.BsonType
-import org.mongodb.scala.bson.BsonString
-import org.scalatest.{Matchers, WordSpec}
+import org.mongodb.scala.bson.{ BsonDocument, BsonInt32, BsonString }
+import org.scalatest.{ Matchers, WordSpec }
 import pbson.BsonError.UnexpectedType
 import pbson.semiauto._
 
@@ -65,7 +65,6 @@ class CaseClassTest extends WordSpec with Matchers {
         case class TestCase(a: Int, b: Option[String], id: MyIdV)
 
         implicit val idDecoder: BsonDecoder[MyIdV] = validateDeriveDecoder(MyIdV.validate)
-        //implicit val idDecoder: BsonDecoder[MyIdV] = deriveDecoder
 
         implicit val testCaseEncoder: BsonEncoder[TestCase] = deriveEncoder
         implicit val testCaseDecoder: BsonDecoder[TestCase] = deriveDecoder
@@ -74,6 +73,32 @@ class CaseClassTest extends WordSpec with Matchers {
 
         val bson = test.toBson
         bson.fromBson[TestCase] shouldEqual Right(test)
+      }
+      "lost field" in {
+
+        case class TestCase(id: MyIdV)
+
+        //implicit val idDecoder: BsonDecoder[MyIdV] = validateDeriveDecoder(MyIdV.validate)
+
+        implicit val testCaseDecoder: BsonDecoder[TestCase] = deriveDecoder
+
+        val bson = BsonDocument(
+          "a" -> BsonInt32(3)
+        )
+        bson.fromBson[TestCase].isLeft shouldEqual true
+      }
+      "lost field two" in {
+
+        case class TestCase(id: MyIdV)
+
+        implicit val idDecoder: BsonDecoder[MyIdV] = validateDeriveDecoder(MyIdV.validate)
+
+        implicit val testCaseDecoder: BsonDecoder[TestCase] = deriveDecoder
+
+        val bson = BsonDocument(
+          "a" -> BsonInt32(3)
+        )
+        bson.fromBson[TestCase].isLeft shouldEqual true
       }
     }
 }

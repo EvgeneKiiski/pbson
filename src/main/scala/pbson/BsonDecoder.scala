@@ -4,8 +4,9 @@ import java.util.UUID
 
 import org.bson._
 import org.bson.types.Decimal128
+import pbson.BsonDecoder.BsonDecoderNotNull
 import pbson.BsonError._
-import pbson.decoder.DerivedBsonDecoder
+import pbson.decoder.{ DerivedBsonDecoder, DerivedBsonDecoderNotNull }
 import shapeless.Lazy
 import pbson.utils.TraversableUtils._
 
@@ -32,8 +33,7 @@ object BsonDecoder {
   abstract class BsonDecoderNotNull[A] extends Decoder[BsonValue, BsonError, A]
 }
 
-
-trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
+trait BsonDecoderInstances extends MidPriorityBsonDecoderInstances {
   import BsonDecoder._
 
   implicit final val unitDecoder: BsonDecoderNotNull[Unit] = { b =>
@@ -256,6 +256,13 @@ trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
       Left(UnexpectedType(b, BsonType.DOCUMENT))
     }
   }
+}
+
+trait MidPriorityBsonDecoderInstances extends LowPriorityBsonDecoderInstances {
+
+  implicit final def deriveDecoderLow[A](implicit
+    decode: Lazy[DerivedBsonDecoderNotNull[A]]
+  ): BsonDecoderNotNull[A] = decode.value
 }
 
 trait LowPriorityBsonDecoderInstances {
