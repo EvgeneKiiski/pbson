@@ -24,14 +24,15 @@ lazy val compilerOptions = Seq(
   "-Ywarn-numeric-widen",
   "-Xfuture",
   "-Ywarn-unused-import",
+  //"-Xlog-implicits"
 )
 
 lazy val commonSettings = Seq(
   organization := "ru.twistedlogic",
   organizationName := "Twistedlogic",
   organizationHomepage := Some(new URL("http://twistedlogic.ru/")),
-  version := "0.0.13",
-  crossScalaVersions := Seq("2.11.12", "2.12.8", "2.13.0"),
+  version := "0.0.16",
+  crossScalaVersions := Seq("2.11.12", "2.12.9", "2.13.0"),
   licenses := Seq("Apache 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
   scalacOptions ++= {
     CrossVersion.partialVersion(scalaVersion.value) match {

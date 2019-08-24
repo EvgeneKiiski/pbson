@@ -30,7 +30,7 @@ trait BsonDecoderUtils {
   }
 
   final def enumDecoder[E <: Enumeration](enum: E): BsonDecoder[E#Value] = b =>
-    BsonDecoder.stringDecoder(b).flatMap { str =>
+    BsonDecoder[String].apply(b).flatMap { str =>
       Try(enum.withName(str))
         .toEither.fold(e => Left(WrappedThrowable(e)), Right.apply)
     }

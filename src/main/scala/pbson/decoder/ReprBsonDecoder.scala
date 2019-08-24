@@ -12,7 +12,7 @@ import shapeless.labelled.FieldType
 /**
   * @author Evgenii Kiiski 
   */
-abstract class  ReprBsonDecoder[R] {
+abstract class ReprBsonDecoder[R] {
   def apply(b: BsonDocument): Result[R]
 }
 

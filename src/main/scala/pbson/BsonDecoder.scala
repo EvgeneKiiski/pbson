@@ -4,9 +4,9 @@ import java.util.UUID
 
 import org.bson._
 import org.bson.types.Decimal128
-import pbson.BsonDecoder.Result
+import pbson.BsonDecoder.BsonDecoderNotNull
 import pbson.BsonError._
-import pbson.decoder.DerivedBsonDecoder
+import pbson.decoder.{ DerivedBsonDecoder, DerivedBsonDecoderNotNull }
 import shapeless.Lazy
 import pbson.utils.TraversableUtils._
 
@@ -15,36 +15,8 @@ import scala.util.control.NonFatal
 /**
   * @author Evgenii Kiiski 
   */
-abstract class BsonDecoder[A] { self =>
-  def apply(b: BsonValue): BsonDecoder.Result[A]
 
-  final def map[B](f: A => B): BsonDecoder[B] = b => self(b).map(f)
-
-  final def flatMap[B](f: A => BsonDecoder[B]): BsonDecoder[B] = b => self(b) match {
-    case Right(a) => f(a)(b)
-    case l@Left(_) => l.asInstanceOf[Result[B]]
-  }
-
-  final def handleErrorWith(f: BsonError => BsonDecoder[A]): BsonDecoder[A] = b => self(b) match {
-    case r@Right(_) => r
-    case Left(e) => f(e)(b)
-  }
-
-  final def product[B](fb: BsonDecoder[B]): BsonDecoder[(A, B)] = b => self(b) match {
-    case Right(a) => fb(b) match {
-      case Right(rb) => Right((a, rb))
-      case l@Left(_) => l.asInstanceOf[Result[(A, B)]]
-    }
-    case l@Left(_) => l.asInstanceOf[Result[(A, B)]]
-  }
-
-  final def or[AA >: A](d: => BsonDecoder[AA]): BsonDecoder[AA] = b => self(b) match {
-    case r@Right(_) => r
-    case Left(_) => d(b)
-  }
-}
-
-object BsonDecoder extends BsonDecoderInstances {
+object BsonDecoder {
 
   type Result[A] = Either[BsonError, A]
 
@@ -57,12 +29,12 @@ object BsonDecoder extends BsonDecoderInstances {
   final def fromEither[A](a: Result[A]): BsonDecoder[A] = _ => a
 
   private[pbson] final val RIGHT_NULL = Right(null)
+
+  abstract class BsonDecoderNotNull[A] extends Decoder[BsonValue, BsonError, A]
 }
 
-
-trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
-
-  abstract class BsonDecoderNotNull[A] extends BsonDecoder[A]
+trait BsonDecoderInstances extends MidPriorityBsonDecoderInstances {
+  import BsonDecoder._
 
   implicit final val unitDecoder: BsonDecoderNotNull[Unit] = { b =>
     if (b.getBsonType == BsonType.NULL) {
@@ -284,15 +256,20 @@ trait BsonDecoderInstances extends LowPriorityBsonDecoderInstances {
       Left(UnexpectedType(b, BsonType.DOCUMENT))
     }
   }
+}
 
+trait MidPriorityBsonDecoderInstances extends LowPriorityBsonDecoderInstances {
+
+  implicit final def deriveDecoderLow[A](implicit
+    decode: Lazy[DerivedBsonDecoderNotNull[A]]
+  ): BsonDecoderNotNull[A] = decode.value
 }
 
 trait LowPriorityBsonDecoderInstances {
 
-  implicit final def deriveDecoder[A](implicit
+  implicit final def deriveDecoderLow[A](implicit
     decode: Lazy[DerivedBsonDecoder[A]]
   ): BsonDecoder[A] = decode.value
-
 }
 
 

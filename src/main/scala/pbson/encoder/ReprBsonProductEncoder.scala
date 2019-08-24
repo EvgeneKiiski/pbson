@@ -11,13 +11,11 @@ import shapeless.{ ::, HList, HNil, Lazy, Strict, Witness }
 abstract class ReprBsonProductEncoder[R] {
 
   def apply(doc: BsonDocument, r: R): BsonDocument
-
 }
 
 object ReprBsonProductEncoder extends ReprBsonProductEncoderInstances {
 
   @inline final def apply[A](implicit e: ReprBsonProductEncoder[A]): ReprBsonProductEncoder[A] = e
-
 }
 
 trait ReprBsonProductEncoderInstances extends LowPriorityReprBsonProductEncoderInstances {
@@ -44,5 +42,4 @@ trait LowPriorityReprBsonProductEncoderInstances {
     doc.append(w.value.name, e.value.apply(l.head))
     rt.value.apply(doc, l.tail)
   }
-
 }
