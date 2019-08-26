@@ -1,7 +1,7 @@
 package pbson.decoder
 
 import org.bson.{ BsonDocument, BsonType, BsonValue }
-import pbson.BsonError.UnexpectedType
+import pbson.BsonError.{ FieldNotFound, UnexpectedType }
 import pbson.utils.AnyValUtils
 import pbson.{ BsonDecoder, BsonError, Decoder }
 import shapeless._
@@ -19,13 +19,16 @@ object DerivedBsonDecoder extends DerivedBsonDecoderInstances {
 
 trait DerivedBsonDecoderInstances extends LowPriorityDerivedBsonDecoderInstances with AnyValUtils {
 
-  implicit
-  final def deriveWrappedDecoder[A <: AnyVal, R, U](implicit
+  implicit final def deriveWrappedDecoder[A <: AnyVal, R, U](implicit
     gen: Generic.Aux[A, R],
     avh: AnyValHelper.Aux[R, U],
     decode: Lazy[BsonDecoder[U]]
   ): DerivedBsonDecoder[A] = b =>
-    decode.value(b).map(v => gen.from(avh.wrap(v)))
+    if (b != null) {
+      decode.value(b).map(v => gen.from(avh.wrap(v)))
+    } else {
+      Left(FieldNotFound("AnyVal wrapper has null value"))
+    }
 
 }
 
