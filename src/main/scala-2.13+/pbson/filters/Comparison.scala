@@ -2,8 +2,9 @@ package pbson.filters
 
 import org.bson.BsonDocument
 import pbson.BsonEncoder
-import Utils._
-import collection.JavaConverters._
+import pbson.filters.Utils._
+
+import scala.jdk.CollectionConverters._
 
 /**
   * @author Evgenii Kiiski 
