@@ -79,7 +79,7 @@ lazy val root = (project in file("."))
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, minor)) if minor <= 12 =>
           Seq(
-            "org.mongodb" % "bson" % "3.10.2",
+            "org.mongodb" % "bson" % "3.11.0",
             "com.chuusai" %% "shapeless" % "2.3.3",
             "org.scalactic" %% "scalactic" % "3.0.8" % Test,
             "org.scalatest" %% "scalatest" % "3.0.8" % Test,
@@ -89,7 +89,7 @@ lazy val root = (project in file("."))
           )
         case Some((2, minor)) if minor >= 13 =>
           Seq(
-            "org.mongodb" % "bson" % "3.10.1",
+            "org.mongodb" % "bson" % "3.11.0",
             "com.chuusai" %% "shapeless" % "2.3.3",
             "org.scalactic" %% "scalactic" % "3.0.8" % Test,
             "org.scalatest" %% "scalatest" % "3.0.8" % Test,
