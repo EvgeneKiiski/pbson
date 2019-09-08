@@ -30,7 +30,7 @@ lazy val commonSettings = Seq(
   organization := "ru.twistedlogic",
   organizationName := "Twistedlogic",
   organizationHomepage := Some(new URL("http://twistedlogic.ru/")),
-  version := "0.0.16",
+  version := "0.0.18",
   crossScalaVersions := Seq("2.11.12", "2.12.9", "2.13.0"),
   licenses := Seq("Apache 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
   scalacOptions ++= {
@@ -78,7 +78,7 @@ lazy val root = (project in file("."))
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, minor)) if minor <= 12 =>
           Seq(
-            "org.mongodb" % "bson" % "3.10.1",
+            "org.mongodb" % "bson" % "3.11.0",
             "com.chuusai" %% "shapeless" % "2.3.3",
             "org.scalactic" %% "scalactic" % "3.0.8" % Test,
             "org.scalatest" %% "scalatest" % "3.0.8" % Test,
@@ -88,7 +88,7 @@ lazy val root = (project in file("."))
           )
         case Some((2, minor)) if minor >= 13 =>
           Seq(
-            "org.mongodb" % "bson" % "3.10.1",
+            "org.mongodb" % "bson" % "3.11.0",
             "com.chuusai" %% "shapeless" % "2.3.3",
             "org.scalactic" %% "scalactic" % "3.0.8" % Test,
             "org.scalatest" %% "scalatest" % "3.0.8" % Test,
@@ -142,9 +142,9 @@ lazy val benchmarks = (project in file("benchmarks"))
     commonSettings,
     name := "benchmarks",
     libraryDependencies ++= Seq(
-      "io.circe" %% "circe-core" % "0.12.0-M3",
-      "io.circe" %% "circe-generic" % "0.12.0-M3",
-      "io.circe" %% "circe-parser" % "0.12.0-M3",
+      "io.circe" %% "circe-core" % "0.12.0-M4",
+      "io.circe" %% "circe-generic" % "0.12.0-M4",
+      "io.circe" %% "circe-parser" % "0.12.0-M4",
       "org.mongodb.scala" %% "mongo-scala-driver" % "2.6.0",
       "junit" % "junit" % "4.12" % Test,
       "org.scalactic" %% "scalactic" % "3.0.8",
