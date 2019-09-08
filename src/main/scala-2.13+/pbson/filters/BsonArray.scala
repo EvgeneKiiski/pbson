@@ -1,7 +1,8 @@
 package pbson.filters
 
 import org.bson.BsonValue
-import collection.JavaConverters._
+
+import scala.jdk.CollectionConverters._
 
 /**
   * @author Evgenii Kiiski 
