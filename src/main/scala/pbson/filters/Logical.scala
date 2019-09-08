@@ -9,7 +9,7 @@ import pbson.filters.Utils.includeOperatorBson
 trait Logical {
 
   /**
-    * $and	Joins query clauses with a logical AND returns all documents that match the conditions of both clauses.
+    * and	Joins query clauses with a logical AND returns all documents that match the conditions of both clauses.
     */
   final def and(b1: BsonValue, b2: BsonValue): BsonDocument =
     new BsonDocument("$and", BsonArray(b1, b2))
@@ -35,12 +35,12 @@ trait Logical {
   final def and(bs: Seq[BsonValue]): BsonDocument = new BsonDocument("$and", BsonArray(bs))
 
   /**
-    * $not	Inverts the effect of a query expression and returns documents that do not match the query expression.
+    * not	Inverts the effect of a query expression and returns documents that do not match the query expression.
     */
   final def not(key: String, cond: BsonValue): BsonDocument =
     includeOperatorBson(key, "$not", cond)
   /**
-    * $nor	Joins query clauses with a logical NOR returns all documents that fail to match both clauses.
+    * nor	Joins query clauses with a logical NOR returns all documents that fail to match both clauses.
     */
   final def nor(b1: BsonValue, b2: BsonValue): BsonDocument =
     new BsonDocument("$nor", BsonArray(b1, b2))
@@ -66,7 +66,7 @@ trait Logical {
   final def nor(bs: Seq[BsonValue]): BsonDocument = new BsonDocument("$nor", BsonArray(bs))
 
   /**
-    * $or	Joins query clauses with a logical OR returns all documents that match the conditions of either clause.
+    * or	Joins query clauses with a logical OR returns all documents that match the conditions of either clause.
     */
   final def or(b1: BsonValue, b2: BsonValue): BsonDocument =
     new BsonDocument("$or", BsonArray(b1, b2))
