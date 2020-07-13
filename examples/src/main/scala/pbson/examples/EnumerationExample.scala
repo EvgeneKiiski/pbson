@@ -20,6 +20,6 @@ object EnumerationExample extends App {
 
   val bson = test.toBson
   println(bson)
-  println(bson.fromBson[WeekDay.Value])
+  println(bson.fromBson[WeekDay.Value]())
 
 }

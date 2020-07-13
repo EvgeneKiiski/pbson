@@ -4,7 +4,6 @@ import java.util.UUID
 
 import org.bson._
 import org.bson.types.Decimal128
-import pbson.BsonEncoder.BSON_NULL
 import pbson.encoder.DerivedBsonEncoder
 import shapeless.Lazy
 

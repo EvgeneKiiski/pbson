@@ -22,6 +22,6 @@ object MapArrayExample extends App {
 
   val bson = test.toBson
   println(bson)
-  println(bson.fromBson[TestCase])
+  println(bson.fromBson[TestCase]())
 
 }

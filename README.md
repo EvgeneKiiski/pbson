@@ -37,7 +37,7 @@ val test = TestCase(3, Some("45"), MyId("000"))
 val bson = test.toBson
 println(bson)
 // { "a" : 3, "b" : "45", "id" : "000" }
-println(bson.fromBson[TestCase])
+println(bson.fromBson[TestCase]())
 // Right(TestCase(3,Some(45),MyId(000)))
 ```
 
@@ -49,7 +49,7 @@ If you're using SBT, add the following line to your build file:
 
 ```scala
 resolvers += "JCenter" at "https://jcenter.bintray.com/"
-libraryDependencies += "ru.twistedlogic" %% "pbson" % "0.0.18"
+libraryDependencies += "ru.twistedlogic" %% "pbson" % "0.0.19"
 ```
 
 ## Resources

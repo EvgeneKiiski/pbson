@@ -73,7 +73,7 @@ class SpeedTest extends WordSpec with ParallelTestExecution with Matchers {
       println(bson)
     }
     "decode" in {
-      bson.fromBson[A] shouldEqual Right(small)
+      bson.fromBson[A]() shouldEqual Right(small)
     }
     "manual decode" in {
       val doc = bson.asDocument()

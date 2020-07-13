@@ -22,11 +22,11 @@ class AnyValWrapperTest extends WordSpec with ParallelTestExecution with Matcher
     }
     "decode" in {
       val bson : BsonValue = BsonString("000")
-      bson.fromBson[Wrapper] shouldEqual Right(test)
+      bson.fromBson[Wrapper]() shouldEqual Right(test)
     }
     "decode invalid value" in {
       val bson : BsonValue = BsonInt32(23)
-      bson.fromBson[Wrapper] shouldEqual Left(UnexpectedType(bson, BsonType.STRING))
+      bson.fromBson[Wrapper]() shouldEqual Left(UnexpectedType(bson, BsonType.STRING))
     }
   }
 

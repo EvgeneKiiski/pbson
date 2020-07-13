@@ -28,7 +28,7 @@ object ADTExample extends App {
 
   val bson = test.toBson
   println(bson)
-  println(bson.fromBson[ADT])
+  println(bson.fromBson[ADT]())
 
 
 }

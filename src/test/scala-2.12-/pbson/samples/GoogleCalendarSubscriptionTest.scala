@@ -41,8 +41,8 @@ class GoogleCalendarSubscriptionTest extends FlatSpec with Matchers {
     )
     subscription.toBson shouldEqual testsBson
     println(subscription.toBson)
-    println(subscription.toBson.fromBson[GoogleCalendarSubscription])
-    subscription.toBson.fromBson[GoogleCalendarSubscription].right.get shouldEqual subscription
+    println(subscription.toBson.fromBson[GoogleCalendarSubscription]())
+    subscription.toBson.fromBson[GoogleCalendarSubscription]().right.get shouldEqual subscription
   }
 
 }
