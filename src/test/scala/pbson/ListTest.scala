@@ -29,19 +29,19 @@ class ListTest extends WordSpec with ParallelTestExecution with Matchers {
     }
     "decode list" in {
       val bson = BsonDocument("a" -> BsonArray(BsonString("45"), BsonString("23")))
-      bson.fromBson[TestCase] shouldEqual Right(TestCase(List("45", "23")))
+      bson.fromBson[TestCase]() shouldEqual Right(TestCase(List("45", "23")))
     }
     "decode list empty" in {
       val bson = BsonDocument()
-      bson.fromBson[TestCase] shouldEqual Right(TestCase(List.empty))
+      bson.fromBson[TestCase]() shouldEqual Right(TestCase(List.empty))
     }
     "decode unexpected type" in {
       val bson = BsonDocument("a" -> BsonString("45"))
-      bson.fromBson[TestCase] shouldEqual Left(UnexpectedType(BsonString("45"), BsonType.ARRAY))
+      bson.fromBson[TestCase]() shouldEqual Left(UnexpectedType(BsonString("45"), BsonType.ARRAY))
     }
     "decode list with error" in {
       val bson = BsonDocument("a" -> BsonArray(BsonString("45"), BsonInt64(23)))
-      bson.fromBson[TestCase] shouldEqual Left(UnexpectedType(BsonInt64(23), BsonType.STRING))
+      bson.fromBson[TestCase]() shouldEqual Left(UnexpectedType(BsonInt64(23), BsonType.STRING))
     }
   }
 

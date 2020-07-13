@@ -35,15 +35,15 @@ class AsStringTest extends WordSpec with ParallelTestExecution with Matchers wit
     }
     "decode" in {
       val bson = BsonString("A")
-      bson.fromBson[ADT] shouldEqual Right(ADT.One)
+      bson.fromBson[ADT]() shouldEqual Right(ADT.One)
     }
     "decode invalid" in {
       val bson = BsonString("C")
-      bson.fromBson[ADT] shouldEqual Left(UnexpectedValue("C"))
+      bson.fromBson[ADT]() shouldEqual Left(UnexpectedValue("C"))
     }
     "decode invalid type" in {
       val bson = BsonInt32(12)
-      bson.fromBson[ADT] shouldEqual Left(UnexpectedType(BsonInt32(12), BsonType.STRING))
+      bson.fromBson[ADT]() shouldEqual Left(UnexpectedType(BsonInt32(12), BsonType.STRING))
     }
   }
 

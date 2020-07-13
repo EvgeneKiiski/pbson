@@ -25,7 +25,7 @@ class CaseClassTest extends WordSpec with Matchers {
         val test = TestCase()
 
         val bson = test.toBson
-        bson.fromBson[TestCase] shouldEqual Right(test)
+        bson.fromBson[TestCase]() shouldEqual Right(test)
       }
       "simple example" in {
         case class TestCase(a: Int, b: Option[String], id: MyId)
@@ -36,7 +36,7 @@ class CaseClassTest extends WordSpec with Matchers {
         val test = TestCase(3, Some("45"), MyId("000"))
 
         val bson = test.toBson
-        bson.fromBson[TestCase] shouldEqual Right(test)
+        bson.fromBson[TestCase]() shouldEqual Right(test)
       }
       "simple example with unit" in {
         case class TestCase(a: Unit, b: Option[String], id: MyId)
@@ -47,7 +47,7 @@ class CaseClassTest extends WordSpec with Matchers {
         val test = TestCase((), Some("45"), MyId("000"))
 
         val bson = test.toBson
-        bson.fromBson[TestCase] shouldEqual Right(test)
+        bson.fromBson[TestCase]() shouldEqual Right(test)
       }
       "invalid type" in {
         case class TestCase(a: Int, b: Option[String])
@@ -58,7 +58,7 @@ class CaseClassTest extends WordSpec with Matchers {
         val test = TestCase(3, Some("45"))
 
         val bson = BsonString("343")
-        bson.fromBson[TestCase] shouldEqual Left(UnexpectedType(BsonString("343"), BsonType.DOCUMENT))
+        bson.fromBson[TestCase]() shouldEqual Left(UnexpectedType(BsonString("343"), BsonType.DOCUMENT))
       }
       "simple example wrapped with either constructor" in {
 
@@ -72,7 +72,7 @@ class CaseClassTest extends WordSpec with Matchers {
         val test = TestCase(3, Some("45"), MyIdV("000"))
 
         val bson = test.toBson
-        bson.fromBson[TestCase] shouldEqual Right(test)
+        bson.fromBson[TestCase]() shouldEqual Right(test)
       }
       "lost field" in {
 
@@ -85,7 +85,7 @@ class CaseClassTest extends WordSpec with Matchers {
         val bson = BsonDocument(
           "a" -> BsonInt32(3)
         )
-        bson.fromBson[TestCase].isLeft shouldEqual true
+        bson.fromBson[TestCase]().isLeft shouldEqual true
       }
       "lost field two" in {
 
@@ -98,7 +98,7 @@ class CaseClassTest extends WordSpec with Matchers {
         val bson = BsonDocument(
           "a" -> BsonInt32(3)
         )
-        bson.fromBson[TestCase].isLeft shouldEqual true
+        bson.fromBson[TestCase]().isLeft shouldEqual true
       }
     }
 }

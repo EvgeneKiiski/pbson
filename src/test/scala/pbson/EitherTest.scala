@@ -24,19 +24,19 @@ class EitherTest extends WordSpec with ParallelTestExecution with Matchers {
     }
     "decode right" in {
       val bson = BsonDocument("right" -> BsonInt32(1))
-      bson.fromBson[Either[String, Int]] shouldEqual Right(Right(1))
+      bson.fromBson[Either[String, Int]]() shouldEqual Right(Right(1))
     }
     "decode left" in {
       val bson = BsonDocument("left" -> BsonString("test"))
-      bson.fromBson[Either[String, Int]] shouldEqual Right(Left("test"))
+      bson.fromBson[Either[String, Int]]() shouldEqual Right(Left("test"))
     }
     "decode field non found" in {
       val bson = BsonDocument("thrid" -> BsonString("test"))
-      bson.fromBson[Either[String, Int]].isLeft shouldEqual true
+      bson.fromBson[Either[String, Int]]().isLeft shouldEqual true
     }
     "decode wrong type" in {
       val bson = BsonString("test")
-      bson.fromBson[Either[String, Int]].isLeft shouldEqual true
+      bson.fromBson[Either[String, Int]]().isLeft shouldEqual true
     }
   }
 

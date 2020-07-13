@@ -18,7 +18,7 @@ object AnyValWrapperExample extends App {
 
   val bson = test.toBson
   println(bson)
-  println(bson.fromBson[MyId])
+  println(bson.fromBson[MyId]())
 
 
 }

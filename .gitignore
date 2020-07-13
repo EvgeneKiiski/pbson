@@ -3,3 +3,8 @@
 .idea
 target
 repository
+.bloop
+.metals
+jfrog
+metals.sbt
+META-INF

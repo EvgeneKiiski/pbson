@@ -44,7 +44,7 @@ class CaseClass2Test extends WordSpec with Matchers {
       )
 
       val bson = test.toBson
-      bson.fromBson[TestCase] shouldEqual Right(test)
+      bson.fromBson[TestCase]() shouldEqual Right(test)
 
     }
   }

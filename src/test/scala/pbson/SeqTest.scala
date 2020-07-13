@@ -29,19 +29,19 @@ class SeqTest extends WordSpec with ParallelTestExecution with Matchers {
     }
     "decode seq" in {
       val bson = BsonDocument("a" -> BsonArray(BsonString("45"), BsonString("23")))
-      bson.fromBson[TestCase] shouldEqual Right(TestCase(Seq("45", "23")))
+      bson.fromBson[TestCase]() shouldEqual Right(TestCase(Seq("45", "23")))
     }
     "decode seq empty" in {
       val bson = BsonDocument()
-      bson.fromBson[TestCase] shouldEqual Right(TestCase(Seq.empty))
+      bson.fromBson[TestCase]() shouldEqual Right(TestCase(Seq.empty))
     }
     "decode unexpected type" in {
       val bson = BsonDocument("a" -> BsonString("45"))
-      bson.fromBson[TestCase] shouldEqual Left(UnexpectedType(BsonString("45"), BsonType.ARRAY))
+      bson.fromBson[TestCase]() shouldEqual Left(UnexpectedType(BsonString("45"), BsonType.ARRAY))
     }
     "decode seq with error" in {
       val bson = BsonDocument("a" -> BsonArray(BsonString("45"), BsonInt32(23)))
-      bson.fromBson[TestCase] shouldEqual Left(UnexpectedType(BsonInt32(23), BsonType.STRING))
+      bson.fromBson[TestCase]() shouldEqual Left(UnexpectedType(BsonInt32(23), BsonType.STRING))
     }
   }
 

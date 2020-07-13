@@ -27,11 +27,11 @@ class OptionTest extends WordSpec with ParallelTestExecution with Matchers {
     }
     "decode some" in {
       val bson = BsonDocument("a" -> BsonString("12"))
-      bson.fromBson[TestCase] shouldEqual Right(TestCase(Some("12")))
+      bson.fromBson[TestCase]() shouldEqual Right(TestCase(Some("12")))
     }
     "decode none" in {
       val bson = BsonDocument()
-      bson.fromBson[TestCase] shouldEqual Right(TestCase(None))
+      bson.fromBson[TestCase]() shouldEqual Right(TestCase(None))
     }
   }
 
