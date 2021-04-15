@@ -6,7 +6,7 @@ logBuffered in Test := false
 
 autoCompilerPlugins := true
 
-scalaVersion := "2.12.13"
+scalaVersion := "2.12.12"
 
 addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.0")
 

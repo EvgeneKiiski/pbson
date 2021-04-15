@@ -1,9 +1,9 @@
 //addSbtPlugin("com.47deg" % "sbt-microsites" % "0.9.0")
 //addSbtPlugin("org.tpolecat" % "tut-plugin" % "0.6.12")
 
-addSbtPlugin("org.portable-scala" % "sbt-scalajs-crossproject" % "0.6.0")
+addSbtPlugin("org.portable-scala" % "sbt-scalajs-crossproject" % "1.0.0")
 
-addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.5.1")
+addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.6.1")
 
 addSbtPlugin("org.scoverage" % "sbt-coveralls" % "1.2.7")
 
