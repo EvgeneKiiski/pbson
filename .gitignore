@@ -8,3 +8,5 @@ repository
 jfrog
 metals.sbt
 META-INF
+.DS_Store
+.vscode

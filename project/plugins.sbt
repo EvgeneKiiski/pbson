@@ -10,3 +10,5 @@ addSbtPlugin("org.scoverage" % "sbt-coveralls" % "1.2.7")
 addSbtPlugin("pl.project13.scala" % "sbt-jmh" % "0.3.6")
 
 addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.1.2")
+
+addSbtPlugin("ch.epfl.scala" % "sbt-bloop" % "1.4.8")

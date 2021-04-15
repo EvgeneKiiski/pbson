@@ -1,10 +1,12 @@
 import sbtcrossproject.{ CrossProject, CrossType }
 
-resolvers += "Artima Maven Repository" at "http://repo.artima.com/releases"
+resolvers += "Artima Maven Repository" at "https://repo.artima.com/releases"
 
 logBuffered in Test := false
 
 autoCompilerPlugins := true
+
+scalaVersion := "2.12.13"
 
 addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.0")
 
@@ -30,8 +32,8 @@ lazy val commonSettings = Seq(
   organization := "ru.twistedlogic",
   organizationName := "Twistedlogic",
   organizationHomepage := Some(new URL("http://twistedlogic.ru/")),
-  version := "0.0.19",
-  crossScalaVersions := Seq("2.11.12", "2.12.11", "2.13.3"),
+  version := "0.0.20",
+  crossScalaVersions := Seq("2.11.12", "2.12.13", "2.13.5"),
   licenses := Seq("Apache 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
   scalacOptions ++= {
     CrossVersion.partialVersion(scalaVersion.value) match {
@@ -78,8 +80,8 @@ lazy val root = (project in file("."))
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, minor)) if minor <= 12 =>
           Seq(
-            "org.mongodb" % "bson" % "4.0.5",
-            "com.chuusai" %% "shapeless" % "2.3.3",
+            "org.mongodb" % "bson" % "4.2.3",
+            "com.chuusai" %% "shapeless" % "2.3.4",
             "org.scalactic" %% "scalactic" % "3.0.8" % Test,
             "org.scalatest" %% "scalatest" % "3.0.8" % Test,
             "org.scalacheck" %% "scalacheck" % "1.14.3" % Test,
@@ -88,11 +90,11 @@ lazy val root = (project in file("."))
           )
         case Some((2, minor)) if minor >= 13 =>
           Seq(
-            "org.mongodb" % "bson" % "4.0.5",
-            "com.chuusai" %% "shapeless" % "2.3.3",
+            "org.mongodb" % "bson" % "4.2.3",
+            "com.chuusai" %% "shapeless" % "2.3.4",
             "org.scalactic" %% "scalactic" % "3.0.8" % Test,
             "org.scalatest" %% "scalatest" % "3.0.8" % Test,
-            "org.scalacheck" %% "scalacheck" % "1.14.3" % Test,
+            "org.scalacheck" %% "scalacheck" % "1.15.3" % Test,
           )
         case _ => Nil
       }
@@ -147,15 +149,7 @@ lazy val benchmarks = (project in file("benchmarks"))
       "io.circe" %% "circe-parser" % "0.13.0",
       "org.mongodb.scala" %% "mongo-scala-driver" % "2.9.0",
       "junit" % "junit" % "4.12" % Test,
-      "org.scalactic" %% "scalactic" % "3.0.8",
-      "org.scalatest" %% "scalatest" % "3.0.8" % Test
+      "org.scalactic" %% "scalactic" % "3.2.7",
+      "org.scalatest" %% "scalatest" % "3.2.7" % Test
     )
   )
-
-
-
-
-
-
-
-
